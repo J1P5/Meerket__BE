@@ -1,0 +1,17 @@
+dependencies {
+
+    implementation project(':meerket-common')
+    implementation project(':meerket-domain')
+    implementation project(':meerket-infrastructure')
+
+    /* swagger */
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+    /* spring security */
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
