@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(':meerket-common')
+
     /* query dsl */
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
