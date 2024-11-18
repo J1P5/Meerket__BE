@@ -1,11 +1,11 @@
-package api.global.response;
+package org.j1p5.api.global.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 /**
  * 성공 여부, 응답 코드, 응답 메세지, 응답 데이터 공통 응답 반환
+ *
  * @author Icecoff22
  * @param <T>
  */
@@ -40,6 +40,7 @@ public class Response<T> {
     }
 
     /* 응답 성공, 응답 데이터 o */
+    //TODO : 성공했을 때도 code 응답
     public static <T> Response<T> onSuccess(T result) {
         return new Response<>(true, result);
     }

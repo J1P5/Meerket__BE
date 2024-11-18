@@ -1,4 +1,13 @@
-package org.j1p5.api.excpetion;
+package org.j1p5.api.global.excpetion;
 
-public enum WebException {
+import lombok.Getter;
+import org.j1p5.common.exception.BaseErrorCode;
+import org.j1p5.common.exception.CustomException;
+
+@Getter
+public class WebException extends CustomException {
+
+    public WebException(BaseErrorCode baseErrorCode) {
+        super(baseErrorCode, "web layer");
+    }
 }
