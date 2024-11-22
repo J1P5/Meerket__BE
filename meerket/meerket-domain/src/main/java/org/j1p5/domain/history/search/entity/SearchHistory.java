@@ -1,7 +1,8 @@
-package org.j1p5.domain.user.entity;
+package org.j1p5.domain.history.search.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.j1p5.domain.user.entity.UserEntity;
 
 import java.time.LocalDateTime;
 
