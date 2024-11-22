@@ -1,11 +1,20 @@
 package org.j1p5.domain.comment.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.user.entity.UserEntity;
 
-@Entity
+@Entity(name = "comment")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@SuperBuilder
 public class CommentEntity extends BaseEntity {
 
     @Id

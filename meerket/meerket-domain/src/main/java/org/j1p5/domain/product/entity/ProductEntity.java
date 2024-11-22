@@ -12,11 +12,10 @@ import java.awt.*;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "product")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
 @SuperBuilder
-@Table(name = "product")
 public class ProductEntity extends BaseEntity {
 
     @Id
