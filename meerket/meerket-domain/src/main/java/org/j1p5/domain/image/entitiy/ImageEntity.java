@@ -1,4 +1,4 @@
-package org.j1p5.domain.image;
+package org.j1p5.domain.image.entitiy;
 
 import jakarta.persistence.*;
 import org.j1p5.domain.global.entity.BaseEntity;
