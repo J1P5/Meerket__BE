@@ -27,7 +27,7 @@ public class ProductEntity extends BaseEntity {
     private String title;
 
     @Lob
-    @Column(name = "content", nullable = false, length = 500)
+    @Column(name = "content", nullable = false, length = 500, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "min_price", nullable = false)
