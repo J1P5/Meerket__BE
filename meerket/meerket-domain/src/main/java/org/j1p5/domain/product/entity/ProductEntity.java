@@ -2,15 +2,14 @@ package org.j1p5.domain.product.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.user.entity.UserEntity;
+import org.locationtech.jts.geom.Point;
 
-import java.awt.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
