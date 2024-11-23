@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: local
+
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${HOME_URL}
+    username: ${HOME_USERNAME}
+    password: ${HOME_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true # 실행되는 SQL 쿼리 표시
+    properties:
+      hibernate:
+        format_sql: true # SQL 포맷팅
+        dialect: org.hibernate.spatial.dialect.mysql.MySQLSpatialDialect
+
