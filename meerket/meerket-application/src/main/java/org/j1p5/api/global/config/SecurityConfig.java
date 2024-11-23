@@ -27,8 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.anyRequest().permitAll(); //init setting
 
-                    authorize.requestMatchers("/api/v1/admin").hasRole("ADMIN");
-                    authorize.requestMatchers("/api/v1/chat", "/api/v1/").hasRole("USER");
+//                    authorize.requestMatchers("/api/v1/admin").hasRole("ADMIN");
                 });
 
         http
