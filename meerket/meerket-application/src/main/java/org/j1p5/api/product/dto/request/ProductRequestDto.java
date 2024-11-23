@@ -3,6 +3,7 @@ package org.j1p5.api.product.dto.request;
 import lombok.Builder;
 import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.user.entity.UserEntity;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -23,7 +24,7 @@ public record ProductRequestDto(
         LocalDateTime expiredTime
 ) {
 
-    public ProductEntity toEntity(ProductRequestDto productRequestDto){
+    public static ProductEntity toEntity(ProductRequestDto productRequestDto, UserEntity user){
 
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),4326);
         Point coordinate = geometryFactory.createPoint(
@@ -38,6 +39,7 @@ public record ProductRequestDto(
                 .category(productRequestDto.category)
                 .coordinate(coordinate)
                 .expiredTime(productRequestDto.expiredTime)
+                .user(user)
                 .build();
     }
 
