@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.j1p5")
+@EntityScan(basePackages = "org.j1p5") // 엔티티 스캔
 public class MeerketApplication {
 
     public static void main(String[] args) {
