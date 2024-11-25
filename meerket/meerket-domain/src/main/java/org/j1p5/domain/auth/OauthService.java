@@ -42,6 +42,7 @@ public class OauthService {
         OauthClient oauthClient = clients.get(Provider.valueOf(provider));
 
         OauthToken token = oauthClient.getOauthToken(code);
+
         return oauthClient.getOauthProfile(token.getAccessToken());
     }
 }

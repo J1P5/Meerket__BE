@@ -37,6 +37,6 @@ public class KakaoClient implements OauthClient {
 
     @Override
     public OauthProfile getOauthProfile(String token) {
-        return kakaoProfileClient.getProfile(token, "application/x-www-form-urlencoded;charset=utf-8");
+        return kakaoProfileClient.getProfile("bearer " + token, "application/x-www-form-urlencoded;charset=utf-8");
     }
 }

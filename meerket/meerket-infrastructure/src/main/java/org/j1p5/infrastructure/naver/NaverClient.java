@@ -34,11 +34,11 @@ public class NaverClient implements OauthClient {
 
     @Override
     public OauthToken getOauthToken(String code) {
-        return naverAuthClient.getToken(clientId, clientSecret, grantType, code, state);
+        return naverAuthClient.getToken(grantType, clientId, clientSecret, code, state);
     }
 
     @Override
     public OauthProfile getOauthProfile(String token) {
-        return naverProfileClient.getProfile(token);
+        return naverProfileClient.getProfile( "Bearer " + token);
     }
 }

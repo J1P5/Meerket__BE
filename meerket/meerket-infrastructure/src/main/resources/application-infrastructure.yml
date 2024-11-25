@@ -1,0 +1,13 @@
+spring:
+  oauth2:
+    client:
+      kakao:
+        grant_type: ${KAKAO_OAUTH_GRANT_TYPE}
+        client_id: ${KAKAO_OAUTH_CLIENT_ID}
+        redirect_uri: ${KAKAO_OAUTH_REDIRECT_URI}
+      naver:
+        grant_type: ${NAVER_OAUTH_GRANT_TYPE}
+        client_id: ${NAVER_OAUTH_CLIENT_ID}
+        client_secret: ${NAVER_OAUTH_CLIENT_SECRET}
+        state: ${NAVER_OAUTH_STATE}
+
