@@ -12,6 +12,12 @@ repositories {
 dependencies {
     implementation project(':meerket-common')
 
+    //s3관련 설정
+    // AWS SDK v1 - S3
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.619'
+    // Spring Cloud AWS
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
