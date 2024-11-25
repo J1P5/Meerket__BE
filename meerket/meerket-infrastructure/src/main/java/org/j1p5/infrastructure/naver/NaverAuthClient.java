@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface NaverAuthClient {
 
     @PostMapping("/oauth2.0/token")
-    NaverToken getToken(@RequestParam(name = "response_type") String code,
+    NaverToken getToken(@RequestParam(name = "grant_type") String grantType,
                         @RequestParam(name = "client_id") String clientId,
-                        @RequestParam(name = "redirect_uri") String redirectUri,
+                        @RequestParam(name = "client_secret") String clientSecret,
+                        @RequestParam(name = "code") String code,
                         @RequestParam(name = "state") String state
     );
 }
