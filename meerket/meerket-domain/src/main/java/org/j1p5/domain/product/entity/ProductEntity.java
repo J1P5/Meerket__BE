@@ -69,4 +69,13 @@ public class ProductEntity extends BaseEntity {
     @JoinColumn(name = "product_id")
     private List<ImageEntity> imageEntityList = new ArrayList<>(); //이미지와 단방향관계로 설정
 
+
+    public void addImage(ImageEntity image) {
+        imageEntityList.add(image);
+    }
+
+    public void removeImage(ImageEntity image) {
+        imageEntityList.remove(image);
+    }
+
 }

@@ -3,23 +3,26 @@ package org.j1p5.api.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.product.dto.request.ProductRequestDto;
-import org.j1p5.common.exception.CustomException;
+import org.j1p5.api.product.dto.response.ProductResponseDto;
+import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.product.repository.ProductRepository;
+import org.j1p5.domain.product.service.ProductAppender;
 import org.j1p5.domain.product.service.UserReader;
 import org.j1p5.domain.user.entity.UserEntity;
-import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.j1p5.common.exception.GlobalErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class ProductUsecase {
 
     private final UserReader userReader;
+    private final ProductAppender productAppender;
     private final ImageService imageService;
 
 
@@ -32,7 +35,19 @@ public class ProductUsecase {
 
         //이미지 처리를 위한 로직 -> 그 후 image테이블에 저장
 
+        List<String> imageUrls = imageService.upload(images);
+        for (String url : imageUrls) {
+            ImageEntity image = ImageEntity.from(url);//이미지 엔티티에 저장
+            product.addImage(image); // 관계 설정
+        }
+        
+        productAppender.saveProduct(product);//이떄 연관된 ImageEntity도 같이 저장
 
+    }
+
+    @Transactional
+    public ProductResponseDto selectAllProduct(String category, String keyword){
+        //사용자 활동지역 반경 100km까지 조회
     }
 
 }
