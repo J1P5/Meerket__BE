@@ -33,6 +33,7 @@ import static org.j1p5.api.product.exception.S3ErrorCode.*;
 public class ImageService{
 
     private final AmazonS3 amazonS3;
+    private final ImageValidator imageValidator;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -49,7 +50,7 @@ public class ImageService{
     }
 
     private String uploadImage(MultipartFile image) {
-        this.validateImageFileExtension(image.getOriginalFilename());
+        imageValidator.validateImageFile(image);
         try {
             return this.uploadImageToS3(image);
         } catch (IOException e) {
@@ -57,19 +58,6 @@ public class ImageService{
         }
     }
 
-    private void validateImageFileExtension(String filename) {
-        int lastDotIndex = filename.lastIndexOf(".");
-        if (lastDotIndex == -1) {
-            throw new WebException(NO_FILE_EXTENSION);
-        }
-
-        String extension = filename.substring(lastDotIndex + 1).toLowerCase();
-        List<String> allowedExtensionList = Arrays.asList("jpg", "jpeg", "png", "gif");
-
-        if (!allowedExtensionList.contains(extension)) {
-            throw new WebException(INVALID_FILE_EXTENSION);
-        }
-    }
 
     private String uploadImageToS3(MultipartFile image) throws IOException {
         String originalFilename = image.getOriginalFilename(); //원본 파일 명
