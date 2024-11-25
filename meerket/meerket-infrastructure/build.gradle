@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation project(':meerket-common')
+    implementation project(':meerket-domain')
 
     /* open feign */
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3'
