@@ -44,7 +44,7 @@ public class ImageServiceImpl implements ImageService {
     public List<String> upload(List<File> images) {
         List<String> imageList = new ArrayList<>();
         if (images.isEmpty()) {
-            throw new DomainException(ProductException.EMPTY_FILE_EXCEPTION);
+            throw new InfraException(EMPTY_FILE_EXCEPTION);
         }
         for (File image : images) {
             imageList.add(uploadImage(image));
