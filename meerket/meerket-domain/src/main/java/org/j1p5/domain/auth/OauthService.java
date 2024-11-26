@@ -19,7 +19,7 @@ public class OauthService {
     private final UserAppender userAppender;
 
     public Long login(String code, String provider) {
-        loginValidator.validator(Provider.valueOf(provider));
+        loginValidator.validator(provider);
 
         OauthProfile profile = oauthSender.request(code, provider);
 
