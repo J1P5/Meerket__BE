@@ -13,7 +13,7 @@ public class ActivityArea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "range", nullable = false)
+    @Column(name = "range_level", nullable = false)
     private Short range;
 
     @ManyToOne(fetch = FetchType.LAZY)
