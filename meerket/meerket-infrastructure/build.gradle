@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation project(':meerket-common')
+    implementation project(':meerket-domain')
 
     //s3관련 설정
     // AWS SDK v1 - S3
