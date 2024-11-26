@@ -1,11 +1,12 @@
 package org.j1p5.infrastructure.kakao;
 
 import org.j1p5.domain.auth.KakaoToken;
+import org.j1p5.infrastructure.global.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "kakao-auth-client", url = "https://kauth.kakao.com")
+@FeignClient(name = "kakao-auth-client", url = "https://kauth.kakao.com", configuration = FeignClientConfig.class)
 public interface KakaoAuthClient {
 
     @PostMapping("/oauth/token")
