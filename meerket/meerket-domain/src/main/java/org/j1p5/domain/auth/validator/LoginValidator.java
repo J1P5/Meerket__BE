@@ -1,4 +1,4 @@
-package org.j1p5.domain.auth;
+package org.j1p5.domain.auth.validator;
 
 import org.j1p5.domain.auth.exception.InvalidProviderException;
 import org.j1p5.domain.user.entity.Provider;

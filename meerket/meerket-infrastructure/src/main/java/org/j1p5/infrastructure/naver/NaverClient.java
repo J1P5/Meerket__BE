@@ -2,8 +2,8 @@ package org.j1p5.infrastructure.naver;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.auth.OauthClient;
-import org.j1p5.domain.auth.OauthProfile;
-import org.j1p5.domain.auth.OauthToken;
+import org.j1p5.domain.auth.dto.OauthProfile;
+import org.j1p5.domain.auth.dto.OauthToken;
 import org.j1p5.domain.user.entity.Provider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

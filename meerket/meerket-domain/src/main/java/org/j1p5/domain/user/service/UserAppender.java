@@ -1,7 +1,7 @@
 package org.j1p5.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.j1p5.domain.auth.OauthProfile;
+import org.j1p5.domain.auth.dto.OauthProfile;
 import org.j1p5.domain.user.entity.Provider;
 import org.j1p5.domain.user.entity.Role;
 import org.j1p5.domain.user.entity.UserEntity;

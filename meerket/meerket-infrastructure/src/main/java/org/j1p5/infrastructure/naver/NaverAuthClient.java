@@ -1,6 +1,6 @@
 package org.j1p5.infrastructure.naver;
 
-import org.j1p5.domain.auth.NaverToken;
+import org.j1p5.domain.auth.dto.NaverToken;
 import org.j1p5.infrastructure.global.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
