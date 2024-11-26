@@ -1,6 +1,7 @@
 package org.j1p5.api.product.dto.request;
 
 import lombok.Builder;
+import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -24,22 +25,17 @@ public record ProductRequestDto(
         LocalDateTime expiredTime
 ) {
 
-    public static ProductEntity toEntity(ProductRequestDto productRequestDto, UserEntity user){
-
-        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),4326);
-        Point coordinate = geometryFactory.createPoint(
-                new Coordinate(productRequestDto.longtitude, productRequestDto.latitude));
-
-        return ProductEntity.builder()
-                .title(productRequestDto.title)
-                .content(productRequestDto.content)
-                .address(productRequestDto.address)
-                .location(productRequestDto.location)
-                .minPrice(productRequestDto.price)
-                .category(productRequestDto.category)
-                .coordinate(coordinate)
-                .expiredTime(productRequestDto.expiredTime)
-                .user(user)
+    public static ProductInfo toInfo(ProductRequestDto requestDto){
+        return ProductInfo.builder()
+                .title(requestDto.title)
+                .content(requestDto.content)
+                .address(requestDto.address)
+                .location(requestDto.location)
+                .price(requestDto.price)
+                .category(requestDto.category)
+                .latitude(requestDto.latitude)
+                .longtitude(requestDto.longtitude())
+                .expiredTime(requestDto.expiredTime)
                 .build();
     }
 

@@ -1,37 +1,38 @@
-package org.j1p5.api.product.service;
+package org.j1p5.domain.product.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.j1p5.api.product.dto.request.ProductRequestDto;
-import org.j1p5.api.product.dto.response.ProductResponseDto;
+
 import org.j1p5.domain.image.entitiy.ImageEntity;
+import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.entity.ProductEntity;
-import org.j1p5.domain.product.repository.ProductRepository;
-import org.j1p5.domain.product.service.ProductAppender;
-import org.j1p5.domain.product.service.UserReader;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+
+import java.io.File;
 import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
-public class ProductUsecase {
+public class ProductService {
 
     private final UserReader userReader;
     private final ProductAppender productAppender;
     private final ImageService imageService;
+    private final UserRegionauth userRegionauth;
 
 
     @Transactional
-    public void registerProduct(String email, ProductRequestDto productRequestDto, List<MultipartFile> images) {
+    public void registerProduct(String email, ProductInfo productInfo, List<File> images) {
+        //multipart 자료형은 web에서 처리하고 file만 내려줘라
 
         UserEntity user = userReader.getUser(email);//user객체 가져오는 실제 구현부는 UserReader임
 
-        ProductEntity product = ProductRequestDto.toEntity(productRequestDto, user);
+        userRegionauth.checkAuth(user.getId());// 동네 인증된 사용자 체크
+
+        ProductEntity product = ProductInfo.toEntity(productInfo, user);
 
         //이미지 처리를 위한 로직 -> 그 후 image테이블에 저장
 
@@ -45,9 +46,5 @@ public class ProductUsecase {
 
     }
 
-    @Transactional
-    public ProductResponseDto selectAllProduct(String category, String keyword){
-        //사용자 활동지역 반경 100km까지 조회
-    }
 
 }
