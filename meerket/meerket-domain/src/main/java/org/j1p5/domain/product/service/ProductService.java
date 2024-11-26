@@ -3,6 +3,7 @@ package org.j1p5.domain.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.entity.ProductEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
     private final UserReader userReader;
@@ -38,6 +40,7 @@ public class ProductService {
 
         List<String> imageUrls = imageService.upload(images);
         for (String url : imageUrls) {
+            log.info(url);
             ImageEntity image = ImageEntity.from(url);//이미지 엔티티에 저장
             product.addImage(image); // 관계 설정
         }

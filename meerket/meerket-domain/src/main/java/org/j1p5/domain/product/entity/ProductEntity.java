@@ -2,6 +2,7 @@ package org.j1p5.domain.product.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -65,6 +66,7 @@ public class ProductEntity extends BaseEntity {
     @Column(name = "product_status", nullable = false)
     private ProductStatus status;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
     private List<ImageEntity> imageEntityList = new ArrayList<>(); //이미지와 단방향관계로 설정

@@ -4,6 +4,7 @@ import lombok.Builder;
 import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -22,6 +23,7 @@ public record ProductRequestDto(
         Double longtitude,
         String address,
         String location,
+        ProductStatus status,
         LocalDateTime expiredTime
 ) {
 
@@ -36,6 +38,7 @@ public record ProductRequestDto(
                 .latitude(requestDto.latitude)
                 .longtitude(requestDto.longtitude())
                 .expiredTime(requestDto.expiredTime)
+                .status(requestDto.status)
                 .build();
     }
 

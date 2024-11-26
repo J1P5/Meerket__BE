@@ -82,10 +82,10 @@ public class ImageServiceImpl implements ImageService {
 
         try {
             PutObjectRequest putObjectRequest =
-                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata)
-                            .withCannedAcl(CannedAccessControlList.PublicRead);
+                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata);
             amazonS3.putObject(putObjectRequest); // put image to S3
         } catch (Exception e) {
+            e.printStackTrace();
             throw new InfraException(PUT_OBJECT_EXCEPTION);
         }
 
