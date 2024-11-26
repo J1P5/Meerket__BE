@@ -1,5 +1,6 @@
 package org.j1p5.api.auth.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auth.dto.LoginRequest;
 import org.j1p5.api.global.response.Response;
@@ -18,9 +19,13 @@ public class OauthApi {
 
     @PostMapping
     public Response<Void> login(
-            @RequestBody LoginRequest loginRequest
+            @RequestBody LoginRequest loginRequest,
+            HttpServletRequest request
     ) {
-        oauthService.login(loginRequest.code(), loginRequest.provider());
+        Long userId = oauthService.login(loginRequest.code(), loginRequest.provider());
+
+        request.getSession().setAttribute("id", userId);
+
         return Response.onSuccess();
     }
 }
