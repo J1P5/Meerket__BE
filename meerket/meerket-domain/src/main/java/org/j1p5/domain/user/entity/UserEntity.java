@@ -30,6 +30,7 @@ public class UserEntity extends BaseEntity {
     private String nickname;
 
     @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private UserEntity(String SocialId, String SocialEmail, Provider Provider, Role role) {
