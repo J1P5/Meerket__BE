@@ -1,4 +1,4 @@
-package org.j1p5.api.auth.model;
+package org.j1p5.api.auth;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CustomUserDetail implements UserDetails {
-    private String email;
+    private Long pk;
     private String role;
 
     @Override
@@ -27,6 +27,15 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return String.valueOf(pk);
+    }
+
+    private CustomUserDetail(Long pk, String role) {
+        this.pk = pk;
+        this.role = role;
+    }
+
+    public static CustomUserDetail create(Long pk, String role) {
+        return new CustomUserDetail(pk, role);
     }
 }
