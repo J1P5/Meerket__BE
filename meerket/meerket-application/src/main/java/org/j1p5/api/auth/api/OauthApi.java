@@ -1,14 +1,19 @@
 package org.j1p5.api.auth.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.auth.AuthManager;
 import org.j1p5.api.auth.dto.LoginRequest;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.domain.auth.OauthService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.j1p5.domain.user.UserInfo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,15 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class OauthApi {
 
     private final OauthService oauthService;
+    private final AuthManager authManager;
+    private final HttpSessionSecurityContextRepository securityContextRepository
+            = new HttpSessionSecurityContextRepository();
 
     @PostMapping
     public Response<Void> login(
             @RequestBody LoginRequest loginRequest,
-            HttpServletRequest request
+            HttpServletRequest request,
+            HttpServletResponse response
     ) {
-        Long userId = oauthService.login(loginRequest.code(), loginRequest.provider());
+        UserInfo user = oauthService.login(loginRequest.code(), loginRequest.provider());
 
-        request.getSession().setAttribute("id", userId);
+        SecurityContext context = authManager.setContext(user);
+        securityContextRepository.saveContext(context, request, response);
 
         return Response.onSuccess();
     }
