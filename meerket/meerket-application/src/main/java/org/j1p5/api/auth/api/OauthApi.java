@@ -2,6 +2,7 @@ package org.j1p5.api.auth.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auth.AuthManager;
 import org.j1p5.api.auth.dto.LoginRequest;
@@ -27,7 +28,7 @@ public class OauthApi {
 
     @PostMapping
     public Response<Void> login(
-            @RequestBody LoginRequest loginRequest,
+            @RequestBody @Valid LoginRequest loginRequest,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
