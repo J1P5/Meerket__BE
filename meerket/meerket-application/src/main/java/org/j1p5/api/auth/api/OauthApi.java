@@ -40,4 +40,17 @@ public class OauthApi {
 
         return Response.onSuccess();
     }
+
+    @PostMapping("/logout")
+    public Response<Void> logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+
+        return Response.onSuccess();
+    }
+
+    @PostMapping("/test")
+    public Response<Void> test(@LoginUser Long pk) {
+        System.out.println(pk);
+        return Response.onSuccess();
+    }
 }
