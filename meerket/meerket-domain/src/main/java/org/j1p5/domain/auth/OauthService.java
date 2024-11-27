@@ -3,6 +3,7 @@ package org.j1p5.domain.auth;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.auth.dto.OauthProfile;
 import org.j1p5.domain.auth.validator.LoginValidator;
+import org.j1p5.domain.user.UserInfo;
 import org.j1p5.domain.user.entity.Provider;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.service.UserAppender;
@@ -18,7 +19,7 @@ public class OauthService {
     private final UserReader userReader;
     private final UserAppender userAppender;
 
-    public Long login(String code, String provider) {
+    public UserInfo login(String code, String provider) {
         loginValidator.validator(provider);
 
         OauthProfile profile = oauthSender.request(code, provider);
@@ -26,9 +27,9 @@ public class OauthService {
         UserEntity user = userReader.read(profile.getEmail(), provider);
         if (user == null) {
             user = userAppender.append(profile, provider);
-            return user.getId();
+            return UserInfo.from(user);
         }
 
-        return user.getId();
+        return UserInfo.from(user);
     }
 }
