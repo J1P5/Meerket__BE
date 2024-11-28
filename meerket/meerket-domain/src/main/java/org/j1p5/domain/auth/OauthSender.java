@@ -21,7 +21,7 @@ public class OauthSender {
     }
 
     public OauthProfile request(String code, String provider) {
-        OauthClient oauthClient = clients.get(Provider.valueOf(provider));
+        OauthClient oauthClient = clients.get(Provider.get(provider));
 
         OauthToken token = oauthClient.getOauthToken(code);
 
