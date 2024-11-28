@@ -1,4 +1,4 @@
-package org.j1p5.infrastructure.kakao;
+package org.j1p5.infrastructure.kakao.client;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.auth.OauthClient;

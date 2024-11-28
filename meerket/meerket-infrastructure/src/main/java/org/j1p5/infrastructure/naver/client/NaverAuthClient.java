@@ -1,12 +1,12 @@
-package org.j1p5.infrastructure.naver;
+package org.j1p5.infrastructure.naver.client;
 
-import org.j1p5.domain.auth.dto.NaverToken;
-import org.j1p5.infrastructure.global.config.FeignClientConfig;
+import org.j1p5.infrastructure.naver.config.NaverFeignClientConfig;
+import org.j1p5.infrastructure.naver.dto.NaverToken;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "naver-auth-client", url = "https://nid.naver.com", configuration = FeignClientConfig.class)
+@FeignClient(name = "naver-auth-client", url = "https://nid.naver.com", configuration = NaverFeignClientConfig.class)
 public interface NaverAuthClient {
 
     @PostMapping("/oauth2.0/token")

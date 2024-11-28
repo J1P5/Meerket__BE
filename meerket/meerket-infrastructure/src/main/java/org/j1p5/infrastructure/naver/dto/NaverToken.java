@@ -1,8 +1,9 @@
-package org.j1p5.domain.auth.dto;
+package org.j1p5.infrastructure.naver.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.j1p5.domain.auth.dto.OauthToken;
 
 @Getter
 @NoArgsConstructor
