@@ -10,18 +10,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.INVALID_FILE_EXTENSION;
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.NO_FILE_EXTENSION;
+import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.*;
 
-@Component
+
 public class ImageValidator {
 
     // 허용되는 확장자 목록
-    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png");
 
     // 허용되는 MIME 타입 목록
-    private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList("image/jpeg", "image/png");
+    private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png");
 
     /**
      * 이미지 파일 유효성 검사 (확장자 + MIME 타입)
@@ -68,7 +68,7 @@ public class ImageValidator {
                 throw new InfraException(INVALID_FILE_EXTENSION); // 예외 처리: 허용되지 않은 MIME 타입
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to determine MIME type", e);
+            throw new InfraException(INVALID_MIME_TYPE);
         }
     }
 }
