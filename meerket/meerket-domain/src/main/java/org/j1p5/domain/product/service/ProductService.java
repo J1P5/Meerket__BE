@@ -31,7 +31,6 @@ import java.util.List;
 @Slf4j
 public class ProductService {
 
-    private static final Integer radius = 100000;
 
     private final UserReader userReader;
     private final ProductAppender productAppender;
