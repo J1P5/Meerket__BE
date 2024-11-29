@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class MultipartFileConverter {
 
     public static List<File> convertMultipartFilesToFiles(List<MultipartFile> multipartFiles) {
@@ -17,9 +16,8 @@ public class MultipartFileConverter {
             try {
                 // Create a temporary file
                 File tempFile = File.createTempFile("upload_", "_" + multipartFile.getOriginalFilename());
-                multipartFile.transferTo(tempFile); // Write the content to the temp file
+                multipartFile.transferTo(tempFile);
                 files.add(tempFile);
-                // Ensure the temporary file is deleted when the application exits
                 tempFile.deleteOnExit();
             } catch (IOException e) {
                 throw new RuntimeException("Error converting MultipartFile to File: " + multipartFile.getOriginalFilename(), e);
