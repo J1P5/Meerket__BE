@@ -1,4 +1,4 @@
-package org.j1p5.api.product.api;
+package org.j1p5.api.product.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

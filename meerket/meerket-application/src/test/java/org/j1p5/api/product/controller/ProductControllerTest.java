@@ -1,4 +1,4 @@
-package org.j1p5.api.product.api;
+package org.j1p5.api.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.j1p5.api.product.dto.request.ProductRequestDto;
