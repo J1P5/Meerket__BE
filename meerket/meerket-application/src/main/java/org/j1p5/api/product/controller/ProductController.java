@@ -2,6 +2,7 @@ package org.j1p5.api.product.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
 import org.j1p5.api.product.dto.request.ProductRequestDto;
@@ -35,21 +36,19 @@ public class ProductController {
      *
      * @param request
      * @param images
-     * @param userDetails
+     * @param userId
      * @return 200, 등록 완료 메세지
      * @author sunghyun0610
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Response makeProduct(@RequestPart(name = "request") ProductRequestDto request,
                                 @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                @AuthenticationPrincipal UserDetails userDetails
+                                @LoginUser Long userId
     ) {
 
 
         // 세션이들어옴 -> 세션에있는 userid뽑아냄 ->이거 이용해서 지역인증 테이블에서 findById , 추후에 user role추가
 
-        String userEmail = userDetails.getUsername();//유저 정보를 가져오기 위함
-        log.info("userEmail" + userEmail);
 
         ProductInfo productInfo = ProductRequestDto.toInfo(request);
         List<File> imageFiles = new ArrayList<>();
@@ -58,7 +57,7 @@ public class ProductController {
             imageFiles = MultipartFileConverter.convertMultipartFilesToFiles(images);
         }
 
-        productService.registerProduct(userEmail, productInfo, imageFiles);
+        productService.registerProduct(userId, productInfo, imageFiles);
 
         return Response.onSuccess();
     }
@@ -76,13 +75,11 @@ public class ProductController {
     public Response<CursorResult<ProductResponseInfo>> getProductByAroundPoint(@AuthenticationPrincipal UserDetails userDetails,
                                                                                @RequestParam(name = "category", required = false) String category,
                                                                                @RequestParam(name = "keyword", required = false) String keyword,
-                                                                               @CursorDefault Cursor cursor) {
-//        //Userdetails에서 pk값 바로 꺼내올 수 있게 수정한다고함.
-        String userEmail = userDetails.getUsername();
-        log.info("userEmail :" + userEmail);
+                                                                               @CursorDefault Cursor cursor,
+                                                                               @LoginUser Long userId) {
 
         // 서비스 호출
-        CursorResult<ProductResponseInfo> products = productService.getProducts(userEmail, cursor);//cursorResult형 조회된 productResponseInfo 반환
+        CursorResult<ProductResponseInfo> products = productService.getProducts(userId, cursor);//cursorResult형 조회된 productResponseInfo 반환
 
 
         return Response.onSuccess(products);
