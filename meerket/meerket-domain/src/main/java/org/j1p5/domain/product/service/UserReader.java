@@ -14,8 +14,8 @@ import static org.j1p5.common.exception.GlobalErrorCode.USER_NOT_FOUND;
 public class UserReader {
     private final UserRepository userRepository;
 
-    public UserEntity getUser(String email){
-        UserEntity userEntity = userRepository.findBySocialEmail(email)
+    public UserEntity getUser(Long userId){
+        UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND, "user not found"));//유저 찾음직
 
         return userEntity;
