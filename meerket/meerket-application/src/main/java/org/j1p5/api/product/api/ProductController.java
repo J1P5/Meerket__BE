@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
 import org.j1p5.api.product.dto.request.ProductRequestDto;
-
 import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
@@ -18,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +27,12 @@ import java.util.List;
 @Slf4j
 public class ProductController {
 
-    private final ProductService productUsecase; //생성자 주입
+    private final ProductService productService; //생성자 주입
 
 
     /**
      * 중고물품 등록
+     *
      * @param request
      * @param images
      * @param userDetails
@@ -44,8 +43,7 @@ public class ProductController {
     public Response makeProduct(@RequestPart(name = "request") ProductRequestDto request,
                                 @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                 @AuthenticationPrincipal UserDetails userDetails
-    )
-                                 {
+    ) {
 
 
         // 세션이들어옴 -> 세션에있는 userid뽑아냄 ->이거 이용해서 지역인증 테이블에서 findById , 추후에 user role추가
@@ -56,17 +54,18 @@ public class ProductController {
         ProductInfo productInfo = ProductRequestDto.toInfo(request);
         List<File> imageFiles = new ArrayList<>();
 
-        if (!images.isEmpty() && images != null) {
+        if (images != null && !images.isEmpty()) {
             imageFiles = MultipartFileConverter.convertMultipartFilesToFiles(images);
         }
 
-        productUsecase.registerProduct(userEmail, productInfo, imageFiles);
+        productService.registerProduct(userEmail, productInfo, imageFiles);
 
         return Response.onSuccess();
     }
 
     /**
      * 사용자 활동지역 거리 기반 100km이내 중고물품 조회
+     *
      * @param category
      * @param keyword
      * @param cursor
@@ -83,8 +82,7 @@ public class ProductController {
         log.info("userEmail :" + userEmail);
 
         // 서비스 호출
-        CursorResult<ProductResponseInfo> products = productUsecase.getProducts(userEmail, cursor);//cursorResult형 조회된 productResponseInfo 반환
-
+        CursorResult<ProductResponseInfo> products = productService.getProducts(userEmail, cursor);//cursorResult형 조회된 productResponseInfo 반환
 
 
         return Response.onSuccess(products);

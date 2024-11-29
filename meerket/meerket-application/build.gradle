@@ -18,8 +18,4 @@ dependencies {
     // AWS SDK for S3 (1.x 버전)
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.619'
 
-    //공간 데이터를 위한
-    implementation 'org.hibernate:hibernate-core:6.4.1.Final'
-    implementation 'org.hibernate:hibernate-spatial:6.4.1.Final'
-    implementation 'org.locationtech.jts:jts-core:1.19.0'
 }
