@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.j1p5.domain.global.entity.BaseEntity;
-import org.j1p5.domain.product.entity.ProductEntity;
 
 
 @Entity(name = "image")
@@ -20,10 +19,10 @@ public class ImageEntity extends BaseEntity {
     private Long id;
 
 
-    @Column(name = "image_url", nullable = false , length = 2048)
+    @Column(name = "image_url", nullable = false, length = 2048)
     private String imageUrl;
 
-    public static ImageEntity from( String imageUrl){
-        return new ImageEntity(null,imageUrl);
+    public static ImageEntity from(String imageUrl) {
+        return new ImageEntity(null, imageUrl);
     }
 }
