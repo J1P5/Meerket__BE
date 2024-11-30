@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.j1p5.domain.global.entity.BaseEntity;
 
+import java.util.List;
+
 @Entity(name = "user")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,7 +16,7 @@ public class UserEntity extends BaseEntity {
     private Long id;
 
     @Column(name = "social_id", nullable = false)
-    private Long socialId;
+    private String socialId;
 
     @Column(name = "social_email", nullable = false, length = 50)
     private String socialEmail;
@@ -31,4 +33,7 @@ public class UserEntity extends BaseEntity {
 
     @Column(name = "role", nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<ActivityArea> activityAreas;
 }
