@@ -58,7 +58,7 @@ public class ProductController {
             imageFiles = MultipartFileConverter.convertMultipartFilesToFiles(images);
         }
 
-        productService.registerProduct(1L, productInfo, imageFiles);
+        productService.registerProduct(userId, productInfo, imageFiles);
 
         return Response.onSuccess();
     }
@@ -80,7 +80,7 @@ public class ProductController {
                                                                                @LoginUser Long userId) {
 
         // 서비스 호출
-        CursorResult<ProductResponseInfo> products = productService.getProducts(1L, cursor);//cursorResult형 조회된 productResponseInfo 반환
+        CursorResult<ProductResponseInfo> products = productService.getProducts(userId, cursor);//cursorResult형 조회된 productResponseInfo 반환
 
 
         return Response.onSuccess(products);
@@ -93,7 +93,7 @@ public class ProductController {
     public Response<ProductResponseDetailInfo> getProductDetails(@PathVariable(name = "productId") Long productId,
                                                                  @LoginUser Long userId)
     {
-        return Response.onSuccess(productService.getProductDetail(productId, 1L));
+        return Response.onSuccess(productService.getProductDetail(productId, userId));
     }
 
 
