@@ -10,6 +10,7 @@ import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.product.dto.ProductInfo;
+import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
 import org.j1p5.domain.product.dto.ProductResponseInfo;
 import org.j1p5.domain.product.service.ProductService;
 import org.springframework.http.MediaType;
@@ -41,7 +42,7 @@ public class ProductController {
      * @author sunghyun0610
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Response makeProduct(@RequestPart(name = "request") ProductRequestDto request,
+    public Response<Void> makeProduct(@RequestPart(name = "request") ProductRequestDto request,
                                 @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                 @LoginUser Long userId
     ) {
@@ -57,7 +58,7 @@ public class ProductController {
             imageFiles = MultipartFileConverter.convertMultipartFilesToFiles(images);
         }
 
-        productService.registerProduct(userId, productInfo, imageFiles);
+        productService.registerProduct(1L, productInfo, imageFiles);
 
         return Response.onSuccess();
     }
@@ -79,13 +80,22 @@ public class ProductController {
                                                                                @LoginUser Long userId) {
 
         // 서비스 호출
-        CursorResult<ProductResponseInfo> products = productService.getProducts(userId, cursor);//cursorResult형 조회된 productResponseInfo 반환
+        CursorResult<ProductResponseInfo> products = productService.getProducts(1L, cursor);//cursorResult형 조회된 productResponseInfo 반환
 
 
         return Response.onSuccess(products);
 
 
     }
+
+
+    @GetMapping("/{productId}")
+    public Response<ProductResponseDetailInfo> getProductDetails(@PathVariable(name = "productId") Long productId,
+                                                                 @LoginUser Long userId)
+    {
+        return Response.onSuccess(productService.getProductDetail(productId, 1L));
+    }
+
 
 
 }
