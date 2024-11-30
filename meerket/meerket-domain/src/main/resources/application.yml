@@ -11,10 +11,19 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+#      ddl-auto: update
     show-sql: true # 실행되는 SQL 쿼리 표시
     properties:
       hibernate:
         format_sql: true # SQL 포맷팅
         dialect: org.hibernate.spatial.dialect.mysql.MySQLSpatialDialect
+
+
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
 
