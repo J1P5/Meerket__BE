@@ -23,7 +23,7 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 2048)
     private String imageUrl;
 
     @Column(name = "nickname", length = 15)

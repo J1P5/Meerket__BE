@@ -23,7 +23,7 @@ public class ImageEntity extends BaseEntity {
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = false, length = 2048)
     private String imageUrl;
 
     public static ImageEntity of(ProductEntity product, String imageUrl) {
