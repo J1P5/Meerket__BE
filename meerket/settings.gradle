@@ -1,5 +1,5 @@
 rootProject.name = 'meerket'
-include 'meerket-application'
+include 'meerket-api'
 include 'meerket-domain'
 include 'meerket-common'
 include 'meerket-infrastructure'
