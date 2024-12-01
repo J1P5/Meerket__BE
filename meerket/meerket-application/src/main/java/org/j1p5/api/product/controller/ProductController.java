@@ -1,11 +1,13 @@
 package org.j1p5.api.product.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
 import org.j1p5.api.product.dto.request.ProductRequestDto;
+import org.j1p5.api.product.dto.request.ProductUpdateRequest;
 import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
@@ -13,6 +15,7 @@ import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
 import org.j1p5.domain.product.dto.ProductResponseInfo;
 import org.j1p5.domain.product.service.ProductService;
+import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -97,5 +100,13 @@ public class ProductController {
     }
 
 
+    @PatchMapping("/{productId}")
+    public Response<Void> updateProduct(@PathVariable(name = "productId") Long productId,
+                                        @RequestBody ProductUpdateRequest request,
+                                        @LoginUser Long userId)
+    {
+        productService.updateProduct(productId,userId,ProductUpdateRequest.toInfo(request));
+        return Response.onSuccess();
+    }
 
 }
