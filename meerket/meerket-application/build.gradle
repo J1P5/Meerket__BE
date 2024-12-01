@@ -14,4 +14,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // ObjectId 를 위한 mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    // websocket 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 }
