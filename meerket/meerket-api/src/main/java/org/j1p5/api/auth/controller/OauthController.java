@@ -1,4 +1,4 @@
-package org.j1p5.api.auth.api;
+package org.j1p5.api.auth.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auth.AuthManager;
 import org.j1p5.api.auth.dto.LoginRequest;
 import org.j1p5.api.global.response.Response;
-import org.j1p5.domain.auth.OauthService;
+import org.j1p5.api.auth.usecase.OauthLoginUsecase;
 import org.j1p5.domain.user.UserInfo;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/oauth")
-public class OauthApi {
+public class OauthController {
 
-    private final OauthService oauthService;
+    private final OauthLoginUsecase oauthLoginUsecase;
     private final AuthManager authManager;
     private final HttpSessionSecurityContextRepository securityContextRepository =
             new HttpSessionSecurityContextRepository();
@@ -28,7 +28,7 @@ public class OauthApi {
             @RequestBody @Valid LoginRequest loginRequest,
             HttpServletRequest request,
             HttpServletResponse response) {
-        UserInfo user = oauthService.login(loginRequest.code(), loginRequest.provider());
+        UserInfo user = oauthLoginUsecase.execute(loginRequest.code(), loginRequest.provider());
 
         SecurityContext context = authManager.setContext(user);
         securityContextRepository.saveContext(context, request, response);
