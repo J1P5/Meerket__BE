@@ -1,7 +1,7 @@
 package org.j1p5.api.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.j1p5.api.product.dto.request.ProductRequestDto;
+import org.j1p5.api.product.dto.request.ProductCreateRequestDto;
 import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.service.*;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class ProductControllerTest {
     @WithMockUser(username = "test@example.com")
     void makeProduct_withValidRequest_shouldReturn200() throws Exception {
         // Mock ProductRequestDto (record 생성자를 통해 초기화)
-        ProductRequestDto requestDto = new ProductRequestDto(
+        ProductCreateRequestDto requestDto = new ProductCreateRequestDto(
                 "Sample Title",
                 "Sample Content",
                 1000,
@@ -70,7 +70,7 @@ class ProductControllerTest {
     @WithMockUser(username = "test@example.com")
     void makeProduct_withEmptyImages_shouldReturn200() throws Exception {
         // Mock ProductRequestDto (record 생성자를 통해 초기화)
-        ProductRequestDto requestDto = new ProductRequestDto(
+        ProductCreateRequestDto requestDto = new ProductCreateRequestDto(
                 "Sample Title",
                 "Sample Content",
                 1000,
