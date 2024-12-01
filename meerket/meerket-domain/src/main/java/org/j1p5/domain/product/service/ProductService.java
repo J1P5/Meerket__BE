@@ -8,10 +8,7 @@ import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
-import org.j1p5.domain.product.dto.MyLocationInfo;
-import org.j1p5.domain.product.dto.ProductInfo;
-import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
-import org.j1p5.domain.product.dto.ProductResponseInfo;
+import org.j1p5.domain.product.dto.*;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.exception.ProductException;
 import org.j1p5.domain.product.repository.ProductRepository;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.List;
 
+import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_AUTHORIZED;
 import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_FOUND;
 
 
@@ -91,12 +89,27 @@ public class ProductService {
 
     }
 
+    @Transactional
     public ProductResponseDetailInfo getProductDetail(Long productId, Long userId){
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(()->new DomainException(PRODUCT_NOT_FOUND));
         UserEntity user = userReader.getUser(userId);
 
        return ProductResponseDetailInfo.of(product,user);
+
+    }
+
+    @Transactional
+    public void updateProduct(Long productId, Long userId, ProductUpdateInfo info){
+        UserEntity user = userReader.getUser(userId);
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() ->new DomainException(PRODUCT_NOT_FOUND));
+
+        if(!(product.getUser().equals(user))){
+            throw new DomainException(PRODUCT_NOT_AUTHORIZED);
+        }
+
+        product.updateProduct(info);
 
     }
 
