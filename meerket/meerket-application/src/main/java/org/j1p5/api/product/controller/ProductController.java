@@ -44,8 +44,8 @@ public class ProductController {
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Response<Void> makeProduct(@RequestPart(name = "request") ProductCreateRequestDto request,
-                                @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                @LoginUser Long userId
+                                      @RequestPart(name = "images", required = false) List<MultipartFile> images,
+                                      @LoginUser Long userId
     ) {
 
 
@@ -92,8 +92,7 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public Response<ProductResponseDetailInfo> getProductDetails(@PathVariable(name = "productId") Long productId,
-                                                                 @LoginUser Long userId)
-    {
+                                                                 @LoginUser Long userId) {
         return Response.onSuccess(productService.getProductDetail(productId, userId));
     }
 
@@ -101,9 +100,18 @@ public class ProductController {
     @PatchMapping("/{productId}")
     public Response<Void> updateProduct(@PathVariable(name = "productId") Long productId,
                                         @RequestBody ProductUpdateRequest request,
+                                        @LoginUser Long userId) {
+        productService.updateProduct(productId, userId, ProductUpdateRequest.toInfo(request));
+        return Response.onSuccess();
+    }
+
+    @DeleteMapping("/{productId}")
+    public Response<Void> removeProduct(@PathVariable(name = "productId") Long productId,
                                         @LoginUser Long userId)
     {
-        productService.updateProduct(productId,userId,ProductUpdateRequest.toInfo(request));
+
+        productService.removeProduct(productId,1L);
+
         return Response.onSuccess();
     }
 
