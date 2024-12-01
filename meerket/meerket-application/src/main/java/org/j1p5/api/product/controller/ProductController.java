@@ -110,7 +110,7 @@ public class ProductController {
                                         @LoginUser Long userId)
     {
 
-        productService.removeProduct(productId,1L);
+        productService.removeProduct(productId,userId);
 
         return Response.onSuccess();
     }
