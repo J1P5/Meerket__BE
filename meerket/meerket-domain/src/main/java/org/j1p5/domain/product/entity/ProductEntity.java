@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.image.entitiy.ImageEntity;
+import org.j1p5.domain.product.dto.ProductUpdateInfo;
+import org.j1p5.domain.product.service.PointConverter;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.locationtech.jts.geom.Point;
 
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "product")
-@NoArgsConstructor(access=AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @SuperBuilder
 public class ProductEntity extends BaseEntity {
@@ -30,7 +32,7 @@ public class ProductEntity extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(name = "title" , nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Lob
@@ -84,5 +86,30 @@ public class ProductEntity extends BaseEntity {
     public void removeImage(ImageEntity image) {
         imageEntityList.remove(image);
     }
+
+    public void updateProduct(ProductUpdateInfo productUpdateInfo) {
+        Point coordinate = PointConverter.createPoint(productUpdateInfo.longtitude(), productUpdateInfo.latitude());
+
+        if (productUpdateInfo.title() != null) {
+            this.title = productUpdateInfo.title();
+        }
+        if (productUpdateInfo.content() != null) {
+            this.content = productUpdateInfo.content();
+        }
+        if (productUpdateInfo.minimumPrice() != null) {
+            this.minPrice = productUpdateInfo.minimumPrice();
+        }
+        if (productUpdateInfo.category() != null) {
+            this.category = productUpdateInfo.category();
+        }
+        if (coordinate!= null) {
+            this.coordinate = coordinate;
+        }
+        if (productUpdateInfo.content() != null) {
+            this.content = productUpdateInfo.content();
+        }
+
+    }
+
 
 }
