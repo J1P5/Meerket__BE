@@ -24,7 +24,6 @@ public class KakaoClient implements OauthClient {
     @Value("${spring.oauth2.client.kakao.redirect_uri}")
     private String redirectUri;
 
-
     @Override
     public Provider getProvider() {
         return Provider.KAKAO;
@@ -37,6 +36,7 @@ public class KakaoClient implements OauthClient {
 
     @Override
     public OauthProfile getOauthProfile(String token) {
-        return kakaoProfileClient.getProfile("bearer " + token, "application/x-www-form-urlencoded;charset=utf-8");
+        return kakaoProfileClient.getProfile(
+                "bearer " + token, "application/x-www-form-urlencoded;charset=utf-8");
     }
 }

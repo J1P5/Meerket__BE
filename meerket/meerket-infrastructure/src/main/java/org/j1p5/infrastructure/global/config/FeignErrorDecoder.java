@@ -1,5 +1,7 @@
 package org.j1p5.infrastructure.global.config;
 
+import static org.j1p5.infrastructure.global.exception.InfraErrorCode.*;
+
 import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -7,8 +9,6 @@ import org.j1p5.infrastructure.global.exception.OtherServerBadCredentialExceptio
 import org.j1p5.infrastructure.global.exception.OtherServerBadRequestException;
 import org.j1p5.infrastructure.global.exception.OtherServerInvalidAuthorizationException;
 import org.j1p5.infrastructure.global.exception.OtherServerUnknownException;
-
-import static org.j1p5.infrastructure.global.exception.InfraErrorCode.*;
 
 public class FeignErrorDecoder implements ErrorDecoder {
     @Override

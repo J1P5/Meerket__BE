@@ -54,7 +54,7 @@ public class ProductEntity extends BaseEntity {
     private String location; // 물품 등록 ~시 ~구에대한 주소
 
     @Column(name = "coordinate", nullable = false, columnDefinition = "POINT SRID 4326")
-    private Point coordinate;// 거래희망장소 ->물건의 좌표
+    private Point coordinate; // 거래희망장소 ->물건의 좌표
 
     @Column(name = "is_early", nullable = false)
     private boolean isEarly = false;
