@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.List;
 
-import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_AUTHORIZED;
-import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_FOUND;
+import static org.j1p5.domain.product.exception.ProductException.*;
 
 
 @Service
@@ -109,7 +108,11 @@ public class ProductService {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
 
-        product.updateProduct(info);
+        if(!product.isHasBuyer()){
+            product.updateProduct(info);
+        }
+        else throw new DomainException(PRODUCT_HAS_BUYER);
+
 
     }
 
