@@ -24,7 +24,6 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final MongoTemplate mongoTemplate;
-    private final StandardMongoClientSettingsBuilderCustomizer standardMongoSettingsCustomizer;
 
     public ChatMessageEntity sendMessage(ObjectId roomId, Long senderId, String content) {
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.create(roomId, senderId, content);
