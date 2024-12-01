@@ -13,6 +13,7 @@ import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
+import org.j1p5.domain.redis.RedisService;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.dao.DataAccessException;
@@ -38,6 +39,7 @@ public class ChatRoomService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
+    private final RedisService redisService;
 
     /**
      * 특정 채팅방에 유저가 속해있는지 확인
@@ -89,9 +91,18 @@ public class ChatRoomService {
         }
     }
 
+    /**
+     * 채팅방에 상대방이 있는지 확인
+     *
+     * @param roomId 채팅방 id
+     * @param receiverId 상대방 id
+     * @return 상대방이 있으면 true, 없으면 false
+     */
     public boolean isReceiverInChatRoom(ObjectId roomId, Long receiverId) {
-        //TODO redis를 이용해서 있는지 없는지 확인
-        return true;
+
+        String userCurrentRoom = redisService.getUserCurrentRoom(receiverId);
+
+        return roomId.toString().equals(userCurrentRoom);
     }
 
 
