@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.entity.QProductEntity;
 import org.locationtech.jts.geom.Point;
 
@@ -25,7 +26,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 .selectFrom(qProduct)
                 .where(
                         withinDistance(coordinate,100_000), // 거리 조건 (100km 이내)
-                        cursorCondition(cursor) // 커서 조건
+                        cursorCondition(cursor), // 커서 조건
+                        isNotDeleted()
                 )
                 .orderBy(qProduct.id.desc()) // 내림차순 정렬
                 .limit(size) // 페이지 크기 제한
@@ -56,5 +58,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return null; // 커서가 없으면 조건 생략
         }
         return qProduct.id.lt(cursor);
+    }
+
+    private BooleanExpression isNotDeleted(){
+        return qProduct.status.ne(ProductStatus.DELETED);
     }
 }

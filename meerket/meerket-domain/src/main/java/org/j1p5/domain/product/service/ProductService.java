@@ -10,7 +10,7 @@ import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.*;
 import org.j1p5.domain.product.entity.ProductEntity;
-import org.j1p5.domain.product.exception.ProductException;
+import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.ActivityArea;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -93,6 +93,9 @@ public class ProductService {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(()->new DomainException(PRODUCT_NOT_FOUND));
         UserEntity user = userReader.getUser(userId);
+        if(product.getStatus().equals(ProductStatus.DELETED)){
+            throw new DomainException(PRODUCT_IS_DELETED);
+        }
 
        return ProductResponseDetailInfo.of(product,user);
 
@@ -114,6 +117,18 @@ public class ProductService {
         else throw new DomainException(PRODUCT_HAS_BUYER);
 
 
+    }
+
+    @Transactional
+    public void removeProduct(Long productId, Long userId){
+        UserEntity user = userReader.getUser(userId);
+
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(()-> new DomainException(PRODUCT_NOT_FOUND));
+        if(!product.getUser().equals(user)){
+            throw new DomainException(PRODUCT_NOT_AUTHORIZED);
+        }
+        product.updateStatusToDelete(product);
     }
 
 }
