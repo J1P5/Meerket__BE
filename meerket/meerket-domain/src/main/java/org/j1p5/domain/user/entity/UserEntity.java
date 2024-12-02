@@ -13,8 +13,8 @@ public class UserEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "social_id", nullable = false)
-    private Long socialId;
+    @Column(name = "social_id", nullable = false, length = 50)
+    private String socialId;
 
     @Column(name = "social_email", nullable = false, length = 50)
     private String socialEmail;
@@ -30,5 +30,17 @@ public class UserEntity extends BaseEntity {
     private String nickname;
 
     @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    private UserEntity(String SocialId, String SocialEmail, Provider Provider, Role role) {
+        this.socialId = SocialId;
+        this.socialEmail = SocialEmail;
+        this.provider = Provider;
+        this.role = role;
+    }
+
+    public static UserEntity create(String SocialId, String SocialEmail, Provider Provider, Role role) {
+        return new UserEntity(SocialId, SocialEmail, Provider, role);
+    }
 }

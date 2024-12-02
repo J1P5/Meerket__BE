@@ -42,12 +42,12 @@ public class Response<T> {
     /* 응답 성공, 응답 데이터 o */
     //TODO : 성공했을 때도 code 응답
     public static <T> Response<T> onSuccess(T result) {
-        return new Response<>(true, result);
+        return new Response<>(true, "COMMON200", "응답 완료", result);
     }
 
     /* 응답 성공, 응답 데이터 x */
     public static Response<Void> onSuccess() {
-        return new Response<>(true);
+        return new Response<>(true, "COMMON200", "응답 완료");
     }
 
     /* 응답 실패, 응답 데이터 o */

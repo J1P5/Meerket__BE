@@ -1,7 +1,9 @@
-package org.j1p5.domain.user.entity;
+package org.j1p5.domain.activityArea.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.j1p5.domain.user.entity.EmdArea;
+import org.j1p5.domain.user.entity.UserEntity;
 
 @Entity
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -14,7 +16,7 @@ public class ActivityArea {
     private Long id;
 
     @Column(name = "range_level", nullable = false)
-    private Short range;
+    private Short rangeLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
