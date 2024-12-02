@@ -39,6 +39,6 @@ public class NaverClient implements OauthClient {
 
     @Override
     public OauthProfile getOauthProfile(String token) {
-        return naverProfileClient.getProfile( "Bearer " + token);
+        return naverProfileClient.getProfile("Bearer " + token);
     }
 }

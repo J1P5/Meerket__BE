@@ -17,5 +17,4 @@ public class NaverToken implements OauthToken {
 
     @JsonProperty("token_type")
     private String tokenType;
-
 }

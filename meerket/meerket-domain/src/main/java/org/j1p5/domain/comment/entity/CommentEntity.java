@@ -33,7 +33,7 @@ public class CommentEntity extends BaseEntity {
     private String content;
 
     @Column(name = "parent_id")
-    private Long parentId=null;
+    private Long parentId = null;
 
     @Column(name = "comment_status")
     @Enumerated(EnumType.STRING)

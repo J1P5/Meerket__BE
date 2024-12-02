@@ -3,12 +3,11 @@ package org.j1p5.domain.product.repository.querydsl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.entity.QProductEntity;
 import org.locationtech.jts.geom.Point;
-
-import java.util.List;
 
 public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -25,10 +24,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return queryFactory
                 .selectFrom(qProduct)
                 .where(
-                        withinDistance(coordinate,100_000), // 거리 조건 (100km 이내)
+                        withinDistance(coordinate, 100_000), // 거리 조건 (100km 이내)
                         cursorCondition(cursor), // 커서 조건
-                        isNotDeleted()
-                )
+                        isNotDeleted())
                 .orderBy(qProduct.id.desc()) // 내림차순 정렬
                 .limit(size) // 페이지 크기 제한
                 .fetch();
@@ -38,12 +36,16 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
      * 특정 좌표와 반경 내의 상품만 조회하는 조건 생성
      *
      * @param coordinate 기준 좌표
-     * @param distance   반경 (단위: 미터)
+     * @param distance 반경 (단위: 미터)
      * @return BooleanExpression (QueryDSL 조건)
      */
     private BooleanExpression withinDistance(Point coordinate, int distance) {
         String geoFunction = "ST_Distance_Sphere({0}, {1})";
-        return Expressions.numberTemplate(Double.class, geoFunction, qProduct.coordinate, coordinate)//상품 좌표 , 사용자 활동좌표
+        return Expressions.numberTemplate(
+                        Double.class,
+                        geoFunction,
+                        qProduct.coordinate,
+                        coordinate) // 상품 좌표 , 사용자 활동좌표
                 .loe((double) distance);
     }
 
@@ -60,7 +62,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return qProduct.id.lt(cursor);
     }
 
-    private BooleanExpression isNotDeleted(){
+    private BooleanExpression isNotDeleted() {
         return qProduct.status.ne(ProductStatus.DELETED);
     }
 }

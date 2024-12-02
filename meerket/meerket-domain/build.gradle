@@ -1,14 +1,3 @@
-plugins {
-    id 'java'
-}
-
-group = 'org.j1p5'
-version = 'unspecified'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation project(':meerket-common')
 
@@ -47,4 +36,8 @@ tasks.withType(JavaCompile) {
 
 test {
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
 }

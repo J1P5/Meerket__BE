@@ -1,5 +1,8 @@
 package org.j1p5.api.product.controller;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.global.annotation.LoginUser;
@@ -20,18 +23,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductController {
 
-    private final ProductService productService; //생성자 주입
-
+    private final ProductService productService; // 생성자 주입
 
     /**
      * 중고물품 등록
@@ -43,14 +41,12 @@ public class ProductController {
      * @author sunghyun0610
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Response<Void> makeProduct(@RequestPart(name = "request") ProductCreateRequestDto request,
-                                      @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                      @LoginUser Long userId
-    ) {
-
+    public Response<Void> makeProduct(
+            @RequestPart(name = "request") ProductCreateRequestDto request,
+            @RequestPart(name = "images", required = false) List<MultipartFile> images,
+            @LoginUser Long userId) {
 
         // 세션이들어옴 -> 세션에있는 userid뽑아냄 ->이거 이용해서 지역인증 테이블에서 findById , 추후에 user role추가
-
 
         ProductInfo productInfo = ProductCreateRequestDto.toInfo(request);
         List<File> imageFiles = new ArrayList<>();
@@ -74,45 +70,42 @@ public class ProductController {
      * @author sunghyun0610
      */
     @GetMapping
-    public Response<CursorResult<ProductResponseInfo>> getProductByAroundPoint(@AuthenticationPrincipal UserDetails userDetails,
-                                                                               @RequestParam(name = "category", required = false) String category,
-                                                                               @RequestParam(name = "keyword", required = false) String keyword,
-                                                                               @CursorDefault Cursor cursor,
-                                                                               @LoginUser Long userId) {
+    public Response<CursorResult<ProductResponseInfo>> getProductByAroundPoint(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @CursorDefault Cursor cursor,
+            @LoginUser Long userId) {
 
         // 서비스 호출
-        CursorResult<ProductResponseInfo> products = productService.getProducts(userId, cursor);//cursorResult형 조회된 productResponseInfo 반환
-
+        CursorResult<ProductResponseInfo> products =
+                productService.getProducts(
+                        userId, cursor); // cursorResult형 조회된 productResponseInfo 반환
 
         return Response.onSuccess(products);
-
-
     }
 
-
     @GetMapping("/{productId}")
-    public Response<ProductResponseDetailInfo> getProductDetails(@PathVariable(name = "productId") Long productId,
-                                                                 @LoginUser Long userId) {
+    public Response<ProductResponseDetailInfo> getProductDetails(
+            @PathVariable(name = "productId") Long productId, @LoginUser Long userId) {
         return Response.onSuccess(productService.getProductDetail(productId, userId));
     }
 
-
     @PatchMapping("/{productId}")
-    public Response<Void> updateProduct(@PathVariable(name = "productId") Long productId,
-                                        @RequestBody ProductUpdateRequest request,
-                                        @LoginUser Long userId) {
+    public Response<Void> updateProduct(
+            @PathVariable(name = "productId") Long productId,
+            @RequestBody ProductUpdateRequest request,
+            @LoginUser Long userId) {
         productService.updateProduct(productId, userId, ProductUpdateRequest.toInfo(request));
         return Response.onSuccess();
     }
 
     @DeleteMapping("/{productId}")
-    public Response<Void> removeProduct(@PathVariable(name = "productId") Long productId,
-                                        @LoginUser Long userId)
-    {
+    public Response<Void> removeProduct(
+            @PathVariable(name = "productId") Long productId, @LoginUser Long userId) {
 
-        productService.removeProduct(productId,userId);
+        productService.removeProduct(productId, userId);
 
         return Response.onSuccess();
     }
-
 }

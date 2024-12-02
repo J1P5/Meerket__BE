@@ -12,7 +12,7 @@ public class EmdArea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "emd_code", nullable = false, length = 2)
+    @Column(name = "emd_code", nullable = false, length = 8)
     private String emdCode;
 
     @Column(name = "emd_name", nullable = false, length = 20)

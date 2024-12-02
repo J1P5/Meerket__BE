@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProductAppender {
-    //productentity save하는 메소드
+    // productentity save하는 메소드
 
     private final ProductRepository productRepository;
 
-    public void saveProduct(ProductEntity product){
+    public void saveProduct(ProductEntity product) {
         productRepository.save(product);
     }
 }

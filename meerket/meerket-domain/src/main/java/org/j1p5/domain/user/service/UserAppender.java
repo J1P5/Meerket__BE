@@ -15,11 +15,11 @@ public class UserAppender {
     private final UserRepository userRepository;
 
     public UserEntity append(OauthProfile profile, String provider) {
-        return userRepository.save(UserEntity.create(
+        return userRepository.save(
+                UserEntity.create(
                         profile.getId(),
                         profile.getEmail(),
                         Provider.valueOf(provider),
-                        Role.USER
-        ));
+                        Role.USER));
     }
 }

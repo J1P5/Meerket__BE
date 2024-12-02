@@ -10,7 +10,7 @@ public class SggArea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "sgg_code", nullable = false, length = 2)
+    @Column(name = "sgg_code", nullable = false, length = 5)
     private String sggCode;
 
     @Column(name = "sgg_name", nullable = false, length = 20)

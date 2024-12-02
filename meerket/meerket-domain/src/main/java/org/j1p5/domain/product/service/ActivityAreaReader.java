@@ -1,21 +1,20 @@
 package org.j1p5.domain.product.service;
 
-import org.j1p5.domain.user.entity.ActivityArea;
+import java.util.ArrayList;
+import java.util.List;
+import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class ActivityAreaReader {
-    public Point getActivityArea(List<ActivityArea> activityAreas){
+    public Point getActivityArea(List<ActivityArea> activityAreas) {
 
         List<Point> pointList = new ArrayList<>();
-        for (ActivityArea activityArea : activityAreas){
+        for (ActivityArea activityArea : activityAreas) {
             Point userCoordinate = activityArea.getEmdArea().getCoordinate();
             pointList.add(userCoordinate);
-        }//일단은 활동지역 1개로 제한된 상태
+        } // 일단은 활동지역 1개로 제한된 상태
         Point coordinate = pointList.get(0);
         return coordinate;
     }
