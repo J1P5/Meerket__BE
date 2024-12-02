@@ -1,4 +1,4 @@
-package org.j1p5.api;
+package org.j1p5;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

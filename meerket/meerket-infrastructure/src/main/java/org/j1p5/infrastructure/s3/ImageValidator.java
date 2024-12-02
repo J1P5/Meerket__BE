@@ -1,7 +1,7 @@
-package org.j1p5.infrastructure.global.s3;
+package org.j1p5.infrastructure.s3;
 
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.INVALID_FILE_EXTENSION;
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.NO_FILE_EXTENSION;
+import static org.j1p5.infrastructure.s3.exception.S3ErrorCode.INVALID_FILE_EXTENSION;
+import static org.j1p5.infrastructure.s3.exception.S3ErrorCode.NO_FILE_EXTENSION;
 
 import java.io.File;
 import java.io.IOException;

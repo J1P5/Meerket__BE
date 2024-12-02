@@ -1,6 +1,6 @@
-package org.j1p5.infrastructure.global.s3;
+package org.j1p5.infrastructure.s3;
 
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.*;
+import static org.j1p5.infrastructure.s3.exception.S3ErrorCode.*;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -30,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
     private final AmazonS3 amazonS3;
     private final ImageValidator imageValidator;
 
-    @Value("${cloud.aws.s3.bucketName}")
+    @Value("${cloud.aws.s3.bucket-name}")
     private String bucketName;
 
     @Override

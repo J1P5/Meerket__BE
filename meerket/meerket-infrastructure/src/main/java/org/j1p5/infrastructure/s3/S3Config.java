@@ -1,4 +1,4 @@
-package org.j1p5.infrastructure.global.s3;
+package org.j1p5.infrastructure.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class S3Config {
-    @Value("${AWS_ACCESS_KEY_ID}")
+    @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
 
-    @Value("${AWS_SECRET_ACCESS_KEY}")
+    @Value("${cloud.aws.credentials.secret-key}")
     private String secretKey;
 
-    @Value("${AWS_REGION:ap-northeast-2}")
+    @Value("${cloud.aws.region.static}")
     private String region;
 
     @Bean

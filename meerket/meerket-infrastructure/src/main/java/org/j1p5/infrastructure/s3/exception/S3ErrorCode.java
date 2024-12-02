@@ -1,4 +1,4 @@
-package org.j1p5.infrastructure.global.s3.exception;
+package org.j1p5.infrastructure.s3.exception;
 
 import org.j1p5.common.exception.BaseErrorCode;
 import org.j1p5.common.exception.ErrorResponse;
