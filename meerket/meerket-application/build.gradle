@@ -19,9 +19,6 @@ dependencies {
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.619'
 
 
-    // ObjectId 를 위한 mongodb
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-
     // websocket 의존성
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
