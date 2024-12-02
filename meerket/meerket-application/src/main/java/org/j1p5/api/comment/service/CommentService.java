@@ -9,7 +9,10 @@ import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.service.UserReader;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static org.j1p5.api.comment.exception.CommentErrorCode.COMMENT_DEPTH_EXCEEDED;
 import static org.j1p5.api.comment.exception.CommentErrorCode.COMMENT_NOT_FOUND;
@@ -44,6 +47,10 @@ public class CommentService {
     public UserEntity getUser(Long userId){
         UserEntity user = userReader.getById(userId);
         return user;
+    }
+
+    public List<CommentEntity> getComments(Long productId, Pageable pageable){
+        return commentRepository.findParentCommentByProductId(productId,pageable);
     }
 
 
