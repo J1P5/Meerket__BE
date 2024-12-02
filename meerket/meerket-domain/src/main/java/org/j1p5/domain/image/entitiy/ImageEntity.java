@@ -32,6 +32,8 @@ public class ImageEntity extends BaseEntity {
 
     public static ImageEntity from(String imageUrl) {
         return new ImageEntity(null, imageUrl);
+    }
+
     public static ImageEntity of(ProductEntity product, String imageUrl) {
         return new ImageEntity(null, product, imageUrl);
     }
