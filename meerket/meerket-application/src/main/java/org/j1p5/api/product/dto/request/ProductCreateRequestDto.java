@@ -8,7 +8,7 @@ import org.j1p5.domain.product.entity.ProductStatus;
 import java.time.LocalDateTime;
 
 @Builder
-public record ProductRequestDto(
+public record ProductCreateRequestDto(
         String title,
         String content,
         int price,
@@ -21,7 +21,7 @@ public record ProductRequestDto(
         LocalDateTime expiredTime
 ) {
 
-    public static ProductInfo toInfo(ProductRequestDto requestDto) {
+    public static ProductInfo toInfo(ProductCreateRequestDto requestDto) {
         return ProductInfo.builder()
                 .title(requestDto.title)
                 .content(requestDto.content)

@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
-import org.j1p5.api.product.dto.request.ProductRequestDto;
+import org.j1p5.api.product.dto.request.ProductCreateRequestDto;
+import org.j1p5.api.product.dto.request.ProductUpdateRequest;
 import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
@@ -42,7 +43,7 @@ public class ProductController {
      * @author sunghyun0610
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Response<Void> makeProduct(@RequestPart(name = "request") ProductRequestDto request,
+    public Response<Void> makeProduct(@RequestPart(name = "request") ProductCreateRequestDto request,
                                 @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                 @LoginUser Long userId
     ) {
@@ -51,7 +52,7 @@ public class ProductController {
         // 세션이들어옴 -> 세션에있는 userid뽑아냄 ->이거 이용해서 지역인증 테이블에서 findById , 추후에 user role추가
 
 
-        ProductInfo productInfo = ProductRequestDto.toInfo(request);
+        ProductInfo productInfo = ProductCreateRequestDto.toInfo(request);
         List<File> imageFiles = new ArrayList<>();
 
         if (images != null && !images.isEmpty()) {
@@ -97,5 +98,13 @@ public class ProductController {
     }
 
 
+    @PatchMapping("/{productId}")
+    public Response<Void> updateProduct(@PathVariable(name = "productId") Long productId,
+                                        @RequestBody ProductUpdateRequest request,
+                                        @LoginUser Long userId)
+    {
+        productService.updateProduct(productId,userId,ProductUpdateRequest.toInfo(request));
+        return Response.onSuccess();
+    }
 
 }
