@@ -13,29 +13,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class ExceptionAdvice {
 
-
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> onCustomException(CustomException e) {
         log.error(e.getMessage());
-        return ResponseEntity.status(
-                e.getBaseErrorCode().getErrorResponse().getStatus()
-        ).body(
-                Response.onFailure(
-                        e.getBaseErrorCode().getErrorResponse().getErrorCode(),
-                        e.getBaseErrorCode().getErrorResponse().getMessage()
-                )
-        );
+        return ResponseEntity.status(e.getBaseErrorCode().getErrorResponse().getStatus())
+                .body(
+                        Response.onFailure(
+                                e.getBaseErrorCode().getErrorResponse().getErrorCode(),
+                                e.getBaseErrorCode().getErrorResponse().getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> onException(Exception e) {
         log.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(
-                Response.onFailure(
-                        "UNKNOWN500",
-                        "unknown server error"
-                )
-        );
+                .body(Response.onFailure("UNKNOWN500", "unknown server error"));
     }
 }

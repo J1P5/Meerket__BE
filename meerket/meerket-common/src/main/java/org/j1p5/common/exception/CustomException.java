@@ -18,5 +18,4 @@ public class CustomException extends RuntimeException {
         }
         return String.format("%s - %s", layer, baseErrorCode.getErrorResponse().getMessage());
     }
-
 }

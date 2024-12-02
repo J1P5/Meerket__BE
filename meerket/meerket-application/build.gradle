@@ -15,6 +15,10 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
+    // AWS SDK for S3 (1.x 버전)
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.619'
+
+
     // ObjectId 를 위한 mongodb
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 

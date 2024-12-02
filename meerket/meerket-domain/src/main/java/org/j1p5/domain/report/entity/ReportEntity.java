@@ -1,14 +1,11 @@
 package org.j1p5.domain.report.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.j1p5.domain.global.entity.BaseEntity;
-import org.j1p5.domain.user.entity.Provider;
-import org.j1p5.domain.user.entity.Role;
 import org.j1p5.domain.user.entity.UserEntity;
 
 @Entity(name = "report")

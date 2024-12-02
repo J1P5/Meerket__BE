@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    group:
+      local: domain, infrastructure
+      dev: domain, infrastructure
+    active: local
+---
+spring:
+  config:
+    activate:
+      on-profile: local

@@ -16,7 +16,8 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public static ErrorResponse of(boolean isSuccess, int status, String errorCode, String message) {
+    public static ErrorResponse of(
+            boolean isSuccess, int status, String errorCode, String message) {
         return new ErrorResponse(isSuccess, status, errorCode, message);
     }
 }

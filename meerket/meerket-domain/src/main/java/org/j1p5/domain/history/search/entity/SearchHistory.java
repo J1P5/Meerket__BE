@@ -1,10 +1,9 @@
 package org.j1p5.domain.history.search.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
 import org.j1p5.domain.user.entity.UserEntity;
-
-import java.time.LocalDateTime;
 
 @Entity(name = "search_history")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
