@@ -20,7 +20,7 @@ public class ImageEntity extends BaseEntity {
     private Long id;
 
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = false , length = 2048)
     private String imageUrl;
 
     public static ImageEntity from( String imageUrl){
