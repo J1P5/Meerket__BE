@@ -1,6 +1,9 @@
 package org.j1p5.domain.product.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,11 +13,6 @@ import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.locationtech.jts.geom.Point;
-
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "product")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
@@ -30,7 +28,7 @@ public class ProductEntity extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(name = "title" , nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Lob
@@ -69,8 +67,7 @@ public class ProductEntity extends BaseEntity {
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
-    private List<ImageEntity> imageEntityList = new ArrayList<>(); //이미지와 단방향관계로 설정
-
+    private List<ImageEntity> imageEntityList = new ArrayList<>(); // 이미지와 단방향관계로 설정
 
     public void addImage(ImageEntity image) {
         imageEntityList.add(image);
@@ -79,5 +76,4 @@ public class ProductEntity extends BaseEntity {
     public void removeImage(ImageEntity image) {
         imageEntityList.remove(image);
     }
-
 }

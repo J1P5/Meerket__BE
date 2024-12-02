@@ -1,5 +1,6 @@
 package org.j1p5.domain.product.dto;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
@@ -9,8 +10,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
-
-import java.time.LocalDateTime;
 
 @Builder
 public record ProductInfo(
@@ -23,16 +22,14 @@ public record ProductInfo(
         String address,
         String location,
         ProductStatus status,
-        LocalDateTime expiredTime
-) {
+        LocalDateTime expiredTime) {
 
+    public static ProductEntity toEntity(ProductInfo productRequestDto, UserEntity user) {
 
-
-    public static ProductEntity toEntity(ProductInfo productRequestDto, UserEntity user){
-
-        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),4326);
-        Point coordinate = geometryFactory.createPoint(
-                new Coordinate(productRequestDto.longtitude, productRequestDto.latitude));
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point coordinate =
+                geometryFactory.createPoint(
+                        new Coordinate(productRequestDto.longtitude, productRequestDto.latitude));
 
         return ProductEntity.builder()
                 .title(productRequestDto.title)

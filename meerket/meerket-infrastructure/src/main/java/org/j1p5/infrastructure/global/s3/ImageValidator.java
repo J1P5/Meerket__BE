@@ -1,18 +1,15 @@
 package org.j1p5.infrastructure.global.s3;
 
-
-
-import org.j1p5.infrastructure.global.exception.InfraException;
-import org.springframework.stereotype.Component;
+import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.INVALID_FILE_EXTENSION;
+import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.NO_FILE_EXTENSION;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.INVALID_FILE_EXTENSION;
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.NO_FILE_EXTENSION;
+import org.j1p5.infrastructure.global.exception.InfraException;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ImageValidator {
@@ -23,9 +20,7 @@ public class ImageValidator {
     // 허용되는 MIME 타입 목록
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList("image/jpeg", "image/png");
 
-    /**
-     * 이미지 파일 유효성 검사 (확장자 + MIME 타입)
-     */
+    /** 이미지 파일 유효성 검사 (확장자 + MIME 타입) */
     public static void validateImageFile(File file) {
         String filename = file.getName();
 
@@ -40,9 +35,7 @@ public class ImageValidator {
         validateMimeType(file);
     }
 
-    /**
-     * 파일 확장자 검증
-     */
+    /** 파일 확장자 검증 */
     private static void validateFileExtension(String filename) {
         int lastDotIndex = filename.lastIndexOf(".");
         if (lastDotIndex == -1 || lastDotIndex == filename.length() - 1) {
@@ -56,9 +49,7 @@ public class ImageValidator {
         }
     }
 
-    /**
-     * MIME 타입 검증
-     */
+    /** MIME 타입 검증 */
     private static void validateMimeType(File file) {
         try {
             // 파일의 MIME 타입 추출

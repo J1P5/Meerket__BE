@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.product.entity.ProductEntity;
 
-
 @Entity(name = "image")
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -26,6 +25,13 @@ public class ImageEntity extends BaseEntity {
     @Column(name = "image_url", nullable = false, length = 2048)
     private String imageUrl;
 
+    private ImageEntity(ProductEntity product, String imageUrl) {
+        this.product = product;
+        this.imageUrl = imageUrl;
+    }
+
+    public static ImageEntity from(String imageUrl) {
+        return new ImageEntity(null, imageUrl);
     public static ImageEntity of(ProductEntity product, String imageUrl) {
         return new ImageEntity(null, product, imageUrl);
     }

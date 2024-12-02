@@ -40,8 +40,7 @@ public class SecurityConfig {
                 exception -> {
                     exception.authenticationEntryPoint(customAuthenticationEntryPoint);
                     exception.accessDeniedHandler(customAccessDeniedHandler);
-                }
-        );
+                });
 
         http.sessionManagement(
                 session ->

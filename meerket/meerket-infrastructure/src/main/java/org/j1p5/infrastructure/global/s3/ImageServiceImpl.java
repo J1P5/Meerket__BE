@@ -1,22 +1,12 @@
 package org.j1p5.infrastructure.global.s3;
 
+import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.*;
+
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.j1p5.domain.global.exception.DomainException;
-import org.j1p5.domain.product.exception.ProductException;
-import org.j1p5.domain.product.service.ImageService;
-import org.j1p5.infrastructure.global.exception.InfraException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,9 +15,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.*;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.j1p5.domain.product.service.ImageService;
+import org.j1p5.infrastructure.global.exception.InfraException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,13 +54,12 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-
-
     private String uploadImageToS3(File image) throws IOException {
-        String originalFilename = image.getName(); //원본 파일 명
-        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); //확장자 명
+        String originalFilename = image.getName(); // 원본 파일 명
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 확장자 명
 
-        String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
+        String s3FileName =
+                UUID.randomUUID().toString().substring(0, 10) + originalFilename; // 변경된 파일 명
 
         // 파일 내용 읽기
         byte[] bytes;

@@ -1,6 +1,5 @@
 package org.j1p5.infrastructure.global.s3.exception;
 
-
 import org.j1p5.common.exception.BaseErrorCode;
 import org.j1p5.common.exception.ErrorResponse;
 
@@ -29,5 +28,4 @@ public enum S3ErrorCode implements BaseErrorCode {
     public ErrorResponse getErrorResponse() {
         return ErrorResponse.of(false, status, errorCode, message);
     }
-
 }

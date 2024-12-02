@@ -3,6 +3,7 @@ package org.j1p5.api.product.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.j1p5.api.product.dto.request.ProductRequestDto;
 import org.j1p5.domain.product.dto.ProductInfo;
+import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +37,18 @@ class ProductControllerTest {
     @WithMockUser(username = "test@example.com")
     void makeProduct_withValidRequest_shouldReturn200() throws Exception {
         // Mock ProductRequestDto (record 생성자를 통해 초기화)
-        ProductRequestDto requestDto = new ProductRequestDto(
-                "Sample Title",
-                "Sample Content",
-                1000,
-                null,
-                37.7749,
-                127.4194,
-                "Sample Address",
-                "Sample Location",
-                LocalDateTime.now().plusDays(1)
-        );
+        ProductRequestDto requestDto =
+                new ProductRequestDto(
+                        "Sample Title",
+                        "Sample Content",
+                        1000,
+                        null,
+                        37.7749,
+                        127.4194,
+                        "Sample Address",
+                        "Sample Location",
+                        ProductStatus.BIDDING,
+                        LocalDateTime.now().plusDays(1));
 
         // Mock Multipart file
         MockMultipartFile mockFile = new MockMultipartFile(
@@ -70,17 +72,18 @@ class ProductControllerTest {
     @WithMockUser(username = "test@example.com")
     void makeProduct_withEmptyImages_shouldReturn200() throws Exception {
         // Mock ProductRequestDto (record 생성자를 통해 초기화)
-        ProductRequestDto requestDto = new ProductRequestDto(
-                "Sample Title",
-                "Sample Content",
-                1000,
-                null,
-                37.7749,
-                127.4194,
-                "Sample Address",
-                "Sample Location",
-                LocalDateTime.now().plusDays(1)
-        );
+        ProductRequestDto requestDto =
+                new ProductRequestDto(
+                        "Sample Title",
+                        "Sample Content",
+                        1000,
+                        null,
+                        37.7749,
+                        127.4194,
+                        "Sample Address",
+                        "Sample Location",
+                        ProductStatus.BIDDING,
+                        LocalDateTime.now().plusDays(1));
 
         // Mock service behavior
         doNothing().when(productService).registerProduct(anyString(), any(ProductInfo.class), eq(Collections.emptyList()));
