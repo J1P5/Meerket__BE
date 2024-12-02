@@ -19,14 +19,11 @@ public class ImageEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private ProductEntity product;
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
-    public static ImageEntity of( ProductEntity product, String imageUrl){
-        return new ImageEntity(null,product,imageUrl);
+    public static ImageEntity from( String imageUrl){
+        return new ImageEntity(null,imageUrl);
     }
 }

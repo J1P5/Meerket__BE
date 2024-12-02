@@ -7,10 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.j1p5.domain.global.entity.BaseEntity;
+import org.j1p5.domain.image.entitiy.ImageEntity;
+import org.j1p5.domain.user.entity.UserEntity;
+import org.locationtech.jts.geom.Point;
 
-import java.awt.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "product")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
@@ -21,6 +25,10 @@ public class ProductEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Column(name = "title" , nullable = false)
     private String title;
@@ -57,5 +65,19 @@ public class ProductEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "product_status", nullable = false)
     private ProductStatus status;
+
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "product_id")
+    private List<ImageEntity> imageEntityList = new ArrayList<>(); //이미지와 단방향관계로 설정
+
+
+    public void addImage(ImageEntity image) {
+        imageEntityList.add(image);
+    }
+
+    public void removeImage(ImageEntity image) {
+        imageEntityList.remove(image);
+    }
 
 }
