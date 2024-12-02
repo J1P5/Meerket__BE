@@ -1,6 +1,6 @@
 package org.j1p5.api.chat.dto;
 
-public enum ChatRoomFilter {
+public enum ChatRoomType {
     ALL,
     PURCHASE,
     SALE

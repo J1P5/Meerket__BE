@@ -29,7 +29,7 @@ public class SendChatMessageUseCase {
 
         chatRoomService.verifyAccess(userId, roomObjectId);
 
-        ChatMessageEntity chatMessageEntity = chatMessageService.sendMessage(roomObjectId, userId, content);
+        ChatMessageEntity chatMessageEntity = chatMessageService.saveMessage(roomObjectId, userId, content);
 
         boolean receiverInChatRoom = chatRoomService.isReceiverInChatRoom(roomObjectId, receiverId);
 
@@ -37,8 +37,10 @@ public class SendChatMessageUseCase {
                 roomObjectId, content,
                 receiverId, receiverInChatRoom, chatMessageEntity.getCreatedAt());
 
-        // FCM 전송 등 추가 작업
-        //TODO
+        chatMessageService.sendWebSocketMessage(roomId, userId, content);
+
+        chatRoomService.sendFcmMessage(receiverInChatRoom, receiverId, userId, chatMessageEntity.getContent());
+
         return ChatMessageResponse.fromEntity(chatMessageEntity);
     }
 

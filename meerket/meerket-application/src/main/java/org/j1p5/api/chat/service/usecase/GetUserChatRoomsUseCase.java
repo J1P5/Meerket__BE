@@ -1,7 +1,7 @@
 package org.j1p5.api.chat.service.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.j1p5.api.chat.dto.ChatRoomFilter;
+import org.j1p5.api.chat.dto.ChatRoomType;
 import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.service.ChatRoomService;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class GetUserChatRoomsUseCase {
 
     private final ChatRoomService chatRoomService;
 
-    public List<ChatRoomInfoResponse> execute(Long userId, ChatRoomFilter filter) {
-        return chatRoomService.getUserChatRooms(userId, filter);
+    public List<ChatRoomInfoResponse> execute(Long userId, ChatRoomType type) {
+        return chatRoomService.getUserChatRooms(userId, type);
     }
 }

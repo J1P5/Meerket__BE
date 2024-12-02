@@ -12,8 +12,8 @@ public record ChatRoomBasicInfo(
         String productTitle,
         String productImage,
         int price,
-        boolean isSeller
-
+        boolean isSeller,
+        boolean isChatAvailable
 ) {
     public ChatRoomBasicInfo{
         Objects.requireNonNull(roomId,"roomId는 필수입니다.");
@@ -21,5 +21,6 @@ public record ChatRoomBasicInfo(
         Objects.requireNonNull(otherUserId,"otherUserId는 필수입니다.");
         Objects.requireNonNull(productId,"productId는 필수입니다.");
         Objects.requireNonNull(productTitle,"productTitle은 필수입니다.");
+        Objects.requireNonNull(isChatAvailable, "isChatAvailable은 필수입니다.");
     }
 }

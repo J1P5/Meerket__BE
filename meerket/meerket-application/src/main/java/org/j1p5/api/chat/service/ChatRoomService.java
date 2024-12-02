@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.j1p5.api.chat.dto.ChatRoomBasicInfo;
-import org.j1p5.api.chat.dto.ChatRoomFilter;
+import org.j1p5.api.chat.dto.ChatRoomType;
 import org.j1p5.api.chat.dto.OtherProfile;
 import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
 import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
+import org.j1p5.domain.fcm.FcmService;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.redis.RedisService;
@@ -40,6 +41,7 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private final RedisService redisService;
+    private final FcmService fcmService;
 
     /**
      * 특정 채팅방에 유저가 속해있는지 확인
@@ -106,17 +108,22 @@ public class ChatRoomService {
     }
 
 
-    public List<ChatRoomInfoResponse> getUserChatRooms(Long userId, ChatRoomFilter filter) {
+    public List<ChatRoomInfoResponse> getUserChatRooms(Long userId, ChatRoomType type) {
+        System.out.println("userId : " + userId);
+        System.out.println("type : " + type);
         //TODO 커스텀 예외 처리
         List<ChatRoomEntity> chatRoomEntities;
         try {
-            chatRoomEntities = switch (filter) {
+            chatRoomEntities = switch (type) {
                 case ALL -> chatRoomRepository.findAllByUserId(userId);
                 case PURCHASE -> chatRoomRepository.findByBuyerId(userId);
                 case SALE -> chatRoomRepository.findBySellerId(userId);
                 default -> throw new IllegalArgumentException("잘못된 필터입력입니다."); //TODO 추후 예외처리
+
+
             };
 
+            System.out.println("chatRoomEntities = " + chatRoomEntities);
             List<ChatRoomInfoResponse> chatRoomInfoResponses = new ArrayList<>();
             for (ChatRoomEntity chatRoomEntity : chatRoomEntities) {
                 OtherProfile otherProfile = getOtherProfile(chatRoomEntity, userId);
@@ -136,7 +143,7 @@ public class ChatRoomService {
             }
             return chatRoomInfoResponses;
 
-        } catch (DataAccessException e) {
+        } catch (DataAccessException e) {  //TODO 커스텀 예외 처리
             log.error("채팅방 목록 조회중 에러 발생", e);
             throw new RuntimeException("채팅방 조회중 에러 발생");
         }
@@ -147,9 +154,6 @@ public class ChatRoomService {
         //TODO 낙찰자, 구매자 찾는과정 필요
         // 지금은 userId == sellerId 이고 otherUserId == buyerId 라고 가정
         Long otherUserId = 2L;
-
-        Map<Long, Integer> unreadCountsMap = Map.of(userId, 0, otherUserId, 0);
-        Map<Long, Boolean> statusMap = Map.of(userId, true, otherUserId, true);
 
         //TODO 대표이미지, 낙찰가는 아직 product 테이블에 반영x
         int successfulBid = 100000;
@@ -171,9 +175,12 @@ public class ChatRoomService {
         //TODO 커스텀 예외 처리
         try {
             Query query = new Query(Criteria.where("_id").is(roomId));
-            Update update = new Update().set("userStatus." + userId, false);
+            Update update = new Update()
+                    .set("userStatus." + userId, false)
+                    .set("isChatAvailable", false);
 
             mongoTemplate.updateFirst(query, update, ChatRoomEntity.class);
+
         } catch (Exception e) {
             throw new RuntimeException("채팅방에서 나가기 중 예외 발생");
         }
@@ -212,15 +219,28 @@ public class ChatRoomService {
                 chatRoomEntity.getProductTitle(),
                 chatRoomEntity.getProductImage(),
                 chatRoomEntity.getPrice(),
-                isSeller
+                isSeller,
+                chatRoomEntity.isChatAvailable()
         );
+
+    }
+
+
+    public void sendFcmMessage(boolean receiverInChatRoom, Long receiverId, Long userId, String content) {
+
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 예외"));
+
+        if (!receiverInChatRoom) {
+            fcmService.sendPushChatMessageNotification(receiverId, userEntity.getNickname(), content);
+        }
 
     }
 
 
     // 상대방 프로필 확인
     private OtherProfile getOtherProfile(ChatRoomEntity chatRoomEntity, Long userId) {
-        Long otherUserId = userId == chatRoomEntity.getSellerId()
+        Long otherUserId = (userId == chatRoomEntity.getSellerId())
                 ? chatRoomEntity.getBuyerId()
                 : chatRoomEntity.getSellerId();
 
@@ -230,6 +250,7 @@ public class ChatRoomService {
         return new OtherProfile(userEntity.getNickname(), userEntity.getImageUrl(), userEntity.getId());
 
     }
+
 
 
 }
