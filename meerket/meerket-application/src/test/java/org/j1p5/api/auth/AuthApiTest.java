@@ -4,7 +4,7 @@
 // import com.fasterxml.jackson.databind.ObjectMapper;
 // import jakarta.servlet.http.HttpSession;
 // import org.j1p5.api.auth.dto.LoginRequest;
-// import org.j1p5.domain.auth.OauthService;
+// import org.j1p5.api.auth.service.OauthService;
 // import org.junit.jupiter.api.BeforeEach;
 // import org.junit.jupiter.api.DisplayName;
 // import org.junit.jupiter.api.Test;
