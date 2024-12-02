@@ -10,6 +10,7 @@ import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.product.dto.ProductInfo;
+import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
 import org.j1p5.domain.product.dto.ProductResponseInfo;
 import org.j1p5.domain.product.service.ProductService;
 import org.springframework.http.MediaType;
@@ -41,7 +42,7 @@ public class ProductController {
      * @author sunghyun0610
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Response makeProduct(@RequestPart(name = "request") ProductRequestDto request,
+    public Response<Void> makeProduct(@RequestPart(name = "request") ProductRequestDto request,
                                 @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                 @LoginUser Long userId
     ) {
@@ -86,6 +87,15 @@ public class ProductController {
 
 
     }
+
+
+    @GetMapping("/{productId}")
+    public Response<ProductResponseDetailInfo> getProductDetails(@PathVariable(name = "productId") Long productId,
+                                                                 @LoginUser Long userId)
+    {
+        return Response.onSuccess(productService.getProductDetail(productId, userId));
+    }
+
 
 
 }

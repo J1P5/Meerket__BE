@@ -36,7 +36,6 @@ public class ProductEntity extends BaseEntity {
     @Lob
     @Column(name = "content", nullable = false, length = 500, columnDefinition = "TEXT")
     private String content;
-
     @Column(name = "min_price", nullable = false)
     private int minPrice;
 
@@ -70,6 +69,12 @@ public class ProductEntity extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
     private List<ImageEntity> imageEntityList = new ArrayList<>(); //이미지와 단방향관계로 설정
+
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
+    @Column(name = "winning_price")
+    private Integer winningPrice;
 
 
     public void addImage(ImageEntity image) {

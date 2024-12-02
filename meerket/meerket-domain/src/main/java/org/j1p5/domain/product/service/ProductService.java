@@ -6,11 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
+import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.MyLocationInfo;
 import org.j1p5.domain.product.dto.ProductInfo;
+import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
 import org.j1p5.domain.product.dto.ProductResponseInfo;
 import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.product.exception.ProductException;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.ActivityArea;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+
+import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_FOUND;
 
 
 @Service
@@ -32,19 +37,18 @@ public class ProductService {
     private final ProductAppender productAppender;
     private final ImageService imageService;
     private final RegionAuthHandler userRegionauth;
-    //private final ProductReader productReader;
     private final ActivityAreaReader activityAreaReader;
     private final ProductRepository productRepository;
     private final UserLocationNameReader userLocationNameReader;
 
 
     @Transactional
-    public void registerProduct(String email, ProductInfo productInfo, List<File> images) {
+    public void registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
         //multipart 자료형은 web에서 처리하고 file만 내려줘라
 
-        UserEntity user = userReader.getUser(email);//user객체 가져오는 실제 구현부는 UserReader임
+        UserEntity user = userReader.getUser(userId);//user객체 가져오는 실제 구현부는 UserReader임
 
-        userRegionauth.checkAuth(user.getId());// 동네 인증된 사용자 체크
+//        userRegionauth.checkAuth(user.getId());// 동네 인증된 사용자 체크
 
         ProductEntity product = ProductInfo.toEntity(productInfo, user);
 
@@ -62,9 +66,9 @@ public class ProductService {
     }
 
     @Transactional
-    public CursorResult<ProductResponseInfo> getProducts(String email, Cursor cursor) {
+    public CursorResult<ProductResponseInfo> getProducts(Long userId, Cursor cursor) {
         //사용자 활동지역 반경 100km까지 조회
-        UserEntity user = userReader.getUser(email);
+        UserEntity user = userReader.getUser(userId);
 
 
         List<ActivityArea> activityAreas = user.getActivityAreas();
@@ -84,6 +88,15 @@ public class ProductService {
 
 
         return CursorResult.of(productResponseInfos, nextCursor);// Dto ->CursorResult형으로 변환
+
+    }
+
+    public ProductResponseDetailInfo getProductDetail(Long productId, Long userId){
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(()->new DomainException(PRODUCT_NOT_FOUND));
+        UserEntity user = userReader.getUser(userId);
+
+       return ProductResponseDetailInfo.of(product,user);
 
     }
 
