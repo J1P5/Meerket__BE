@@ -35,7 +35,7 @@ import static org.j1p5.infrastructure.global.s3.exception.S3ErrorCode.*;
 public class ImageServiceImpl implements ImageService {
 
     private final AmazonS3 amazonS3;
-    private final ImageValidator imageValidator;
+
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -53,7 +53,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private String uploadImage(File image) {
-        imageValidator.validateImageFile(image);
+        ImageValidator.validateImageFile(image);
         try {
             return this.uploadImageToS3(image);
         } catch (IOException e) {
