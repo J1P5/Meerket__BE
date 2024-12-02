@@ -25,6 +25,6 @@ public class EmdArea {
     private Point coordinate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sido_area_id")
-    private SidoArea sidoArea;
+    @JoinColumn(name = "sgg_area_id")
+    private SggArea sggArea;
 }
