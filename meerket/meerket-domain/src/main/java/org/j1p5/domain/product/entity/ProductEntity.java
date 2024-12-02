@@ -1,6 +1,9 @@
 package org.j1p5.domain.product.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,11 +15,6 @@ import org.j1p5.domain.product.dto.ProductUpdateInfo;
 import org.j1p5.domain.product.service.PointConverter;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.locationtech.jts.geom.Point;
-
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +36,7 @@ public class ProductEntity extends BaseEntity {
     @Lob
     @Column(name = "content", nullable = false, length = 500, columnDefinition = "TEXT")
     private String content;
+
     @Column(name = "min_price", nullable = false)
     private int minPrice;
 
@@ -55,7 +54,7 @@ public class ProductEntity extends BaseEntity {
     private String location; // 물품 등록 ~시 ~구에대한 주소
 
     @Column(name = "coordinate", nullable = false, columnDefinition = "POINT SRID 4326")
-    private Point coordinate;// 거래희망장소 ->물건의 좌표
+    private Point coordinate; // 거래희망장소 ->물건의 좌표
 
     @Column(name = "is_early", nullable = false)
     private boolean isEarly = false;
@@ -70,14 +69,13 @@ public class ProductEntity extends BaseEntity {
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
-    private List<ImageEntity> imageEntityList = new ArrayList<>(); //이미지와 단방향관계로 설정
+    private List<ImageEntity> imageEntityList = new ArrayList<>(); // 이미지와 단방향관계로 설정
 
     @Column(name = "thumbnail")
     private String thumbnail;
 
     @Column(name = "winning_price")
     private Integer winningPrice;
-
 
     public void addImage(ImageEntity image) {
         imageEntityList.add(image);
@@ -88,7 +86,9 @@ public class ProductEntity extends BaseEntity {
     }
 
     public void updateProduct(ProductUpdateInfo productUpdateInfo) {
-        Point coordinate = PointConverter.createPoint(productUpdateInfo.longtitude(), productUpdateInfo.latitude());
+        Point coordinate =
+                PointConverter.createPoint(
+                        productUpdateInfo.longtitude(), productUpdateInfo.latitude());
 
         if (productUpdateInfo.title() != null) {
             this.title = productUpdateInfo.title();
@@ -102,18 +102,15 @@ public class ProductEntity extends BaseEntity {
         if (productUpdateInfo.category() != null) {
             this.category = productUpdateInfo.category();
         }
-        if (coordinate!= null) {
+        if (coordinate != null) {
             this.coordinate = coordinate;
         }
         if (productUpdateInfo.content() != null) {
             this.content = productUpdateInfo.content();
         }
-
     }
 
-    public void updateStatusToDelete(ProductEntity product){
+    public void updateStatusToDelete(ProductEntity product) {
         this.status = ProductStatus.DELETED;
     }
-
-
 }

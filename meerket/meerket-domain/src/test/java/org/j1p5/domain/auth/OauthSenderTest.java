@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import org.j1p5.domain.auth.dto.KakaoToken;
 import org.j1p5.domain.auth.dto.OauthProfile;
 import org.j1p5.domain.auth.dto.OauthToken;
 import org.j1p5.domain.user.entity.Provider;
@@ -36,7 +35,7 @@ public class OauthSenderTest {
     void requestSuccess() {
         String code = "auth code";
         String provider = "KAKAO";
-        OauthToken token = new KakaoToken();
+        OauthToken token = OauthTokenFixture.create();
         OauthProfile profile = AuthFixture.create();
 
         // given

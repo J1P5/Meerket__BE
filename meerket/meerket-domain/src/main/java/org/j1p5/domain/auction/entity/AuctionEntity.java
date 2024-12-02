@@ -21,7 +21,6 @@ public class AuctionEntity {
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -32,5 +31,4 @@ public class AuctionEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "auction_status", nullable = false)
     private AuctionStatus status;
-
 }

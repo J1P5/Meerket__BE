@@ -1,11 +1,10 @@
 package org.j1p5.domain.auth.area.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
 import org.j1p5.domain.user.entity.EmdArea;
 import org.j1p5.domain.user.entity.UserEntity;
-
-import java.time.LocalDateTime;
 
 @Entity(name = "area_authentication")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

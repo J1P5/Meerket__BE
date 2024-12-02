@@ -1,7 +1,10 @@
 package org.j1p5.domain.user.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
+import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.j1p5.domain.global.entity.BaseEntity;
 
 @Entity(name = "user")
@@ -33,6 +36,9 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private List<ActivityArea> activityAreas = new ArrayList<>();
+
     private UserEntity(String SocialId, String SocialEmail, Provider Provider, Role role) {
         this.socialId = SocialId;
         this.socialEmail = SocialEmail;
@@ -40,7 +46,8 @@ public class UserEntity extends BaseEntity {
         this.role = role;
     }
 
-    public static UserEntity create(String SocialId, String SocialEmail, Provider Provider, Role role) {
+    public static UserEntity create(
+            String SocialId, String SocialEmail, Provider Provider, Role role) {
         return new UserEntity(SocialId, SocialEmail, Provider, role);
     }
 }

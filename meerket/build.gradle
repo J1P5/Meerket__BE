@@ -68,3 +68,6 @@ subprojects {
     }
 }
 
+bootJar {
+    enabled = false
+}

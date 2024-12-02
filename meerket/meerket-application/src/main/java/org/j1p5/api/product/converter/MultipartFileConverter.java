@@ -1,11 +1,10 @@
 package org.j1p5.api.product.converter;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public class MultipartFileConverter {
 
@@ -15,12 +14,16 @@ public class MultipartFileConverter {
         for (MultipartFile multipartFile : multipartFiles) {
             try {
                 // Create a temporary file
-                File tempFile = File.createTempFile("upload_", "_" + multipartFile.getOriginalFilename());
+                File tempFile =
+                        File.createTempFile("upload_", "_" + multipartFile.getOriginalFilename());
                 multipartFile.transferTo(tempFile);
                 files.add(tempFile);
                 tempFile.deleteOnExit();
             } catch (IOException e) {
-                throw new RuntimeException("Error converting MultipartFile to File: " + multipartFile.getOriginalFilename(), e);
+                throw new RuntimeException(
+                        "Error converting MultipartFile to File: "
+                                + multipartFile.getOriginalFilename(),
+                        e);
             }
         }
 

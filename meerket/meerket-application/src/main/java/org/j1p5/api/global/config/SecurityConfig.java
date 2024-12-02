@@ -18,25 +18,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/oauth/**"))
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/oauth/**"))
                 .cors(c -> c.configurationSource(corsConfig.configurationSource()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
 
-        http
-                .authorizeHttpRequests(authorize -> {
-                    authorize.anyRequest().permitAll(); //init setting
+        http.authorizeHttpRequests(
+                authorize -> {
+                    authorize.anyRequest().permitAll(); // init setting
 
-//                    authorize.requestMatchers("/api/v1/admin").hasRole("ADMIN");
+                    //
+                    // authorize.requestMatchers("/api/v1/admin").hasRole("ADMIN");
                 });
 
-        http
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(false)
-                );
+        http.sessionManagement(
+                session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                                .maximumSessions(1)
+                                .maxSessionsPreventsLogin(false));
 
         return http.build();
     }
