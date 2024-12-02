@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ProductService {
 
-    private final ProductUserReader productUserReader;
+    private final ProductUserReader userReader;
     private final ProductAppender productAppender;
     private final ImageService imageService;
     private final RegionAuthHandler userRegionauth;
@@ -37,7 +37,7 @@ public class ProductService {
     public void registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
         // multipart 자료형은 web에서 처리하고 file만 내려줘라
 
-        UserEntity user = productUserReader.getUser(userId); // user객체 가져오는 실제 구현부는 UserReader임
+        UserEntity user = userReader.getUser(userId); // user객체 가져오는 실제 구현부는 UserReader임
 
         //        userRegionauth.checkAuth(user.getId());// 동네 인증된 사용자 체크
 
@@ -58,7 +58,7 @@ public class ProductService {
     @Transactional
     public CursorResult<ProductResponseInfo> getProducts(Long userId, Cursor cursor) {
         // 사용자 활동지역 반경 100km까지 조회
-        UserEntity user = productUserReader.getUser(userId);
+        UserEntity user = userReader.getUser(userId);
 
         List<ActivityArea> activityAreas = user.getActivityAreas();
         Point coordinate = activityAreaReader.getActivityArea(activityAreas); // 이상 사용자 활동지역 좌표
@@ -95,7 +95,7 @@ public class ProductService {
                 productRepository
                         .findById(productId)
                         .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
-        UserEntity user = productUserReader.getUser(userId);
+        UserEntity user = userReader.getUser(userId);
         if (product.getStatus().equals(ProductStatus.DELETED)) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
@@ -105,7 +105,7 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(Long productId, Long userId, ProductUpdateInfo info) {
-        UserEntity user = productUserReader.getUser(userId);
+        UserEntity user = userReader.getUser(userId);
         ProductEntity product =
                 productRepository
                         .findById(productId)
@@ -122,7 +122,7 @@ public class ProductService {
 
     @Transactional
     public void removeProduct(Long productId, Long userId) {
-        UserEntity user = productUserReader.getUser(userId);
+        UserEntity user = userReader.getUser(userId);
 
         ProductEntity product =
                 productRepository
