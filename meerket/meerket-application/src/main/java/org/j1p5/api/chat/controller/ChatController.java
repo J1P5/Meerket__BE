@@ -126,7 +126,7 @@ public class ChatController {
     }
 
 
-    @MessageMapping("/messages")
+    @MessageMapping("/message")
     @Operation(summary = "메시지 보내기", description = "특정 채팅방에 메시지를 보냅니다.")
     @ApiResponses(
             value = {
