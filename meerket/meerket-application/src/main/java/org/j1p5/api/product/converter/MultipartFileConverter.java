@@ -29,4 +29,17 @@ public class MultipartFileConverter {
 
         return files;
     }
+
+    public static File convertMultipartFileToFile(MultipartFile multipartFile) {
+        File file;
+
+        try {
+            file = File.createTempFile("upload_", "_" + multipartFile.getOriginalFilename());
+            multipartFile.transferTo(file); // Write the content to the temp file
+        } catch (IOException e) {
+            throw new RuntimeException("Error converting MultipartFile to File: " + multipartFile.getOriginalFilename(), e);
+        }
+
+        return file;
+    }
 }
