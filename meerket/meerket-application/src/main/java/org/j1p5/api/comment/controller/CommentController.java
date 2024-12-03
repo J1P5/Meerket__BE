@@ -4,9 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 import org.j1p5.api.comment.dto.request.CommentCreateRequestDto;
+import org.j1p5.api.comment.dto.request.CommentDeleteRequestDto;
 import org.j1p5.api.comment.dto.request.CommentUpdateRequestDto;
 import org.j1p5.api.comment.dto.response.CommentReadResponseDto;
+import org.j1p5.api.comment.service.CommentService;
 import org.j1p5.api.comment.usecase.CommentCreateUsecase;
+import org.j1p5.api.comment.usecase.CommentDeleteUsecase;
 import org.j1p5.api.comment.usecase.CommentReadUsecase;
 import org.j1p5.api.comment.usecase.CommentUpdateUsecase;
 import org.j1p5.api.global.annotation.LoginUser;
@@ -26,6 +29,7 @@ public class CommentController {
     private final CommentCreateUsecase commentCreateUsecase;
     private final CommentReadUsecase commentReadUsecase;
     private final CommentUpdateUsecase commentUpdateUsecase;
+    private final CommentDeleteUsecase commentDeleteUsecase;
 
     @PostMapping("/{productId}")
     public Response<Void> createComment(@PathVariable(name = "productId") Long productId,
@@ -50,7 +54,17 @@ public class CommentController {
     public Response<Void> updateComment(@PathVariable(name = "commentId") Long commentId,
                                         @LoginUser Long userId,
                                         @RequestBody CommentUpdateRequestDto request){
-        commentUpdateUsecase.updateComment(request.productId(),commentId,userId,request);
+        commentUpdateUsecase.updateComment(commentId,userId,request);
         return Response.onSuccess();
+    }
+
+    @DeleteMapping("/{commentId}")
+    public Response<Void> deleteComment(@PathVariable(name = "commentId") Long commentId,
+                                        @LoginUser Long userId,
+                                        @RequestBody CommentDeleteRequestDto request){
+
+        commentDeleteUsecase.removeComment(request.productId(),userId,commentId);
+        return Response.onSuccess();
+
     }
 }
