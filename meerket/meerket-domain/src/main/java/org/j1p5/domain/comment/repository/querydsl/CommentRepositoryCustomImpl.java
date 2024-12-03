@@ -19,6 +19,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     public List<CommentEntity> findParentCommentByProductId(Long productId, Pageable pageable) {
         QCommentEntity comment = QCommentEntity.commentEntity;
         return jpaQueryFactory.selectFrom(comment)
+                //.leftJoin(comment.replies).fetchJoin()
                 .where(comment.product.id.eq(productId) //q객체명, 자바 변수명(!= 컬럼명)
                         .and(comment.parentComment.isNull()))
                 .offset(pageable.getOffset())

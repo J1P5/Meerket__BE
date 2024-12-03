@@ -3,6 +3,7 @@ package org.j1p5.domain.comment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.BatchSize;
 import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuperBuilder
+@BatchSize(size = 10)
 public class CommentEntity extends BaseEntity {
 
     @Id
@@ -43,4 +45,8 @@ public class CommentEntity extends BaseEntity {
     @Column(name = "comment_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private CommentStatus status;
+
+    public void update(String content){
+        this.content = content;
+    }
 }
