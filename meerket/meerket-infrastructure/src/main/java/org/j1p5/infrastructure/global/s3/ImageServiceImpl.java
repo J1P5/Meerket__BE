@@ -32,7 +32,7 @@ public class ImageServiceImpl implements ImageService, UserImageClient {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucketName}")
+    @Value("${cloud.aws.s3.bucket-name}")
     private String bucketName;
 
     @Override

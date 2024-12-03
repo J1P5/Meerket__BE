@@ -33,7 +33,7 @@ public class UserRegisterService {
     public void nickNameValidation(String nickname) {
         boolean isValid = userRepository.existsByNickname(nickname);
 
-        if (!isValid) {
+        if (isValid) {
             throw new UserNotFoundException(USER_NOT_FOUND);
         }
     }

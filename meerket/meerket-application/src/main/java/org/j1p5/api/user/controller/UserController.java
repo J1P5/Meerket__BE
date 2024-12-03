@@ -11,15 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
-import org.j1p5.api.user.dto.ImageRegisterRequest;
 import org.j1p5.api.user.dto.NameRegisterRequest;
 import org.j1p5.api.user.usecase.UserImageRegisterUsecase;
 import org.j1p5.api.user.usecase.UserNameRegisterUsecase;
 import org.j1p5.common.exception.ErrorResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "users", description = "유저 관련 API")
 @RestController
@@ -47,7 +45,7 @@ public class UserController {
         return Response.onSuccess();
     }
 
-    @PostMapping("/profile")
+    @PostMapping(value = "/profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "유저 프로필사진 등록", description = "로그인 후 추가 설정 과정 중 프로필 사진 등록 API")
     @ApiResponses(
             value = {
@@ -67,8 +65,8 @@ public class UserController {
                     )
             })
     public Response<Void> registerImage(
-            @LoginUser Long userId, @RequestBody ImageRegisterRequest request) {
-        userImageRegisterUsecase.execute(userId, MultipartFileConverter.convertMultipartFileToFile(request.file()));
+            @LoginUser Long userId, @RequestPart(name = "file") MultipartFile imageFile) {
+        userImageRegisterUsecase.execute(userId, MultipartFileConverter.convertMultipartFileToFile(imageFile));
         return Response.onSuccess();
     }
 }
