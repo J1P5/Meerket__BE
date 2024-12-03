@@ -10,7 +10,7 @@ import java.util.List;
 public interface ChatRoomRepository extends MongoRepository<ChatRoomEntity, ObjectId> {
     // 모든 채팅방 조회 (userId가 sellerId 또는 buyerId인 경우)
     @Query(value = "{ '$or': [ { 'sellerId': ?0, 'userStatus.?0': true }, { 'buyerId': ?0, 'userStatus.?0': true } ] }", sort = "{ 'lastMessageAt': -1 }")
-    List<ChatRoomEntity> findAllByUserId(Long userId);
+    List<ChatRoomEntity> findByUserId(Long userId);
 
     // sellerId인 경우만 조회
     @Query(value = "{ 'sellerId': ?0, 'userStatus.?0': true }", sort = "{ 'lastMessageAt': -1 }")

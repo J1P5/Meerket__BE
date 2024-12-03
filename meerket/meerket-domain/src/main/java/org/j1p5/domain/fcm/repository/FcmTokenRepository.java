@@ -1,4 +1,4 @@
-package org.j1p5.infrastructure.fcm.repository;
+package org.j1p5.domain.fcm.repository;
 
 import java.util.Optional;
 import org.j1p5.domain.fcm.entity.FcmTokenEntity;

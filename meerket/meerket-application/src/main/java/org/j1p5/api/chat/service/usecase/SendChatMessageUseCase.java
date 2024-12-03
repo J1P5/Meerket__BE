@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.j1p5.api.chat.dto.response.ChatMessageResponse;
 import org.j1p5.api.chat.service.ChatMessageService;
 import org.j1p5.api.chat.service.ChatRoomService;
+import org.j1p5.api.fcm.FcmService;
 import org.j1p5.domain.chat.entity.ChatMessageEntity;
+import org.j1p5.domain.chat.vo.MessageInfo;
 import org.springframework.stereotype.Service;
 import org.bson.types.ObjectId;
 
@@ -19,11 +21,16 @@ public class SendChatMessageUseCase {
 
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
+    private final FcmService fcmService;
 
     // 메시지 보내기
     //@Transactional 추후 적용
     public ChatMessageResponse execute(
-            Long userId, Long receiverId, String content, String roomId) throws AccessDeniedException {
+            MessageInfo messageInfo) throws AccessDeniedException {
+        Long userId = messageInfo.getUserId();
+        Long receiverId = messageInfo.getReceiverId();
+        String roomId = messageInfo.getRoomId();
+        String content = messageInfo.getContent();
 
         ObjectId roomObjectId = chatRoomService.validateRoomId(roomId);
 
@@ -39,7 +46,7 @@ public class SendChatMessageUseCase {
 
         chatMessageService.sendWebSocketMessage(roomId, userId, content);
 
-        chatRoomService.sendFcmMessage(receiverInChatRoom, receiverId, userId, chatMessageEntity.getContent());
+        if(receiverInChatRoom) fcmService.sendFcmChatMessage(receiverId,userId,chatMessageEntity.getContent());
 
         return ChatMessageResponse.fromEntity(chatMessageEntity);
     }

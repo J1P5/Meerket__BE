@@ -4,14 +4,14 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
-import org.j1p5.domain.fcm.FcmService;
+import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.fcm.entity.FcmTokenEntity;
-import org.j1p5.infrastructure.fcm.repository.FcmTokenRepository;
+import org.j1p5.domain.fcm.repository.FcmTokenRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FcmServiceImpl implements FcmService {
+public class FcmSenderImpl implements FcmSender {
 
     private final FcmTokenRepository fcmTokenRepository;
 

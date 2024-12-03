@@ -14,7 +14,7 @@ import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
 import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
-import org.j1p5.domain.fcm.FcmService;
+import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.redis.RedisService;
@@ -40,7 +40,7 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private final RedisService redisService;
-    private final FcmService fcmService;
+    private final FcmSender fcmSender;
 
     /**
      * 특정 채팅방에 유저가 속해있는지 확인
@@ -116,7 +116,7 @@ public class ChatRoomService {
         try {
             chatRoomEntities =
                     switch (type) {
-                        case ALL -> chatRoomRepository.findAllByUserId(userId);
+                        case ALL -> chatRoomRepository.findByUserId(userId);
                         case PURCHASE -> chatRoomRepository.findByBuyerId(userId);
                         case SALE -> chatRoomRepository.findBySellerId(userId);
                         default ->
@@ -228,19 +228,6 @@ public class ChatRoomService {
                 chatRoomEntity.isChatAvailable());
     }
 
-    public void sendFcmMessage(
-            boolean receiverInChatRoom, Long receiverId, Long userId, String content) {
-
-        UserEntity userEntity =
-                userRepository
-                        .findById(userId)
-                        .orElseThrow(() -> new IllegalArgumentException("사용자 예외"));
-
-        if (!receiverInChatRoom) {
-            fcmService.sendPushChatMessageNotification(
-                    receiverId, userEntity.getNickname(), content);
-        }
-    }
 
     // 상대방 프로필 확인
     private OtherProfile getOtherProfile(ChatRoomEntity chatRoomEntity, Long userId) {

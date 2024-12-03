@@ -9,7 +9,9 @@ import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
 import org.j1p5.api.chat.service.usecase.*;
 import org.j1p5.api.global.response.Response;
+import org.j1p5.domain.chat.vo.MessageInfo;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -38,7 +40,7 @@ public class ChatController {
      * @param productId 상품id
      * @return 생성된 roomId
      */
-    @PostMapping("/{roomId}")
+    @PostMapping("/{productId}")
     public Response<CreateChatRoomResponse> createChatRoom(
             @PathVariable Long productId
 //            @LoginUser Long userId
@@ -92,13 +94,14 @@ public class ChatController {
     // TODO 커스텀 예외처리
     @MessageMapping("/messages")
     public Response<Void> sendChatMessage(
-            @RequestBody ChatMessageRequest request
+            @RequestBody @Validated ChatMessageRequest request
 //            @LoginUser Long userId,
             ) throws AccessDeniedException {
 
         Long userId = 1L;
+        MessageInfo messageInfo = new MessageInfo(userId, request.receiverId(), request.content(), request.roomId());
 
-        sendChatMessageUseCase.execute(userId,request.receiverId(),request.content(), request.roomId());
+        sendChatMessageUseCase.execute(messageInfo);
         return Response.onSuccess();
     }
 
