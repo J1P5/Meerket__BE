@@ -26,6 +26,10 @@ public class CommentService {
     private final ProductRepository productRepository;
     private final UserReader userReader;
 
+    public void appendComment(CommentEntity comment){
+        commentRepository.save(comment);
+    }
+
     public CommentEntity validateParentComment(Long parentCommentId) {
         Long parentId = parentCommentId;
         CommentEntity parentComment = null;
