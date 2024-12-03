@@ -26,4 +26,16 @@ public class FcmTokenEntity extends BaseEntity {
     @Column(nullable = false, unique = true, length = 512)
     private String token;
 
+    public void updateToken(String newToken) {
+        this.token = newToken;
+    }
+
+    public static FcmTokenEntity create(UserEntity user, String token) {
+        FcmTokenEntity fcmTokenEntity = new FcmTokenEntity();
+        fcmTokenEntity.user = user;
+        fcmTokenEntity.token = token;
+
+        return fcmTokenEntity;
+    }
+
 }
