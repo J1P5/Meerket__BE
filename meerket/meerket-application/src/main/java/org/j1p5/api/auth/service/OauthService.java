@@ -16,14 +16,16 @@ public class OauthService {
     private final UserRepository userRepository;
 
     public UserInfo login(OauthProfile profile, Provider provider) {
-        UserEntity user = userRepository.findBySocialEmailAndProvider(profile.getEmail(), provider)
-                .orElse(null);
+        UserEntity user =
+                userRepository
+                        .findBySocialEmailAndProvider(profile.getEmail(), provider)
+                        .orElse(null);
 
         if (user == null) {
-            user = userRepository.save(
-                    UserEntity.create(
-                            profile.getId(), profile.getEmail(), provider, Role.USER
-                    ));
+            user =
+                    userRepository.save(
+                            UserEntity.create(
+                                    profile.getId(), profile.getEmail(), provider, Role.USER));
 
             return UserInfo.from(user);
         }

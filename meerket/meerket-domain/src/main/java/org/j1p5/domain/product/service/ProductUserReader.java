@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class UserReader {
+public class ProductUserReader {
     private final UserRepository userRepository;
 
     public UserEntity getUser(Long userId) {

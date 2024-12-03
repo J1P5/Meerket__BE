@@ -4,10 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.auth.dto.OauthProfile;
 import org.j1p5.domain.user.UserInfo;
 import org.j1p5.domain.user.entity.Provider;
-import org.j1p5.domain.user.entity.UserEntity;
-import org.j1p5.domain.user.repository.UserRepository;
-import org.j1p5.domain.user.service.UserAppender;
-import org.j1p5.domain.user.service.UserReader;
 import org.springframework.stereotype.Service;
 
 @Service

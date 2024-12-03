@@ -6,6 +6,10 @@ dependencies {
     implementation 'org.hibernate:hibernate-spatial:6.4.1.Final'
     implementation 'org.locationtech.jts:jts-core:1.19.0'
 
+    // 채팅에서 mongodb 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+
 
 
     runtimeOnly 'com.mysql:mysql-connector-j'

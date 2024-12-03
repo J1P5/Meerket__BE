@@ -1,6 +1,7 @@
 package org.j1p5.api.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.global.handler.CustomAccessDeniedHandler;
 import org.j1p5.api.global.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -22,7 +22,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/oauth/**"))
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(c -> c.configurationSource(corsConfig.configurationSource()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
@@ -39,8 +39,7 @@ public class SecurityConfig {
                 e -> {
                     e.accessDeniedHandler(customAccessDeniedHandler);
                     e.authenticationEntryPoint(customAuthenticationEntryPoint);
-                }
-        )
+                });
 
         http.sessionManagement(
                 session ->

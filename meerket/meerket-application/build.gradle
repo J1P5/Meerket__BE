@@ -18,4 +18,8 @@ dependencies {
     // AWS SDK for S3 (1.x 버전)
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.619'
 
+
+    // websocket 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 }

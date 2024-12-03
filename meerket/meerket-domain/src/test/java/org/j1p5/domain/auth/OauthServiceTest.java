@@ -1,24 +1,24 @@
-package org.j1p5.domain.auth;
+ package org.j1p5.domain.auth;
 
-import org.j1p5.domain.auth.dto.OauthProfile;
-import org.j1p5.domain.user.UserFixture;
-import org.j1p5.domain.user.UserInfo;
-import org.j1p5.domain.user.entity.UserEntity;
-import org.j1p5.domain.user.service.UserAppender;
-import org.j1p5.domain.user.service.UserReader;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.mockito.ArgumentMatchers.anyString;
+ import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+ import org.j1p5.domain.auth.dto.OauthProfile;
+ import org.j1p5.domain.user.UserFixture;
+ import org.j1p5.domain.user.UserInfo;
+ import org.j1p5.domain.user.entity.UserEntity;
+ import org.j1p5.domain.user.service.UserAppender;
+ import org.j1p5.domain.user.service.UserReader;
+ import org.junit.jupiter.api.DisplayName;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.ExtendWith;
+ import org.mockito.InjectMocks;
+ import org.mockito.Mock;
+ import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
-public class OauthServiceTest {
+ @ExtendWith(MockitoExtension.class)
+ public class OauthServiceTest {
 
     @InjectMocks private OauthService oauthService;
 
@@ -71,4 +71,4 @@ public class OauthServiceTest {
         verify(userAppender).append(profile, provider);
         assertEquals(user.getId(), userInfo.pk());
     }
-}
+ }
