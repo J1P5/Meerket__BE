@@ -22,7 +22,7 @@ public class GetChatMessageUseCase {
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
 
-    public List<ChatMessageResponse> execute(String roomId, LocalDateTime beforeTime, Long userId) throws AccessDeniedException {
+    public List<ChatMessageResponse> execute(String roomId, LocalDateTime beforeTime, Long userId){
 
         ObjectId roomObjectId = chatRoomService.validateRoomId(roomId);
 

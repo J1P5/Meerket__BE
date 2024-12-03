@@ -14,7 +14,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -64,12 +63,12 @@ public class ChatController {
     }
 
 
-    // TODO 커스텀 예외처리
     @PostMapping("/exit/{roomId}")
     public Response<Void> exitChatRoom(
             @PathVariable String roomId
 //            @LoginUser Long userId
-    ) throws AccessDeniedException {
+
+    ) {
         Long userId = 1L;
 
         exitChatRoomUseCase.execute(userId,roomId);
@@ -77,13 +76,13 @@ public class ChatController {
     }
 
 
-    // TODO 커스텀 예외처리
     @GetMapping("/messages")
     public Response<List<ChatMessageResponse>> getChatMessages(
             @RequestParam String roomId,
             @RequestParam(required = false) LocalDateTime beforeTime
 //            @LoginUser Long userId
-            ) throws AccessDeniedException {
+
+            ) {
         Long userId = 1L;
 
         List<ChatMessageResponse> response = getChatMessageUseCase.execute(roomId, beforeTime, userId);
@@ -91,12 +90,11 @@ public class ChatController {
     }
 
 
-    // TODO 커스텀 예외처리
     @MessageMapping("/messages")
     public Response<Void> sendChatMessage(
             @RequestBody @Validated ChatMessageRequest request
 //            @LoginUser Long userId,
-            ) throws AccessDeniedException {
+            ) {
 
         Long userId = 1L;
         MessageInfo messageInfo = new MessageInfo(userId, request.receiverId(), request.content(), request.roomId());
@@ -111,6 +109,7 @@ public class ChatController {
 //            @LoginUser Long userId,
             @RequestParam ChatRoomType type
     ) {
+
         Long userId = 1L;
 
         List<ChatRoomInfoResponse> response = userChatRoomsUseCase.execute(userId, type);

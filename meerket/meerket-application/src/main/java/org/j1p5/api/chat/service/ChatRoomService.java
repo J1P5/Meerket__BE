@@ -12,10 +12,11 @@ import org.j1p5.api.chat.dto.ChatRoomType;
 import org.j1p5.api.chat.dto.OtherProfile;
 import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
+import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
-import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.product.exception.ProductException;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.redis.RedisService;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -26,6 +27,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+
+import static org.j1p5.api.chat.exception.ChatException.*;
 
 /**
  * @author yechan
@@ -40,7 +43,6 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private final RedisService redisService;
-    private final FcmSender fcmSender;
 
     /**
      * 특정 채팅방에 유저가 속해있는지 확인
@@ -49,15 +51,14 @@ public class ChatRoomService {
      * @param roomId
      * @throws AccessDeniedException
      */
-    public void verifyAccess(Long userId, ObjectId roomId) throws AccessDeniedException {
+    public void verifyAccess(Long userId, ObjectId roomId){
         ChatRoomEntity chatRoomEntity =
                 chatRoomRepository
                         .findById(roomId)
-                        .orElseThrow(() -> new IllegalArgumentException("채팅방이 존재하지 않습니다."));
+                        .orElseThrow(() -> new WebException(NOT_FOUND_CHATROOM));
 
         if (chatRoomEntity.getSellerId() != userId && chatRoomEntity.getBuyerId() != userId) {
-            // TODO 예외처리 추가하기
-            throw new AccessDeniedException("해당 채팅방에 속한 유저가 아닙니다.");
+            throw new WebException(NOT_MEMBER_OF_CHATROOM);
         }
     }
 
@@ -69,7 +70,7 @@ public class ChatRoomService {
      */
     public ObjectId validateRoomId(String roomId) {
         if (!ObjectId.isValid(roomId)) {
-            throw new IllegalArgumentException("roomId 형식이 맞지않습니다.");
+            throw new WebException(INVALID_ROOM_ID);
         }
         return new ObjectId(roomId);
     }
@@ -90,9 +91,9 @@ public class ChatRoomService {
 
         try {
             mongoTemplate.updateFirst(query, update, ChatRoomEntity.class);
-        } catch (Exception e) { // TODO 커스텀 예외 처리
+        } catch (Exception e) {
             log.error("채팅방 업데이트 실패");
-            throw new RuntimeException("채팅방 업데이트에 실패");
+            throw new WebException(CHAT_ROOM_UPDATE_FAIL);
         }
     }
 
@@ -111,7 +112,6 @@ public class ChatRoomService {
     }
 
     public List<ChatRoomInfoResponse> getUserChatRooms(Long userId, ChatRoomType type) {
-        // TODO 커스텀 예외 처리
         List<ChatRoomEntity> chatRoomEntities;
         try {
             chatRoomEntities =
@@ -120,7 +120,7 @@ public class ChatRoomService {
                         case PURCHASE -> chatRoomRepository.findByBuyerId(userId);
                         case SALE -> chatRoomRepository.findBySellerId(userId);
                         default ->
-                                throw new IllegalArgumentException("잘못된 필터입력입니다."); // TODO 추후 예외처리
+                                throw new WebException(INVALID_ROOM_TYPE);
                     };
 
             List<ChatRoomInfoResponse> chatRoomInfoResponses = new ArrayList<>();
@@ -142,31 +142,31 @@ public class ChatRoomService {
             }
             return chatRoomInfoResponses;
 
-        } catch (DataAccessException e) { // TODO 커스텀 예외 처리
+        } catch (DataAccessException e) {
             log.error("채팅방 목록 조회중 에러 발생", e);
-            throw new RuntimeException("채팅방 조회중 에러 발생");
+            throw new WebException(CHATROOM_LIST_ERROR);
         }
     }
 
     public CreateChatRoomResponse createChatRoom(Long userId, Long productId) {
-        // TODO 낙찰자, 구매자 찾는과정 필요
+        //TODO 낙찰자, 구매자 찾는과정 필요
         // 지금은 userId == sellerId 이고 otherUserId == buyerId 라고 가정
         Long otherUserId = 2L;
 
-        // TODO 대표이미지, 낙찰가는 아직 product 테이블에 반영x
+        // TODO 낙찰가는 아직 반영x 임시 변수
         int successfulBid = 100000;
 
         ProductEntity productEntity =
                 productRepository
                         .findById(productId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 물건이 존재하지않습니다."));
+                        .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
 
         ChatRoomEntity chatRoomEntity =
                 ChatRoomEntity.create(
                         userId,
                         otherUserId,
                         productId,
-                        "productImage",
+                        productEntity.getThumbnail(),
                         productEntity.getTitle(),
                         successfulBid);
 
@@ -178,7 +178,6 @@ public class ChatRoomService {
     }
 
     public void exitChatRoom(Long userId, ObjectId roomId) {
-        // TODO 커스텀 예외 처리
         try {
             Query query = new Query(Criteria.where("_id").is(roomId));
             Update update =
@@ -187,22 +186,21 @@ public class ChatRoomService {
             mongoTemplate.updateFirst(query, update, ChatRoomEntity.class);
 
         } catch (Exception e) {
-            throw new RuntimeException("채팅방에서 나가기 중 예외 발생");
+            throw new WebException(CHAT_EXIT_ERROR);
         }
     }
 
     public void resetUnreadCount(ObjectId roomObjectId, Long userId) {
-        // TODO 커스텀 예외처리
         try {
             Query query = new Query(Criteria.where("_id").is(roomObjectId));
             Update update = new Update().set("unreadCounts." + userId, 0);
             UpdateResult result = mongoTemplate.updateFirst(query, update, ChatRoomEntity.class);
 
             if (result.getMatchedCount() == 0) {
-                throw new IllegalArgumentException("해당 채팅방이 존재하지 않습니다.");
+                throw new WebException(NOT_FOUND_CHATROOM);
             }
         } catch (DataAccessException e) {
-            throw new RuntimeException("안 읽은 메시지 카운트 초기화 중 오류가 발생", e);
+            throw new WebException(CHAT_ROOM_UPDATE_FAIL);
         }
     }
 
@@ -210,7 +208,7 @@ public class ChatRoomService {
         ChatRoomEntity chatRoomEntity =
                 chatRoomRepository
                         .findById(roomObjectId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 채팅방이 없습니다."));
+                        .orElseThrow(() -> new WebException(NOT_FOUND_CHATROOM));
 
         OtherProfile otherProfile = getOtherProfile(chatRoomEntity, userId);
         boolean isSeller = chatRoomEntity.getSellerId() == userId;
@@ -238,8 +236,8 @@ public class ChatRoomService {
 
         UserEntity userEntity =
                 userRepository
-                        .findById(otherUserId) // TODO 추후 예외처리
-                        .orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
+                        .findById(otherUserId)
+                        .orElseThrow(() -> new WebException(RECEIVER_NOT_FOUND));
 
         return new OtherProfile(
                 userEntity.getNickname(), userEntity.getImageUrl(), userEntity.getId());

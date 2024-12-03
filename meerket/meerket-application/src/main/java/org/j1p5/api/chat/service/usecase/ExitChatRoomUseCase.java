@@ -5,7 +5,6 @@ import org.bson.types.ObjectId;
 import org.j1p5.api.chat.service.ChatRoomService;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 
 /**
  * @author yechan
@@ -17,7 +16,7 @@ public class ExitChatRoomUseCase {
 
     private final ChatRoomService chatRoomService;
 
-    public void execute(Long userId, String roomId) throws AccessDeniedException {
+    public void execute(Long userId, String roomId) {
         ObjectId roomObjectId = chatRoomService.validateRoomId(roomId);
 
         chatRoomService.verifyAccess(userId, roomObjectId);

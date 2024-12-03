@@ -26,7 +26,7 @@ public class SendChatMessageUseCase {
     // 메시지 보내기
     //@Transactional 추후 적용
     public ChatMessageResponse execute(
-            MessageInfo messageInfo) throws AccessDeniedException {
+            MessageInfo messageInfo) {
         Long userId = messageInfo.getUserId();
         Long receiverId = messageInfo.getReceiverId();
         String roomId = messageInfo.getRoomId();

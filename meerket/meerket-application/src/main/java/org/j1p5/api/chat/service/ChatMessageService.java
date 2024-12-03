@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.j1p5.api.chat.dto.response.ChatMessageResponse;
 import org.j1p5.api.chat.dto.response.ChatSocketMessageResponse;
+import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.chat.entity.ChatMessageEntity;
 import org.j1p5.domain.chat.repository.ChatMessageRepository;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.j1p5.api.chat.exception.ChatException.*;
 
 /**
  * @author yechan
@@ -32,8 +35,8 @@ public class ChatMessageService {
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.create(roomId, senderId, content);
         try {
             return chatMessageRepository.save(chatMessageEntity);
-        } catch (Exception e) { //TODO 추후 커스텀 예외 처리
-            throw new RuntimeException("메시지 저장에 실패했습니다.", e);
+        } catch (Exception e) {
+            throw new WebException(CHAT_SAVE_ERROR);
         }
     }
 

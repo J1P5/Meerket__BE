@@ -1,9 +1,12 @@
 package org.j1p5.api.fcm;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.chat.exception.ChatException;
+import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
+import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,9 +18,8 @@ public class FcmService {
 
     public void sendFcmChatMessage(Long receiverId, Long userId, String content) {
 
-        //TODO
         UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("예외처리"));
+                .orElseThrow(() -> new InfraException(ChatException.RECEIVER_NOT_FOUND));
 
         fcmSender.sendPushChatMessageNotification(receiverId, userEntity.getNickname(), content);
     }
