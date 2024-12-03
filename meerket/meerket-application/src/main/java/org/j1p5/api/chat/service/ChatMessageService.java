@@ -43,21 +43,25 @@ public class ChatMessageService {
 
     public List<ChatMessageResponse> getChatMessages(ObjectId roomObjectId, Long userId, LocalDateTime beforeTime) {
 
-        Query query = new Query();
-        query.addCriteria(Criteria.where("roomId").is(roomObjectId));
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("roomId").is(roomObjectId));
 
-        if (beforeTime != null) {
-            query.addCriteria(Criteria.where("createdAt").lt(beforeTime));
+            if (beforeTime != null) {
+                query.addCriteria(Criteria.where("createdAt").lt(beforeTime));
+            }
+
+            query.with(Sort.by(Sort.Direction.DESC, "createdAt")).limit(CHAT_LIST_LIMIT);
+
+            List<ChatMessageEntity> chatMessageEntities = mongoTemplate.find(query, ChatMessageEntity.class);
+            List<ChatMessageResponse> responses = chatMessageEntities.stream()
+                    .map(ChatMessageResponse::fromEntity)
+                    .toList();
+
+            return responses;
+        } catch (Exception e) {
+            throw new WebException(CHAT_READ_ERROR);
         }
-
-        query.with(Sort.by(Sort.Direction.DESC, "createdAt")).limit(CHAT_LIST_LIMIT);
-
-        List<ChatMessageEntity> chatMessageEntities = mongoTemplate.find(query, ChatMessageEntity.class);
-        List<ChatMessageResponse> responses = chatMessageEntities.stream()
-                .map(ChatMessageResponse::fromEntity)
-                .toList();
-
-        return responses;
     }
 
 

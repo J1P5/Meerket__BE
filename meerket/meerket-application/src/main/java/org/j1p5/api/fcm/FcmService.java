@@ -2,7 +2,6 @@ package org.j1p5.api.fcm;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.chat.exception.ChatException;
-import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
@@ -19,7 +18,7 @@ public class FcmService {
     public void sendFcmChatMessage(Long receiverId, Long userId, String content) {
 
         UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new InfraException(ChatException.RECEIVER_NOT_FOUND));
+                .orElseThrow(() -> new InfraException(ChatException.CHAT_RECEIVER_NOT_FOUND));
 
         fcmSender.sendPushChatMessageNotification(receiverId, userEntity.getNickname(), content);
     }

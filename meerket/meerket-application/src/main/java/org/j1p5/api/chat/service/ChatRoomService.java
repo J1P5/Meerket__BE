@@ -106,9 +106,13 @@ public class ChatRoomService {
      */
     public boolean isReceiverInChatRoom(ObjectId roomId, Long receiverId) {
 
-        String userCurrentRoom = redisService.getUserCurrentRoom(receiverId);
+        try {
+            String userCurrentRoom = redisService.getUserCurrentRoom(receiverId);
 
-        return roomId.toString().equals(userCurrentRoom);
+            return roomId.toString().equals(userCurrentRoom);
+        } catch (Exception e) {
+            throw new WebException(CHAT_RECEIVER_FIND_ERROR);
+        }
     }
 
     public List<ChatRoomInfoResponse> getUserChatRooms(Long userId, ChatRoomType type) {
@@ -237,7 +241,7 @@ public class ChatRoomService {
         UserEntity userEntity =
                 userRepository
                         .findById(otherUserId)
-                        .orElseThrow(() -> new WebException(RECEIVER_NOT_FOUND));
+                        .orElseThrow(() -> new WebException(CHAT_RECEIVER_NOT_FOUND));
 
         return new OtherProfile(
                 userEntity.getNickname(), userEntity.getImageUrl(), userEntity.getId());
