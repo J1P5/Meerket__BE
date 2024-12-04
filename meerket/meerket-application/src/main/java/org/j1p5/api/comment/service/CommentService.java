@@ -1,6 +1,7 @@
 package org.j1p5.api.comment.service;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.comment.dto.request.CommentUpdateRequestDto;
 import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.comment.entity.CommentEntity;
 import org.j1p5.domain.comment.repository.CommentRepository;
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.j1p5.api.comment.exception.CommentErrorCode.COMMENT_DEPTH_EXCEEDED;
-import static org.j1p5.api.comment.exception.CommentErrorCode.COMMENT_NOT_FOUND;
+import static org.j1p5.api.comment.exception.CommentErrorCode.*;
+import static org.j1p5.domain.product.exception.ProductException.PRODUCT_HAS_BUYER;
 import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_FOUND;
 
 @Service
@@ -48,9 +49,24 @@ public class CommentService {
         UserEntity user = userReader.getById(userId);
         return user;
     }
+    public CommentEntity getComment(Long commentId){
+        CommentEntity comment = commentRepository.getById(commentId);
+        return comment;
+    }
 
     public List<CommentEntity> getComments(Long productId, Pageable pageable){
         return commentRepository.findParentCommentByProductId(productId,pageable);
+    }
+
+    public void validateCommentUpdate(ProductEntity product, CommentEntity comment, UserEntity user,
+                                      CommentUpdateRequestDto request){
+        if(product.isHasBuyer()){
+            throw new WebException(PRODUCT_HAS_BUYER);
+        }
+        if(!comment.getUser().equals(user)) throw new WebException(COMMENT_NOT_AUTHORIZED);
+
+        comment.update(request.content());
+
     }
 
 
