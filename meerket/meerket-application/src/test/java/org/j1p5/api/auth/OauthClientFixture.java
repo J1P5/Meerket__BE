@@ -1,5 +1,6 @@
-package org.j1p5.domain.auth;
+package org.j1p5.api.auth;
 
+import org.j1p5.domain.auth.OauthClient;
 import org.j1p5.domain.auth.dto.OauthProfile;
 import org.j1p5.domain.auth.dto.OauthToken;
 import org.j1p5.domain.user.entity.Provider;

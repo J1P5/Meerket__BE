@@ -1,10 +1,13 @@
- package org.j1p5.domain.auth;
+ package org.j1p5.api.auth;
 
  import static org.assertj.core.api.Assertions.assertThat;
  import static org.mockito.ArgumentMatchers.anyString;
  import static org.mockito.Mockito.when;
 
  import java.util.List;
+
+ import org.j1p5.api.auth.service.OauthSenderService;
+ import org.j1p5.domain.auth.OauthClient;
  import org.j1p5.domain.auth.dto.OauthProfile;
  import org.j1p5.domain.auth.dto.OauthToken;
  import org.j1p5.domain.user.entity.Provider;
@@ -18,7 +21,7 @@
  @ExtendWith(MockitoExtension.class)
  public class OauthSenderTest {
 
-    private OauthSender oauthSender;
+    private OauthSenderService oauthSender;
 
     @Mock private OauthClient oauthClient;
 
@@ -27,7 +30,7 @@
         when(oauthClient.getProvider()).thenReturn(Provider.KAKAO);
 
         List<OauthClient> clients = List.of(oauthClient);
-        oauthSender = new OauthSender(clients);
+        oauthSender = new OauthSenderService(clients);
     }
 
     @Test
