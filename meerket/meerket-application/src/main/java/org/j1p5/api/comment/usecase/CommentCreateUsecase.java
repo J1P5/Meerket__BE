@@ -3,18 +3,19 @@ package org.j1p5.api.comment.usecase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.comment.dto.request.CommentCreateRequestDto;
+import org.j1p5.api.comment.dto.response.CommentReadResponseDto;
 import org.j1p5.api.comment.service.CommentService;
 import org.j1p5.domain.comment.entity.CommentEntity;
 import org.j1p5.domain.comment.entity.CommentStatus;
 import org.j1p5.domain.comment.repository.CommentRepository;
-import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.service.UserReader;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_FOUND;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
