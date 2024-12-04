@@ -12,6 +12,7 @@ import org.j1p5.api.chat.dto.response.ChatRoomEnterResponse;
 import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
 import org.j1p5.api.chat.service.usecase.*;
+import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.domain.chat.vo.MessageInfo;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -48,10 +49,9 @@ public class ChatController {
     )
     @PostMapping("/{productId}")
     public Response<CreateChatRoomResponse> createChatRoom(
-            @PathVariable Long productId
-//            @LoginUser Long userId
+            @PathVariable Long productId,
+            @LoginUser Long userId
     ) {
-        Long userId = 1L;
 
         CreateChatRoomResponse response = createChatRoomUseCase.execute(userId, productId);
         return Response.onSuccess(response);
@@ -69,10 +69,9 @@ public class ChatController {
     )
     @PostMapping("/enter/{roomId}")
     public Response<ChatRoomEnterResponse> enterChatRoom(
-            @PathVariable String roomId
-//            @LoginUser Long userId
+            @PathVariable String roomId,
+            @LoginUser Long userId
     ){
-        Long userId = 1L;
 
         ChatRoomEnterResponse response = enterChatRoomUseCase.execute(userId, roomId);
         return Response.onSuccess(response);
@@ -90,11 +89,9 @@ public class ChatController {
     )
     @PostMapping("/exit/{roomId}")
     public Response<Void> exitChatRoom(
-            @PathVariable String roomId
-//            @LoginUser Long userId
-
+            @PathVariable String roomId,
+            @LoginUser Long userId
     ) {
-        Long userId = 1L;
 
         exitChatRoomUseCase.execute(userId,roomId);
         return Response.onSuccess();
@@ -115,11 +112,10 @@ public class ChatController {
     @GetMapping("/messages")
     public Response<List<ChatMessageResponse>> getChatMessages(
             @RequestParam String roomId,
-            @RequestParam(required = false) LocalDateTime beforeTime
-//            @LoginUser Long userId
+            @RequestParam(required = false) LocalDateTime beforeTime,
+            @LoginUser Long userId
 
             ) {
-        Long userId = 1L;
 
         List<ChatMessageResponse> response = getChatMessageUseCase.execute(roomId, beforeTime, userId);
         return Response.onSuccess(response);
@@ -139,11 +135,10 @@ public class ChatController {
     )
     @MessageMapping("/message")
     public Response<Void> sendChatMessage(
-            @RequestBody @Validated ChatMessageRequest request
-//            @LoginUser Long userId,
+            @RequestBody @Validated ChatMessageRequest request,
+            @LoginUser Long userId
             ) {
 
-        Long userId = 1L;
         MessageInfo messageInfo = new MessageInfo(userId, request.receiverId(), request.content(), request.roomId());
 
         sendChatMessageUseCase.execute(messageInfo);
@@ -161,11 +156,10 @@ public class ChatController {
     )
     @GetMapping
     public Response<List<ChatRoomInfoResponse>> getUserChatRooms(
-//            @LoginUser Long userId,
+            @LoginUser Long userId,
             @RequestParam ChatRoomType type
     ) {
 
-        Long userId = 1L;
 
         List<ChatRoomInfoResponse> response = userChatRoomsUseCase.execute(userId, type);
         return Response.onSuccess(response);
