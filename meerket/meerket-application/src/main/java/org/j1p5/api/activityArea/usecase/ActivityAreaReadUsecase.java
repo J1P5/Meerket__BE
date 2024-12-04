@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ActivityAreaUsecase {
+public class ActivityAreaReadUsecase {
 
     private final ActivityAreaService activityAreaService;
 

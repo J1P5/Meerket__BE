@@ -15,7 +15,7 @@ public class ActivityArea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "range_level", nullable = false)
+    @Column(name = "range_level")
     private Short rangeLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,4 +25,13 @@ public class ActivityArea {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emd_id")
     private EmdArea emdArea;
+
+    private ActivityArea(UserEntity user, EmdArea emdArea) {
+        this.user = user;
+        this.emdArea = emdArea;
+    }
+
+    public static ActivityArea create(UserEntity user, EmdArea emdArea) {
+        return new ActivityArea(user, emdArea);
+    }
 }
