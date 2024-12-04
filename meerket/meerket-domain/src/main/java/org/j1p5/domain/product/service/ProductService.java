@@ -1,10 +1,13 @@
 package org.j1p5.domain.product.service;
 
+import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
 import static org.j1p5.domain.product.exception.ProductException.*;
 
 import jakarta.transaction.Transactional;
+
 import java.io.File;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.common.dto.Cursor;
@@ -17,6 +20,7 @@ import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.UserEntity;
+import org.j1p5.domain.user.repository.UserRepository;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +36,7 @@ public class ProductService {
     private final ActivityAreaReader activityAreaReader;
     private final ProductRepository productRepository;
     private final UserLocationNameReader userLocationNameReader;
+    private final UserRepository userRepository;
 
     @Transactional
     public void registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
@@ -63,28 +68,16 @@ public class ProductService {
         List<ActivityArea> activityAreas = user.getActivityAreas();
         Point coordinate = activityAreaReader.getActivityArea(activityAreas); // 이상 사용자 활동지역 좌표
 
-        List<ProductEntity> products =
-                productRepository.findProductsByCursor(
-                        coordinate,
-                        cursor.cursor(),
-                        cursor.size()); // 거리별 + 커서별 productEntity list조회
+        List<ProductEntity> products = productRepository.findProductsByCursor(coordinate, cursor.cursor(), cursor.size()); // 거리별 + 커서별 productEntity list조회
 
-        Long nextCursor =
-                products.isEmpty()
-                        ? null
-                        : products.get(products.size() - 1).getId(); // 조회된 마지막 물품의 id값 저장
+        Long nextCursor = products.isEmpty() ? null : products.get(products.size() - 1).getId(); // 조회된 마지막 물품의 id값 저장
 
-        List<ProductResponseInfo> productResponseInfos =
-                products.stream()
-                        .map(
-                                product -> {
-                                    MyLocationInfo myLocationInfo =
-                                            MyLocationInfo.of(
-                                                    userLocationNameReader.getLocationName(
-                                                            activityAreas.get(0)));
-                                    return ProductResponseInfo.from(product, myLocationInfo);
-                                })
-                        .toList(); // 엔티티 Info Dto로 변환
+        List<ProductResponseInfo> productResponseInfos = products.stream()
+                .map(product -> {
+                    MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(activityAreas.get(0)));
+                    return ProductResponseInfo.from(product, myLocationInfo);
+                })
+                .toList(); // 엔티티 Info Dto로 변환
 
         return CursorResult.of(productResponseInfos, nextCursor); // Dto ->CursorResult형으로 변환
     }
@@ -132,5 +125,25 @@ public class ProductService {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
         product.updateStatusToDelete(product);
+    }
+
+    @Transactional
+    public CursorResult<ProductResponseInfo> getProductsByCategory(Long userId, Cursor cursor, String category) {
+        if (category.isEmpty() || category == null) throw new DomainException(INVALID_PRODUCT_CATEGORY);
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
+        Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
+
+        List<ProductEntity> productEntityList = productRepository.findProductByCategory(userCoordinate, category, cursor.cursor(), cursor.size());
+
+        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
+
+        List<ProductResponseInfo> productResponseInfos = productEntityList.stream()
+                .map(product -> {
+                    MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(user.getActivityAreas().get(0)));
+                    return ProductResponseInfo.from(product, myLocationInfo);
+                })
+                .toList();
+        return CursorResult.of(productResponseInfos, nextCursor);
     }
 }
