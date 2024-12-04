@@ -4,6 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+
+import org.j1p5.domain.global.exception.DomainException;
+import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.entity.QProductEntity;
@@ -18,17 +21,33 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     QProductEntity qProduct = QProductEntity.productEntity;
 
+   private static final int MAX_DISTANCE = 100_000;
+
     @Override
     public List<ProductEntity> findProductsByCursor(Point coordinate, Long cursor, Integer size) {
         // QueryDSL을 사용한 커서 기반 조회
         return queryFactory
                 .selectFrom(qProduct)
                 .where(
-                        withinDistance(coordinate, 100_000), // 거리 조건 (100km 이내)
+                        withinDistance(coordinate, MAX_DISTANCE), // 거리 조건 (100km 이내)
                         cursorCondition(cursor), // 커서 조건
                         isNotDeleted())
                 .orderBy(qProduct.id.desc()) // 내림차순 정렬
                 .limit(size) // 페이지 크기 제한
+                .fetch();
+    }
+
+    @Override
+    public List<ProductEntity> findProductByCategory(Point coordinate,String category, Long cursor, Integer size) {
+        return queryFactory.selectFrom(qProduct)
+                .where(
+                        withinDistance(coordinate,MAX_DISTANCE),
+                        cursorCondition(cursor),
+                        isNotDeleted(),
+                        findCategory(category)
+                )
+                .orderBy(qProduct.id.desc())
+                .limit(size)
                 .fetch();
     }
 
@@ -64,5 +83,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     private BooleanExpression isNotDeleted() {
         return qProduct.status.ne(ProductStatus.DELETED);
+    }
+
+    private BooleanExpression findCategory(String category){
+            return QProductEntity.productEntity.category.eq(ProductCategory.valueOf(category));
     }
 }
