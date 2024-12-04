@@ -23,6 +23,10 @@ public class OauthLoginUsecase {
 
         ActivityArea activityArea = activityAreaService.getActivityAreaByUser(user.getId());
 
+        if (activityArea == null) {
+            return UserInfo.of(user, null);
+        }
+
         return UserInfo.of(user, activityArea.getId());
     }
 }
