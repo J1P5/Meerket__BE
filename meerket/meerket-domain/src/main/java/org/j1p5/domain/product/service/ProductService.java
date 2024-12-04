@@ -134,7 +134,7 @@ public class ProductService {
                 .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
         Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
 
-        List<ProductEntity> productEntityList = productRepository.findProductByCategory(userCoordinate, category, cursor.cursor(), cursor.size());
+        List<ProductEntity> productEntityList = productRepository. findProductByCategory(userCoordinate, category, cursor.cursor(), cursor.size());
 
         Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
 
@@ -145,5 +145,19 @@ public class ProductService {
                 })
                 .toList();
         return CursorResult.of(productResponseInfos, nextCursor);
+    }
+
+    @Transactional
+    public CursorResult<MyProductResponseInfo> getMyProducts(Long userId, Cursor cursor){
+        List<ProductEntity> productEntityList = productRepository.findProductByUserId(userId, cursor.cursor(), cursor.size());
+
+        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() -1).getId();
+
+        List<MyProductResponseInfo> myProductResponseInfos = productEntityList.stream()
+                .map(MyProductResponseInfo::from)
+                .toList();
+
+        return CursorResult.of(myProductResponseInfos,nextCursor);
+
     }
 }
