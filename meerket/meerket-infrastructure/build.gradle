@@ -23,6 +23,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.4.1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.16.1'
 
+    // quartz 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
 }
 
 test {
