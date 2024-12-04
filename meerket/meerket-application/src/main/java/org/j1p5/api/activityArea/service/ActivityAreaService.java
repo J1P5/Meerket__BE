@@ -1,6 +1,7 @@
 package org.j1p5.api.activityArea.service;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
 import org.j1p5.domain.activityArea.dto.ActivityAreaFullAddress;
 import org.j1p5.domain.activityArea.repository.ActivityAreaRepository;
@@ -9,7 +10,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +27,14 @@ public class ActivityAreaService {
         return geometryFactory.createPoint(new Coordinate(longitude, latitude));
     }
 
-    public Page<ActivityAreaFullAddress> getAreas(Point coordinate, int page,  int size) {
+    public PageResult<ActivityAreaFullAddress> getAreas(Point coordinate, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<ActivityAreaAddress> activityAreaInfos = activityAreaRepository.getActivityAreas(coordinate, pageRequest);
 
         return convertToAreaName(activityAreaInfos);
     }
 
-    public Page<ActivityAreaFullAddress> convertToAreaName(Page<ActivityAreaAddress> activityAreaInfos) {
+    public PageResult<ActivityAreaFullAddress> convertToAreaName(Page<ActivityAreaAddress> activityAreaInfos) {
         List<ActivityAreaAddress> activityAreaInfoList = activityAreaInfos.getContent();
         List<ActivityAreaFullAddress> activityAreaFullAddressList = new ArrayList<>();
 
@@ -43,6 +43,6 @@ public class ActivityAreaService {
             activityAreaFullAddressList.add(ActivityAreaFullAddress.of(fullAddress, activityAreaInfo.emdId()));
         });
 
-        return new PageImpl<>(activityAreaFullAddressList, activityAreaInfos.getPageable(), activityAreaInfos.getTotalElements());
+        return new PageResult<>(activityAreaFullAddressList, activityAreaInfos.getTotalPages(), activityAreaInfos.hasNext());
     }
 }
