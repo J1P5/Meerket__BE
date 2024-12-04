@@ -3,6 +3,7 @@ package org.j1p5.domain.product.repository.querydsl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import java.util.List;
 
 import org.j1p5.domain.global.exception.DomainException;
@@ -21,7 +22,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     QProductEntity qProduct = QProductEntity.productEntity;
 
-   private static final int MAX_DISTANCE = 100_000;
+    private static final int MAX_DISTANCE = 100_000;
 
     @Override
     public List<ProductEntity> findProductsByCursor(Point coordinate, Long cursor, Integer size) {
@@ -38,13 +39,26 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public List<ProductEntity> findProductByCategory(Point coordinate,String category, Long cursor, Integer size) {
+    public List<ProductEntity> findProductByCategory(Point coordinate, String category, Long cursor, Integer size) {
         return queryFactory.selectFrom(qProduct)
                 .where(
-                        withinDistance(coordinate,MAX_DISTANCE),
+                        withinDistance(coordinate, MAX_DISTANCE),
                         cursorCondition(cursor),
                         isNotDeleted(),
                         findCategory(category)
+                )
+                .orderBy(qProduct.id.desc())
+                .limit(size)
+                .fetch();
+    }
+
+    @Override
+    public List<ProductEntity> findProductByUserId(Long userId, Long cursor, Integer size) {
+
+        return queryFactory.selectFrom(qProduct)
+                .where(qProduct.user.id.eq(userId),
+                        cursorCondition(cursor),
+                        isBidding()
                 )
                 .orderBy(qProduct.id.desc())
                 .limit(size)
@@ -55,7 +69,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
      * 특정 좌표와 반경 내의 상품만 조회하는 조건 생성
      *
      * @param coordinate 기준 좌표
-     * @param distance 반경 (단위: 미터)
+     * @param distance   반경 (단위: 미터)
      * @return BooleanExpression (QueryDSL 조건)
      */
     private BooleanExpression withinDistance(Point coordinate, int distance) {
@@ -85,7 +99,12 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return qProduct.status.ne(ProductStatus.DELETED);
     }
 
-    private BooleanExpression findCategory(String category){
-            return QProductEntity.productEntity.category.eq(ProductCategory.valueOf(category));
+    private BooleanExpression findCategory(String category) {
+        return QProductEntity.productEntity.category.eq(ProductCategory.valueOf(category));
+    }
+
+    private BooleanExpression isBidding() {
+        return qProduct.status.eq(ProductStatus.BIDDING)
+                .or(qProduct.status.eq(ProductStatus.IN_PROGRESS));
     }
 }
