@@ -7,4 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ActivityAreaRepositoryCustom {
     Page<ActivityAreaAddress> getActivityAreas(Point coordinate, Pageable pageable);
+
+    Page<ActivityAreaAddress> getActivityAreasWithKeyword(String keyword, Pageable pageable);
+
 }
