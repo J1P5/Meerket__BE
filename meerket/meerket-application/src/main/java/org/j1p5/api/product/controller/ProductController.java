@@ -108,4 +108,11 @@ public class ProductController {
 
         return Response.onSuccess();
     }
+
+    @GetMapping("/categories")
+    public Response<CursorResult<ProductResponseInfo>> getProductByCategory(@RequestParam(name = "category") String category,
+                                                                            @LoginUser Long userId,@CursorDefault Cursor cursor){
+
+        return Response.onSuccess(productService.getProductsByCategory(userId,cursor,category));
+    }
 }
