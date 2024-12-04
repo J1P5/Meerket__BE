@@ -4,11 +4,15 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.fcm.entity.FcmTokenEntity;
 import org.j1p5.domain.fcm.repository.FcmTokenRepository;
+import org.j1p5.infrastructure.fcm.exception.FcmException;
+import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FcmSenderImpl implements FcmSender {
@@ -22,7 +26,7 @@ public class FcmSenderImpl implements FcmSender {
             FcmTokenEntity fcmTokenEntity =
                     fcmTokenRepository
                             .findByUserId(receiverId)
-                            .orElseThrow(() -> new IllegalArgumentException("상대방이 존재하지 않습니다."));
+                            .orElseThrow(() -> new InfraException(FcmException.RECEIVER_NOT_FOUND));
 
             Notification notification =
                     Notification.builder()
@@ -37,9 +41,8 @@ public class FcmSenderImpl implements FcmSender {
                             .build();
 
             FirebaseMessaging.getInstance().send(message);
-            // TODO 커스텀 예외 처리
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("fcm 채팅 메시지 보내기 실패", e);
         }
     }
 }

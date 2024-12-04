@@ -30,7 +30,7 @@ public class EnterChatRoomUseCase {
         chatRoomService.resetUnreadCount(roomObjectId, userId);
 
         List<ChatMessageResponse> chatMessages = chatMessageService.getChatMessages(
-                roomObjectId, userId, null);
+                roomObjectId, null);
 
         ChatRoomBasicInfo chatRoomBasicInfo = chatRoomService.getChatRoomBasicInfo(roomObjectId, userId);
 

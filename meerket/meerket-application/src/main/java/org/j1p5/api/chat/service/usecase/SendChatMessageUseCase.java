@@ -26,7 +26,7 @@ public class SendChatMessageUseCase {
     // 메시지 보내기
     //@Transactional 추후 적용
     public ChatMessageResponse execute(
-            MessageInfo messageInfo) throws AccessDeniedException {
+            MessageInfo messageInfo) {
         Long userId = messageInfo.getUserId();
         Long receiverId = messageInfo.getReceiverId();
         String roomId = messageInfo.getRoomId();
@@ -44,7 +44,7 @@ public class SendChatMessageUseCase {
                 roomObjectId, content,
                 receiverId, receiverInChatRoom, chatMessageEntity.getCreatedAt());
 
-        chatMessageService.sendWebSocketMessage(roomId, userId, content);
+        chatMessageService.sendWebSocketMessage(chatMessageEntity);
 
         if(receiverInChatRoom) fcmService.sendFcmChatMessage(receiverId,userId,chatMessageEntity.getContent());
 
