@@ -39,7 +39,7 @@ public class ActivityAreaService {
         List<ActivityAreaFullAddress> activityAreaFullAddressList = new ArrayList<>();
 
         activityAreaInfoList.forEach(activityAreaInfo -> {
-            String fullAddress = activityAreaInfo.sido() + " " + activityAreaInfo.sgg() + " " + activityAreaInfo.emd();
+            String fullAddress = activityAreaInfo.sidoName() + " " + activityAreaInfo.sggName() + " " + activityAreaInfo.emdName();
             activityAreaFullAddressList.add(ActivityAreaFullAddress.of(fullAddress, activityAreaInfo.emdId()));
         });
 

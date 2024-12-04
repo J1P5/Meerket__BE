@@ -57,7 +57,7 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
     public Page<ActivityAreaAddress> getActivityAreas(Point coordinate, Pageable pageable) {
         List<ActivityAreaAddress> areaInfos =
                 queryFactory
-                        .select(
+                        .selectDistinct(
                                 Projections.constructor(
                                         ActivityAreaAddress.class,
                                         qEmdArea.id.as("emdId"),
@@ -65,8 +65,8 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
                                         qSggArea.sggName.as("sggName"),
                                         qEmdArea.emdName.as("emdName")))
                         .from(qEmdArea)
-                        .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea)).fetchJoin()
-                        .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea)).fetchJoin()
+                        .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
+                        .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
                         .orderBy(getOrderSpecifiersByDistance(coordinate))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -77,10 +77,10 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
         }
 
         Long totalCount = queryFactory
-                .select(qEmdArea.count())
+                .selectDistinct(qEmdArea.count())
                 .from(qEmdArea)
-                .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea)).fetchJoin()
-                .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea)).fetchJoin()
+                .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
+                .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
                 .fetchOne();
 
         if (totalCount == null) {
