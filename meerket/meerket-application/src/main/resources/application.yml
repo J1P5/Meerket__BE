@@ -9,3 +9,9 @@ spring:
   config:
     activate:
       on-profile: local
+---
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 50MB

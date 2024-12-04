@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+
+import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +20,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.product.service.ImageService;
+import org.j1p5.domain.user.UserImageClient;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,11 +28,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ImageServiceImpl implements ImageService {
+public class ImageServiceImpl implements ImageService, UserImageClient {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucketName}")
+    @Value("${cloud.aws.s3.bucket-name}")
     private String bucketName;
 
     @Override
@@ -100,5 +103,10 @@ public class ImageServiceImpl implements ImageService {
         } catch (MalformedURLException | UnsupportedEncodingException e) {
             throw new InfraException(IO_EXCEPTION_ON_IMAGE_DELETE);
         }
+    }
+
+    @Override
+    public String upload(File imageFile) {
+        return uploadImage(imageFile);
     }
 }

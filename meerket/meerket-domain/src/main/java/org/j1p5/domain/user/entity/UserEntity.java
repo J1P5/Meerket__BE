@@ -50,4 +50,12 @@ public class UserEntity extends BaseEntity {
             String SocialId, String SocialEmail, Provider Provider, Role role) {
         return new UserEntity(SocialId, SocialEmail, Provider, role);
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfile(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
