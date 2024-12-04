@@ -39,7 +39,6 @@ public class ActivityAreaController {
             @LoginUser Long userId,
             @Valid @RequestBody ActivityAreaSettingRequest request
     ) {
-        System.out.println(userId);
         activityAreaSettingUsecase.register(userId, request.emdId());
         return Response.onSuccess();
     }
