@@ -1,4 +1,4 @@
-package org.j1p5.domain.user;
+package org.j1p5.api.user;
 
 import java.lang.reflect.Field;
 import org.j1p5.domain.user.entity.Provider;
