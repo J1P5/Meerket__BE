@@ -7,7 +7,7 @@ import org.j1p5.common.exception.ErrorResponse;
 @Getter
 public enum WebErrorCode implements BaseErrorCode {
     USER_NOT_FOUND(404, "USER404", "해당 유저가 존재하지 않습니다"),
-    NICKNAME_ALREADY_EXIST(400, "USER400", "이미 존재하는 닉네임입니다."),
+    NICKNAME_ALREADY_EXIST(409, "USER409", "이미 존재하는 닉네임입니다."),
     ;
     private final int status;
     private final String errorCode;

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 
+import static org.j1p5.api.global.excpetion.WebErrorCode.NICKNAME_ALREADY_EXIST;
 import static org.j1p5.api.global.excpetion.WebErrorCode.USER_NOT_FOUND;
 
 @Service
@@ -25,16 +26,16 @@ public class UserRegisterService {
         nickNameValidation(nickname);
 
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new NicknameAlreadyExistException(USER_NOT_FOUND));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
         user.updateNickname(nickname);
     }
 
     public void nickNameValidation(String nickname) {
-        boolean isValid = userRepository.existsByNickname(nickname);
+        boolean isExist = userRepository.existsByNickname(nickname);
 
-        if (isValid) {
-            throw new UserNotFoundException(USER_NOT_FOUND);
+        if (isExist) {
+            throw new NicknameAlreadyExistException(NICKNAME_ALREADY_EXIST);
         }
     }
 
