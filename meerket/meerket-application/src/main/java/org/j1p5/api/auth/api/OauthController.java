@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auth.AuthManager;
 import org.j1p5.api.auth.dto.LoginRequest;
+import org.j1p5.api.auth.dto.LoginResponse;
+import org.j1p5.api.auth.dto.SessionInfo;
 import org.j1p5.api.auth.service.OauthLoginUsecase;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.domain.user.UserInfo;
@@ -24,16 +26,16 @@ public class OauthController {
             new HttpSessionSecurityContextRepository();
 
     @PostMapping
-    public Response<Void> login(
+    public Response<LoginResponse> login(
             @RequestBody @Valid LoginRequest loginRequest,
             HttpServletRequest request,
             HttpServletResponse response) {
         UserInfo user = oauthLoginUsecase.login(loginRequest.code(), loginRequest.provider());
 
-        SecurityContext context = authManager.setContext(user);
+        SecurityContext context = authManager.setContext(SessionInfo.of(user.pk(), user.role()));
         securityContextRepository.saveContext(context, request, response);
 
-        return Response.onSuccess();
+        return Response.onSuccess(LoginResponse.from(user));
     }
 
     @PostMapping("/logout")
