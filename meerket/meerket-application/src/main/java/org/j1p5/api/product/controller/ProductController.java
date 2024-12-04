@@ -13,6 +13,7 @@ import org.j1p5.api.product.dto.request.ProductUpdateRequest;
 import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
+import org.j1p5.domain.product.dto.MyProductResponseInfo;
 import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
 import org.j1p5.domain.product.dto.ProductResponseInfo;
@@ -107,5 +108,19 @@ public class ProductController {
         productService.removeProduct(productId, userId);
 
         return Response.onSuccess();
+    }
+
+    @GetMapping("/categories")
+    public Response<CursorResult<ProductResponseInfo>> getProductByCategory(@RequestParam(name = "category") String category,
+                                                                            @LoginUser Long userId,@CursorDefault Cursor cursor){
+
+        return Response.onSuccess(productService.getProductsByCategory(userId,cursor,category));
+    }
+
+    @GetMapping("/my")
+    public Response<CursorResult<MyProductResponseInfo>> getMyProducts(@LoginUser Long userId,
+                                                                       @CursorDefault Cursor cursor
+    ){
+        return Response.onSuccess(productService.getMyProducts(userId,cursor));
     }
 }

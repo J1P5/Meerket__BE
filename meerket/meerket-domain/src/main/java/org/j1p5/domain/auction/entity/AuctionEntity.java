@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.user.entity.UserEntity;
 
@@ -12,7 +13,7 @@ import org.j1p5.domain.user.entity.UserEntity;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class AuctionEntity {
+public class AuctionEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

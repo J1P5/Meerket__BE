@@ -19,8 +19,7 @@ public record ProductResponseInfo(
 
     public static ProductResponseInfo from(ProductEntity product, MyLocationInfo myLocationInfo) {
 
-        ProductResponseInfo productResponseInfos =
-                ProductResponseInfo.builder()
+        ProductResponseInfo productResponseInfos = ProductResponseInfo.builder()
                         .myLocation(myLocationInfo.address()) // 사용자 활동지역
                         .productId(product.getId())
                         .memberId(product.getUser().getId())
@@ -30,12 +29,7 @@ public record ProductResponseInfo(
                         .uploadTime(product.getCreatedAt())
                         .expiredTime(product.getExpiredTime())
                         .isEarly(product.isEarly())
-                        .image(
-                                product.getImageEntityList().isEmpty()
-                                        ? null
-                                        : product.getImageEntityList()
-                                                .get(0)
-                                                .getImageUrl()) // 대표 이미지 한 개
+                        .image(product.getImageEntityList().isEmpty() ? null : product.getImageEntityList().get(0).getImageUrl()) // 대표 이미지 한 개
                         .build();
 
         return productResponseInfos;
