@@ -47,6 +47,13 @@ public class ActivityAreaService {
         return convertToAreaName(activityAreaInfos);
     }
 
+    public PageResult<ActivityAreaFullAddress> getAreasWithKeyword(int page, int size, String search) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<ActivityAreaAddress> activityAreaInfos = activityAreaRepository.getActivityAreasWithKeyword(search, pageRequest);
+
+        return convertToAreaName(activityAreaInfos);
+    }
+
     private PageResult<ActivityAreaFullAddress> convertToAreaName(Page<ActivityAreaAddress> activityAreaInfos) {
         List<ActivityAreaAddress> activityAreaInfoList = activityAreaInfos.getContent();
         List<ActivityAreaFullAddress> activityAreaFullAddressList = new ArrayList<>();

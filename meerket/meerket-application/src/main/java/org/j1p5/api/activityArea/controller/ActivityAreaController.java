@@ -33,6 +33,16 @@ public class ActivityAreaController {
         return Response.onSuccess(activityAreaReadUsecase.getAreas(longitude, latitude, page, size));
     }
 
+    @Operation(summary = "키워드 검색", description = "동네 키워드 검색 API")
+    @GetMapping("/search")
+    public Response<PageResult<ActivityAreaFullAddress>> getAreasWithKeyword(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "keyword") String keyword
+    ) {
+        return Response.onSuccess(activityAreaReadUsecase.getAreasWithKeyword(page, size, keyword));
+    }
+
     @Operation(summary = "동네 설정 등록", description = "동네 설정 등록 API")
     @PostMapping
     public Response<Void> register(
