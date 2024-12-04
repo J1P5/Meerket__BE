@@ -88,4 +88,12 @@ public class ActivityAreaService {
 
         activityAreaRepository.deleteByUserAndEmdArea(user, emdArea);
     }
+
+    public ActivityArea getActivityAreaByUser(Long userId) {
+        UserEntity user = userRepository.findById((userId))
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        List<ActivityArea> activityAreas = activityAreaRepository.findByUser(user);
+        return activityAreas.isEmpty() ? null : activityAreas.get(0);
+    }
 }
