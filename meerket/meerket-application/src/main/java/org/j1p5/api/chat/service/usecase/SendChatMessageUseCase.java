@@ -44,7 +44,7 @@ public class SendChatMessageUseCase {
                 roomObjectId, content,
                 receiverId, receiverInChatRoom, chatMessageEntity.getCreatedAt());
 
-        chatMessageService.sendWebSocketMessage(roomId, userId, content);
+        chatMessageService.sendWebSocketMessage(chatMessageEntity);
 
         if(receiverInChatRoom) fcmService.sendFcmChatMessage(receiverId,userId,chatMessageEntity.getContent());
 

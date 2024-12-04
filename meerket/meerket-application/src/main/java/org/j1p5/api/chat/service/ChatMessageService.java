@@ -65,9 +65,11 @@ public class ChatMessageService {
     }
 
 
-    public void sendWebSocketMessage(String roomId, Long senderId, String content) {
-        ChatSocketMessageResponse response = new ChatSocketMessageResponse(senderId, content);
+    public void sendWebSocketMessage(ChatMessageEntity chatMessageEntity) {
+        ChatSocketMessageResponse response = ChatSocketMessageResponse.fromEntity(chatMessageEntity);
 
-        simpMessagingTemplate.convertAndSend("/sub/chatroom" + roomId, response);
+        simpMessagingTemplate.convertAndSend("/sub/chatroom/" +
+                chatMessageEntity.getRoomId().toString(), response);
+
     }
 }
