@@ -15,13 +15,9 @@ public class CommentUpdateUsecase {
     private final CommentService commentService;
 
     @Transactional
-    public void updateComment(Long productId, Long commentId, Long userId, CommentUpdateRequestDto request) {
-        UserEntity user = commentService.getUser(userId);
-        ProductEntity product = commentService.getProduct(productId);
-        CommentEntity comment = commentService.getComment(commentId);
+    public void updateComment(Long commentId, Long userId, CommentUpdateRequestDto request) {
 
-
-        commentService.validateCommentUpdate(product, comment, user, request);
+        commentService.validateCommentUpdate(commentId, userId, request);
 
     }
 }

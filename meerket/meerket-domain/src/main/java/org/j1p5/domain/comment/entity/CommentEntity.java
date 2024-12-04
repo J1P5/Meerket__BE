@@ -46,7 +46,12 @@ public class CommentEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CommentStatus status;
 
-    public void update(String content){
+    public void updateContent(String content){
         this.content = content;
+        this.status = CommentStatus.UPDATED;
+    }
+
+    public void updateStatusDelete(){
+        this.status = CommentStatus.DELETED;
     }
 }
