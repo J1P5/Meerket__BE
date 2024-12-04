@@ -28,7 +28,7 @@ public class GetChatMessageUseCase {
 
         chatRoomService.verifyAccess(userId, roomObjectId);
 
-        return chatMessageService.getChatMessages(roomObjectId, userId, beforeTime);
+        return chatMessageService.getChatMessages(roomObjectId, beforeTime);
     }
 
 }

@@ -15,7 +15,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.j1p5.api.chat.exception.ChatException.*;
 
@@ -41,7 +43,7 @@ public class ChatMessageService {
     }
 
 
-    public List<ChatMessageResponse> getChatMessages(ObjectId roomObjectId, Long userId, LocalDateTime beforeTime) {
+    public List<ChatMessageResponse> getChatMessages(ObjectId roomObjectId, LocalDateTime beforeTime) {
 
         try {
             Query query = new Query();
@@ -54,9 +56,12 @@ public class ChatMessageService {
             query.with(Sort.by(Sort.Direction.DESC, "createdAt")).limit(CHAT_LIST_LIMIT);
 
             List<ChatMessageEntity> chatMessageEntities = mongoTemplate.find(query, ChatMessageEntity.class);
+
             List<ChatMessageResponse> responses = chatMessageEntities.stream()
                     .map(ChatMessageResponse::fromEntity)
-                    .toList();
+                    .collect(Collectors.toList());
+
+            Collections.reverse(responses);
 
             return responses;
         } catch (Exception e) {
