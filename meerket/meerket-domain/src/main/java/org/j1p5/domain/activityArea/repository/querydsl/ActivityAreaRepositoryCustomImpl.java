@@ -6,7 +6,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
 import org.j1p5.domain.activityArea.entity.QActivityArea;
 import org.j1p5.domain.user.entity.QEmdArea;
@@ -16,6 +15,8 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryCustom {
 

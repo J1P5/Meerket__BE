@@ -7,6 +7,7 @@ import org.j1p5.api.global.response.Response;
 import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
+import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.activityArea.dto.ActivityAreaFullAddress;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public class ActivityAreaController {
     private final ActivityAreaUsecase activityAreaUsecase;
 
     @GetMapping
-    public Response<Page<ActivityAreaFullAddress>> getAreas(
+    public Response<PageResult<ActivityAreaFullAddress>> getAreas(
             @RequestParam("latitude") Double latitude,
             @RequestParam("longitude") Double longitude,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
