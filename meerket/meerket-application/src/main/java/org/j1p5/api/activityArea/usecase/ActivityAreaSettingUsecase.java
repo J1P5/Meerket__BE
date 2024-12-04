@@ -6,11 +6,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ActivityAreaRegisterUsecase {
+public class ActivityAreaSettingUsecase {
 
     private final ActivityAreaService activityAreaService;
 
-    public void execute(Long userId, Integer emdId) {
+    public void register(Long userId, Integer emdId) {
         activityAreaService.register(userId, emdId);
+    }
+
+    public void delete(Long userId, Integer emdId) {
+        activityAreaService.delete(userId, emdId);
     }
 }

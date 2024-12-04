@@ -4,17 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.j1p5.api.activityArea.dto.ActivityAreaRegisterRequest;
-import org.j1p5.api.activityArea.usecase.ActivityAreaRegisterUsecase;
-import org.j1p5.api.activityArea.usecase.ActivityAreaUsecase;
+import org.j1p5.api.activityArea.dto.ActivityAreaSettingRequest;
+import org.j1p5.api.activityArea.usecase.ActivityAreaSettingUsecase;
+import org.j1p5.api.activityArea.usecase.ActivityAreaReadUsecase;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
-import org.j1p5.common.annotation.CursorDefault;
-import org.j1p5.common.dto.Cursor;
-import org.j1p5.common.dto.CursorResult;
 import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.activityArea.dto.ActivityAreaFullAddress;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "activity-areas", description = "활동 지역 관련 API")
@@ -23,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/activity-areas")
 public class ActivityAreaController {
 
-    private final ActivityAreaUsecase activityAreaUsecase;
-    private final ActivityAreaRegisterUsecase activityAreaRegisterUsecase;
+    private final ActivityAreaReadUsecase activityAreaReadUsecase;
+    private final ActivityAreaSettingUsecase activityAreaSettingUsecase;
 
     @Operation(summary = "근처 지역 조회", description = "좌표 근처 읍면동 조회 API")
     @GetMapping
@@ -34,18 +30,27 @@ public class ActivityAreaController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
-        return Response.onSuccess(activityAreaUsecase.getAreas(longitude, latitude, page, size));
+        return Response.onSuccess(activityAreaReadUsecase.getAreas(longitude, latitude, page, size));
     }
 
     @Operation(summary = "동네 설정 등록", description = "동네 설정 등록 API")
     @PostMapping
     public Response<Void> register(
             @LoginUser Long userId,
-            @Valid @RequestBody ActivityAreaRegisterRequest request
+            @Valid @RequestBody ActivityAreaSettingRequest request
     ) {
         System.out.println(userId);
-        activityAreaRegisterUsecase.execute(userId, request.emdId());
+        activityAreaSettingUsecase.register(userId, request.emdId());
         return Response.onSuccess();
     }
 
+    @Operation(summary = "설정 동네 삭제", description = "설정한 동네 삭제 API")
+    @DeleteMapping
+    public Response<Void> delete(
+            @LoginUser Long userId,
+            @Valid @RequestBody ActivityAreaSettingRequest request
+    ) {
+        activityAreaSettingUsecase.delete(userId, request.emdId());
+        return Response.onSuccess();
+    }
 }

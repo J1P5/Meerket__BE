@@ -1,5 +1,6 @@
 package org.j1p5.api.activityArea.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.exception.ActivityAreaAlreadyExistException;
 import org.j1p5.api.user.exception.EmdAreaNotFoundException;
@@ -58,6 +59,7 @@ public class ActivityAreaService {
         return new PageResult<>(activityAreaFullAddressList, activityAreaInfos.getTotalPages(), activityAreaInfos.hasNext());
     }
 
+    @Transactional
     public void register(Long userId, Integer emdId) {
         UserEntity user = userRepository.findById(userId)
                         .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
@@ -75,5 +77,15 @@ public class ActivityAreaService {
         if (isExist) {
             throw new ActivityAreaAlreadyExistException(ACTIVITY_AREA_ALREADY_EXIST);
         }
+    }
+
+    @Transactional
+    public void delete(Long userId, Integer emdId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        EmdArea emdArea = emdAreaRepository.findById(emdId)
+                .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
+
+        activityAreaRepository.deleteByUserAndEmdArea(user, emdArea);
     }
 }
