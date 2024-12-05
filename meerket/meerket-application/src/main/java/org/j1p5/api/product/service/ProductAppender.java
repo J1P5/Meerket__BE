@@ -1,4 +1,4 @@
-package org.j1p5.domain.product.service;
+package org.j1p5.api.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.product.entity.ProductEntity;

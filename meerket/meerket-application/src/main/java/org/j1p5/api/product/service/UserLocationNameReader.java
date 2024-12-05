@@ -1,4 +1,4 @@
-package org.j1p5.domain.product.service;
+package org.j1p5.api.product.service;
 
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.springframework.stereotype.Component;

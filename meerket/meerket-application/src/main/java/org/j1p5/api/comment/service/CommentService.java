@@ -16,8 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static org.j1p5.api.comment.exception.CommentErrorCode.*;
-import static org.j1p5.domain.product.exception.ProductException.PRODUCT_HAS_BUYER;
-import static org.j1p5.domain.product.exception.ProductException.PRODUCT_NOT_FOUND;
+import static org.j1p5.api.product.exception.ProductException.PRODUCT_HAS_BUYER;
+import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
+
 
 @Service
 @RequiredArgsConstructor

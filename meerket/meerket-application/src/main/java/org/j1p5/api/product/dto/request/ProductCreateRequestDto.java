@@ -13,7 +13,7 @@ public record ProductCreateRequestDto(
         int price,
         ProductCategory category,
         Double latitude,
-        Double longtitude,
+        Double longitude,
         String address,
         String location,
         ProductStatus status,
@@ -28,7 +28,7 @@ public record ProductCreateRequestDto(
                 .price(requestDto.price)
                 .category(requestDto.category)
                 .latitude(requestDto.latitude)
-                .longtitude(requestDto.longtitude)
+                .longtitude(requestDto.longitude)
                 .expiredTime(requestDto.expiredTime)
                 .status(requestDto.status)
                 .build();

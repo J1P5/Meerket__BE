@@ -16,7 +16,6 @@ import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
 import org.j1p5.domain.product.entity.ProductEntity;
-import org.j1p5.domain.product.exception.ProductException;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.redis.RedisService;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -29,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import static org.j1p5.api.chat.exception.ChatException.*;
+import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
 
 /**
  * @author yechan
@@ -163,7 +163,7 @@ public class ChatRoomService {
         ProductEntity productEntity =
                 productRepository
                         .findById(productId)
-                        .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
+                        .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
 
         ChatRoomEntity chatRoomEntity =
                 ChatRoomEntity.create(

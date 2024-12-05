@@ -1,10 +1,11 @@
-package org.j1p5.domain.product.service;
+package org.j1p5.api.product.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ActivityAreaReader {

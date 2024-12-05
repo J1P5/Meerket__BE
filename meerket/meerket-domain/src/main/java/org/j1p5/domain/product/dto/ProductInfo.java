@@ -11,6 +11,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 
+//상품 등록 dto
 @Builder
 public record ProductInfo(
         String title,
@@ -22,7 +23,8 @@ public record ProductInfo(
         String address,
         String location,
         ProductStatus status,
-        LocalDateTime expiredTime) {
+        LocalDateTime expiredTime
+) {
 
     public static ProductEntity toEntity(ProductInfo productRequestDto, UserEntity user) {
 
