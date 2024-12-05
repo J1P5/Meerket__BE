@@ -16,7 +16,7 @@ import static org.j1p5.api.global.excpetion.WebErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-public class UserRegisterService {
+public class UserProfileService {
 
     private final UserRepository userRepository;
     private final UserImageClient imageClient;
