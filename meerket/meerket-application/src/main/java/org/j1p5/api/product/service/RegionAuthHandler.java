@@ -1,7 +1,7 @@
 package org.j1p5.api.product.service;
 
 import lombok.RequiredArgsConstructor;
-import org.j1p5.domain.auth.area.repository.AreaAuthRepository;
+import org.j1p5.domain.areaAuth.repository.AreaAuthRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.springframework.stereotype.Component;
 

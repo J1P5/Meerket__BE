@@ -1,4 +1,4 @@
-package org.j1p5.domain.auth.area.entity;
+package org.j1p5.domain.areaAuth.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
