@@ -13,12 +13,14 @@ import org.j1p5.domain.activityArea.entity.QActivityArea;
 import org.j1p5.domain.user.entity.QEmdArea;
 import org.j1p5.domain.user.entity.QSggArea;
 import org.j1p5.domain.user.entity.QSidoArea;
+import org.j1p5.domain.user.entity.QUserEntity;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryCustom {
 
@@ -32,6 +34,7 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
     QEmdArea qEmdArea = QEmdArea.emdArea;
     QSggArea qSggArea = QSggArea.sggArea;
     QSidoArea qSidoArea = QSidoArea.sidoArea;
+    QUserEntity qUserEntity = QUserEntity.userEntity;
 
     /**
      * 커서를 기준으로 특정 상품 ID보다 작은 상품만 조회하는 조건 생성
@@ -62,6 +65,13 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
         );
 
         return makeKeywordCondition(fullAddress, partialAddress, keyword);
+    }
+
+    private BooleanExpression userIdCondition(Long userId) {
+        if (userId == null) {
+            return null; // 커서가 없으면 조건 생략
+        }
+        return qUserEntity.id.eq(userId);
     }
 
     private BooleanBuilder makeKeywordCondition(StringTemplate fullAddress, StringTemplate partialAddress, String keyword) {
@@ -159,5 +169,25 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
         }
 
         return new PageImpl<>(areaInfos, pageable, totalCount);
+    }
+
+    @Override
+    public Optional<ActivityAreaAddress> getActivityAreaByUserId(Long userId) {
+        Optional<ActivityAreaAddress> areaInfos =
+                Optional.ofNullable(queryFactory.selectDistinct(
+                                Projections.constructor(
+                                        ActivityAreaAddress.class,
+                                        qEmdArea.id.as("emdId"),
+                                        qSidoArea.sidoName.as("sidoName"),
+                                        qSggArea.sggName.as("sggName"),
+                                        qEmdArea.emdName.as("emdName")))
+                        .from(qActivityArea)
+                        .join(qEmdArea).on(qEmdArea.eq(qActivityArea.emdArea)).fetchJoin()
+                        .join(qSggArea).on(qSggArea.eq(qEmdArea.sggArea)).fetchJoin()
+                        .join(qSidoArea).on(qSidoArea.eq(qSggArea.sidoArea)).fetchJoin()
+                        .where(userIdCondition(userId))
+                        .fetchOne());
+
+        return areaInfos;
     }
 }
