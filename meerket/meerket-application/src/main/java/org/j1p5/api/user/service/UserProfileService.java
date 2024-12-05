@@ -48,4 +48,9 @@ public class UserProfileService {
 
         user.updateProfile(uploadFileName);
     }
+
+    public UserEntity getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+    }
 }

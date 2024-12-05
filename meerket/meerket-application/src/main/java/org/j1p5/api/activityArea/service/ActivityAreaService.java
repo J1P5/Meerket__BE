@@ -9,6 +9,7 @@ import org.j1p5.api.user.exception.UserNotFoundException;
 import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
 import org.j1p5.domain.activityArea.dto.ActivityAreaFullAddress;
+import org.j1p5.domain.activityArea.dto.SimpleAddress;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.j1p5.domain.activityArea.repository.ActivityAreaRepository;
 import org.j1p5.domain.user.entity.EmdArea;
@@ -104,13 +105,11 @@ public class ActivityAreaService {
         return activityAreas.isEmpty() ? null : activityAreas.get(0);
     }
 
-    public ActivityAreaFullAddress getActivityAreaFullAddressByUser(Long userId) {
+    public SimpleAddress getActivityEmdAreaByUserId(Long userId) {
         userRepository.findById((userId))
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
-        ActivityAreaAddress activityAreaAddress = activityAreaRepository.getActivityAreaByUserId(userId)
+        return activityAreaRepository.getActivityEmdAreaByUserId(userId)
                 .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
-
-        return ActivityAreaFullAddress.of(activityAreaAddress);
     }
 }
