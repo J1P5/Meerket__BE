@@ -12,4 +12,6 @@ public interface ProductRepositoryCustom {
     List<ProductEntity> findProductByCategory(Point coordinate,String category, Long cursor, Integer size);
 
     List<ProductEntity> findProductByUserId(Long userId, Long cursor, Integer size, ProductStatus status);
+
+    List<ProductEntity> findProductByKeyword(Point coordinate, String keyword, Long cursor, Integer size);
 }

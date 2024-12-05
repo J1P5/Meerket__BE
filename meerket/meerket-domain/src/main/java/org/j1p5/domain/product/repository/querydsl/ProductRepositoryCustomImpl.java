@@ -22,7 +22,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     QProductEntity qProduct = QProductEntity.productEntity;
 
-    private static final int MAX_DISTANCE = 100_000;
+    private static final int MAX_DISTANCE = 100_0000000;
 
     @Override
     public List<ProductEntity> findProductsByCursor(Point coordinate, Long cursor, Integer size) {
@@ -59,6 +59,20 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 .where(qProduct.user.id.eq(userId),
                         cursorCondition(cursor),
                         filterByStatus(status)
+                )
+                .orderBy(qProduct.id.desc())
+                .limit(size)
+                .fetch();
+    }
+
+    @Override
+    public List<ProductEntity> findProductByKeyword(Point coordinate, String keyword, Long cursor, Integer size) {
+        return queryFactory.selectFrom(qProduct)
+                .where(
+                        withinDistance(coordinate, MAX_DISTANCE),
+                        cursorCondition(cursor),
+                        isNotDeleted(),
+                        titleContains(keyword)
                 )
                 .orderBy(qProduct.id.desc())
                 .limit(size)
@@ -113,5 +127,12 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return qProduct.status.eq(ProductStatus.DELETED);
         }
         return qProduct.status.ne(ProductStatus.DELETED);
+    }
+
+    private BooleanExpression titleContains(String keyword){
+        if(keyword == null || keyword.trim().isEmpty()){
+            return null;
+        }
+        return qProduct.title.like("%" +keyword + "%");
     }
 }
