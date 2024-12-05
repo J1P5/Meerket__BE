@@ -22,6 +22,8 @@ public class FcmSenderImpl implements FcmSender {
 
     private final FcmTokenRepository fcmTokenRepository;
 
+
+    // 채팅 상대방에게 푸쉬 보내기
     @Override
     public void sendPushChatMessageNotification(
             String roomId, Long receiverId, String senderNickname, String content) {
@@ -53,5 +55,35 @@ public class FcmSenderImpl implements FcmSender {
         } catch (Exception e) {
             log.error("fcm 채팅 메시지 보내기 실패", e);
         }
+    }
+
+
+    // 판매자에게 입찰이 +1이라는 푸쉬알림
+    @Override
+    public void sendPushSellerBidNotification(Long productId, Long userId, String title, String content) {
+        try {
+            FcmTokenEntity fcmTokenEntity = fcmTokenRepository.findByUserId(userId)
+                    .orElseThrow(() -> new InfraException(FcmException.AUCTION_SELLER_FCM_TOKEN_NOT_FOUND));
+
+            Notification notification =
+                    Notification.builder()
+                            .setTitle(title + " " + content)
+                            .build();
+
+            Map<String, String> data = new HashMap<>();
+            data.put("productId", productId.toString());
+
+            Message message =
+                    Message.builder()
+                            .setToken(fcmTokenEntity.getToken())
+                            .setNotification(notification)
+                            .putAllData(data)
+                            .build();
+
+            FirebaseMessaging.getInstance().send(message);
+        } catch (Exception e) {
+            log.error("fcm 판매자에게 메시지 보내기 실패", e);
+        }
+
     }
 }
