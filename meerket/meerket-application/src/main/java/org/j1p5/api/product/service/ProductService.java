@@ -1,15 +1,11 @@
-package org.j1p5.domain.product.service;
-
-import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
-import static org.j1p5.domain.product.exception.ProductException.*;
+package org.j1p5.api.product.service;
 
 import jakarta.transaction.Transactional;
-
-import java.io.File;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.j1p5.api.product.converter.PointConverter;
+import org.j1p5.api.product.dto.response.CreateProductResponseDto;
+import org.j1p5.api.product.dto.response.MyProductResponseDto;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
@@ -19,10 +15,18 @@ import org.j1p5.domain.product.dto.*;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.repository.ProductRepository;
+import org.j1p5.domain.product.service.ImageService;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.List;
+
+import static org.j1p5.api.product.exception.ProductException.*;
+import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +43,7 @@ public class ProductService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
+    public CreateProductResponseDto registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
         // multipart 자료형은 web에서 처리하고 file만 내려줘라
 
         UserEntity user = userReader.getUser(userId); // user객체 가져오는 실제 구현부는 UserReader임
@@ -56,8 +60,11 @@ public class ProductService {
             ImageEntity image = ImageEntity.from(url); // 이미지 엔티티에 저장
             product.addImage(image); // 관계 설정
         }
+        product.createThumbnail(imageUrls.get(0));
 
         productAppender.saveProduct(product); // 이떄 연관된 ImageEntity도 같이 저장
+
+        return CreateProductResponseDto.from(product);
     }
 
     @Transactional
@@ -99,17 +106,17 @@ public class ProductService {
     @Transactional
     public void updateProduct(Long productId, Long userId, ProductUpdateInfo info) {
         UserEntity user = userReader.getUser(userId);
-        ProductEntity product =
-                productRepository
-                        .findById(productId)
-                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
 
         if (!(product.getUser().equals(user))) {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
 
+        Point coordinate = PointConverter.createPoint(info.longtitude(), info.latitude());
+
         if (!product.isHasBuyer()) {
-            product.updateProduct(info);
+            product.updateProduct(info, coordinate);
         } else throw new DomainException(PRODUCT_HAS_BUYER);
     }
 
@@ -134,7 +141,7 @@ public class ProductService {
                 .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
         Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
 
-        List<ProductEntity> productEntityList = productRepository. findProductByCategory(userCoordinate, category, cursor.cursor(), cursor.size());
+        List<ProductEntity> productEntityList = productRepository.findProductByCategory(userCoordinate, category, cursor.cursor(), cursor.size());
 
         Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
 
@@ -148,16 +155,16 @@ public class ProductService {
     }
 
     @Transactional
-    public CursorResult<MyProductResponseInfo> getMyProducts(Long userId, Cursor cursor){
-        List<ProductEntity> productEntityList = productRepository.findProductByUserId(userId, cursor.cursor(), cursor.size());
+    public CursorResult<MyProductResponseDto> getMyProducts(Long userId, Cursor cursor,ProductStatus status) {
+        List<ProductEntity> productEntityList = productRepository.findProductByUserId(userId, cursor.cursor(), cursor.size(), status);
 
-        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() -1).getId();
+        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
 
-        List<MyProductResponseInfo> myProductResponseInfos = productEntityList.stream()
-                .map(MyProductResponseInfo::from)
+        List<MyProductResponseDto> myProductResponseDtos = productEntityList.stream()
+                .map(MyProductResponseDto::from)
                 .toList();
 
-        return CursorResult.of(myProductResponseInfos,nextCursor);
+        return CursorResult.of(myProductResponseDtos, nextCursor);
 
     }
 }
