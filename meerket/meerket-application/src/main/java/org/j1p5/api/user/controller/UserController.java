@@ -25,7 +25,7 @@ public class UserController {
     private final UserProfileSettingUsecase userProfileSettingUsecase;
 
     @PostMapping("/profile")
-    @Operation(summary = "유저 프로필 업데이트", description = "유저 이름, 유저 프로필 이미지 업데이트 API")
+    @Operation(summary = "유저 프로필 업데이트", description = "로그인 후 등록, 마이페이지 수정 시 유저 프로필 업데이트 API")
     @ApiResponses(
             value = {@ApiResponse(responseCode = "200", description = "프로필 설정 성공"),
                     @ApiResponse(responseCode = "400", description = "1. 닉네임 중복 \t\n 2. 15자 이상 입력 \t\n "
