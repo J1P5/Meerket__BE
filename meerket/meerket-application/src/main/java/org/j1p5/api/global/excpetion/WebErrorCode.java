@@ -12,6 +12,7 @@ public enum WebErrorCode implements BaseErrorCode {
     EMD_AREA_NOT_FOUND(404, "EMD404", ""),
 
     ACTIVITY_AREA_ALREADY_EXIST(409, "ACTIVITY_AREA409", "등록한 동네가 이미 존재합니다."),
+    ACTIVITY_AREA_NOT_FOUND(404, "ACTIVITY_AREA404", "활동지역 동네가 없습니다."),
     ;
     private final int status;
     private final String errorCode;
