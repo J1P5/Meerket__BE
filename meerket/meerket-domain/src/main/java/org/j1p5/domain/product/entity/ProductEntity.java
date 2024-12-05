@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 import org.j1p5.domain.global.entity.BaseEntity;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.ProductUpdateInfo;
-import org.j1p5.domain.product.service.PointConverter;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.locationtech.jts.geom.Point;
 
@@ -85,10 +84,7 @@ public class ProductEntity extends BaseEntity {
         imageEntityList.remove(image);
     }
 
-    public void updateProduct(ProductUpdateInfo productUpdateInfo) {
-        Point coordinate =
-                PointConverter.createPoint(
-                        productUpdateInfo.longtitude(), productUpdateInfo.latitude());
+    public void updateProduct(ProductUpdateInfo productUpdateInfo, Point coordinate) {
 
         if (productUpdateInfo.title() != null) {
             this.title = productUpdateInfo.title();
@@ -105,6 +101,9 @@ public class ProductEntity extends BaseEntity {
         if (coordinate != null) {
             this.coordinate = coordinate;
         }
+        if(address != null){
+            this.address =address;
+        }
         if (productUpdateInfo.content() != null) {
             this.content = productUpdateInfo.content();
         }
@@ -112,5 +111,9 @@ public class ProductEntity extends BaseEntity {
 
     public void updateStatusToDelete(ProductEntity product) {
         this.status = ProductStatus.DELETED;
+    }
+
+    public void createThumbnail(String thumbnail){
+        this.thumbnail = thumbnail;
     }
 }
