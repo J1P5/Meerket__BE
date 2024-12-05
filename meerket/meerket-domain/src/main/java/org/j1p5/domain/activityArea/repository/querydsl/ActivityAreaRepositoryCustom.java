@@ -13,6 +13,6 @@ public interface ActivityAreaRepositoryCustom {
 
     Page<ActivityAreaAddress> getActivityAreasWithKeyword(String keyword, Pageable pageable);
 
-    Optional<SimpleAddress> getActivityAreaByUserId(Long userId);
+    Optional<SimpleAddress> getActivityEmdAreaByUserId(Long userId);
 
 }

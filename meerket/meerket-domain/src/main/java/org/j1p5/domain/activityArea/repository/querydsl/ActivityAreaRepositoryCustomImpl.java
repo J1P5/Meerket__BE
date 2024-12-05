@@ -173,7 +173,7 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
     }
 
     @Override
-    public Optional<SimpleAddress> getActivityAreaByUserId(Long userId) {
+    public Optional<SimpleAddress> getActivityEmdAreaByUserId(Long userId) {
         Optional<SimpleAddress> areaInfos =
                 Optional.ofNullable(queryFactory.selectDistinct(
                                 Projections.constructor(
