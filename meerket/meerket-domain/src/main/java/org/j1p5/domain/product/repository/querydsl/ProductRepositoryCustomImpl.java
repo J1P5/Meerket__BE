@@ -53,12 +53,12 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public List<ProductEntity> findProductByUserId(Long userId, Long cursor, Integer size) {
+    public List<ProductEntity> findProductByUserId(Long userId, Long cursor, Integer size, ProductStatus status) {
 
         return queryFactory.selectFrom(qProduct)
                 .where(qProduct.user.id.eq(userId),
                         cursorCondition(cursor),
-                        isBidding()
+                        filterByStatus(status)
                 )
                 .orderBy(qProduct.id.desc())
                 .limit(size)
@@ -103,8 +103,15 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return QProductEntity.productEntity.category.eq(ProductCategory.valueOf(category));
     }
 
-    private BooleanExpression isBidding() {
-        return qProduct.status.eq(ProductStatus.BIDDING)
-                .or(qProduct.status.eq(ProductStatus.IN_PROGRESS));
+    private BooleanExpression filterByStatus(ProductStatus status) {
+        if (status == ProductStatus.BIDDING || status == ProductStatus.IN_PROGRESS) {
+            return qProduct.status.eq(ProductStatus.BIDDING)
+                    .or(qProduct.status.eq(ProductStatus.IN_PROGRESS));
+        } else if (status == ProductStatus.COMPLETED) {//WHERE user_id = <userId> AND status = 'COMPLETED'
+            return qProduct.status.eq(ProductStatus.COMPLETED);
+        } else if (status == ProductStatus.DELETED) {
+            return qProduct.status.eq(ProductStatus.DELETED);
+        }
+        return qProduct.status.ne(ProductStatus.DELETED);
     }
 }

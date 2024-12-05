@@ -29,7 +29,7 @@ public record ProductResponseInfo(
                         .uploadTime(product.getCreatedAt())
                         .expiredTime(product.getExpiredTime())
                         .isEarly(product.isEarly())
-                        .image(product.getImageEntityList().isEmpty() ? null : product.getImageEntityList().get(0).getImageUrl()) // 대표 이미지 한 개
+                        .image(product.getThumbnail()) // 대표 이미지 한 개
                         .build();
 
         return productResponseInfos;

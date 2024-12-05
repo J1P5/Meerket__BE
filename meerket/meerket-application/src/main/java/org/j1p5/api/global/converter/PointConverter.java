@@ -1,4 +1,4 @@
-package org.j1p5.domain.product.service;
+package org.j1p5.api.global.converter;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

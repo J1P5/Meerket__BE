@@ -1,11 +1,12 @@
-package org.j1p5.domain.product.service;
-
-import static org.j1p5.domain.product.exception.ProductException.REGION_AUTH_NOT_FOUND;
+package org.j1p5.api.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.auth.area.repository.AreaAuthRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.springframework.stereotype.Component;
+
+import static org.j1p5.api.product.exception.ProductException.REGION_AUTH_NOT_FOUND;
+
 
 @Component
 @RequiredArgsConstructor

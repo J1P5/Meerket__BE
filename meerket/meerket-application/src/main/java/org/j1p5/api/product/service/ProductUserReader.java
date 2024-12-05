@@ -1,12 +1,12 @@
-package org.j1p5.domain.product.service;
-
-import static org.j1p5.common.exception.GlobalErrorCode.USER_NOT_FOUND;
+package org.j1p5.api.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.common.exception.CustomException;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Component;
+
+import static org.j1p5.common.exception.GlobalErrorCode.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Component

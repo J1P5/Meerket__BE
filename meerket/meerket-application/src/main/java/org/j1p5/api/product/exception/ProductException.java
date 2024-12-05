@@ -1,4 +1,4 @@
-package org.j1p5.domain.product.exception;
+package org.j1p5.api.product.exception;
 
 import org.j1p5.common.exception.BaseErrorCode;
 import org.j1p5.common.exception.ErrorResponse;

@@ -12,7 +12,10 @@ public record ProductUpdateRequest(
         LocalDateTime expiredTime,
         Double latitude,
         Double longtitude,
-        String location) {
+        String address,
+        String location
+)
+{
 
     public static ProductUpdateInfo toInfo(ProductUpdateRequest request) {
         return new ProductUpdateInfo(
@@ -23,6 +26,8 @@ public record ProductUpdateRequest(
                 request.expiredTime,
                 request.latitude,
                 request.longtitude,
-                request.location);
+                request.address,
+                request.location
+        );
     }
 }

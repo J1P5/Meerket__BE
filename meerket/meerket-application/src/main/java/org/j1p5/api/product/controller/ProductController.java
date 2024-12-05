@@ -1,8 +1,5 @@
 package org.j1p5.api.product.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.global.annotation.LoginUser;
@@ -10,19 +7,25 @@ import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
 import org.j1p5.api.product.dto.request.ProductCreateRequestDto;
 import org.j1p5.api.product.dto.request.ProductUpdateRequest;
+import org.j1p5.api.product.dto.response.CreateProductResponseDto;
+import org.j1p5.api.product.dto.response.MyProductResponseDto;
+import org.j1p5.api.product.service.ProductService;
 import org.j1p5.common.annotation.CursorDefault;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
-import org.j1p5.domain.product.dto.MyProductResponseInfo;
 import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.dto.ProductResponseDetailInfo;
 import org.j1p5.domain.product.dto.ProductResponseInfo;
-import org.j1p5.domain.product.service.ProductService;
+import org.j1p5.domain.product.entity.ProductStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -42,7 +45,7 @@ public class ProductController {
      * @author sunghyun0610
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Response<Void> makeProduct(
+    public Response<CreateProductResponseDto> createProduct(
             @RequestPart(name = "request") ProductCreateRequestDto request,
             @RequestPart(name = "images", required = false) List<MultipartFile> images,
             @LoginUser Long userId) {
@@ -56,9 +59,9 @@ public class ProductController {
             imageFiles = MultipartFileConverter.convertMultipartFilesToFiles(images);
         }
 
-        productService.registerProduct(userId, productInfo, imageFiles);
+        CreateProductResponseDto responseDto = productService.registerProduct(userId, productInfo, imageFiles);
 
-        return Response.onSuccess();
+        return Response.onSuccess(responseDto);
     }
 
     /**
@@ -118,9 +121,10 @@ public class ProductController {
     }
 
     @GetMapping("/my")
-    public Response<CursorResult<MyProductResponseInfo>> getMyProducts(@LoginUser Long userId,
-                                                                       @CursorDefault Cursor cursor
-    ){
-        return Response.onSuccess(productService.getMyProducts(userId,cursor));
+    public Response<CursorResult<MyProductResponseDto>> getMyProducts(@LoginUser Long userId,
+                                                                      @CursorDefault Cursor cursor,
+                                                                      @RequestParam(name = "status")ProductStatus status
+                                                                      ){
+        return Response.onSuccess(productService.getMyProducts(userId,cursor,status));
     }
 }
