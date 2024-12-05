@@ -1,6 +1,7 @@
 package org.j1p5.api.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.auth.dto.SessionInfo;
 import org.j1p5.api.auth.util.AuthorityUtil;
 import org.j1p5.domain.user.UserInfo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,10 +16,10 @@ public class AuthManager {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public SecurityContext setContext(UserInfo user) {
+    public SecurityContext setContext(SessionInfo sessionInfo) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                        user.pk(), null, AuthorityUtil.convertToAuthorities(user.role()));
+                        sessionInfo.pk(), null, AuthorityUtil.convertToAuthorities(sessionInfo.role()));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         return SecurityContextHolder.getContext();
