@@ -167,4 +167,23 @@ public class ProductService {
         return CursorResult.of(myProductResponseDtos, nextCursor);
 
     }
+
+    @Transactional
+    public CursorResult<ProductResponseInfo> getProductByKeyword(String keyword, Long userId, Cursor cursor){
+        if(keyword .isEmpty() || keyword == null) throw new DomainException(INVALID_PRODUCT_KEYWORD);
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
+        Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
+
+        List<ProductEntity> productEntityList = productRepository.findProductByKeyword(userCoordinate,keyword, cursor.cursor(), cursor.size());
+        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
+
+        List<ProductResponseInfo> productResponseInfos = productEntityList.stream()
+                .map(product -> {
+                    MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(user.getActivityAreas().get(0)));
+                    return ProductResponseInfo.from(product,myLocationInfo);
+                })
+                .toList();
+        return CursorResult.of(productResponseInfos,nextCursor);
+    }
 }
