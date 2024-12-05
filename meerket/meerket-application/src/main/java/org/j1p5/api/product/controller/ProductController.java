@@ -127,4 +127,13 @@ public class ProductController {
                                                                       ){
         return Response.onSuccess(productService.getMyProducts(userId,cursor,status));
     }
+
+    @GetMapping("/keywords")
+    private Response<CursorResult<ProductResponseInfo>> getProductByKeyword(@RequestParam(name = "keyword") String keyword,
+                                                                            @LoginUser Long userId,
+                                                                            @CursorDefault Cursor cursor){
+
+        return Response.onSuccess(productService.getProductByKeyword(keyword, userId, cursor));
+
+    }
 }

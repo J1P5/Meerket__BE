@@ -65,6 +65,20 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<ProductEntity> findProductByKeyword(Point coordinate, String keyword, Long cursor, Integer size) {
+        return queryFactory.selectFrom(qProduct)
+                .where(
+                        withinDistance(coordinate, MAX_DISTANCE),
+                        cursorCondition(cursor),
+                        isNotDeleted(),
+                        titleContains(keyword)
+                )
+                .orderBy(qProduct.id.desc())
+                .limit(size)
+                .fetch();
+    }
+
     /**
      * 특정 좌표와 반경 내의 상품만 조회하는 조건 생성
      *
@@ -113,5 +127,12 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return qProduct.status.eq(ProductStatus.DELETED);
         }
         return qProduct.status.ne(ProductStatus.DELETED);
+    }
+
+    private BooleanExpression titleContains(String keyword){
+        if(keyword == null || keyword.trim().isEmpty()){
+            return null;
+        }
+        return qProduct.title.like("%" +keyword + "%");
     }
 }
