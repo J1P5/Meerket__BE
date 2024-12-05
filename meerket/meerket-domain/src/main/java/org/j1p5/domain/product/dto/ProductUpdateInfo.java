@@ -13,4 +13,6 @@ public record ProductUpdateInfo(
         LocalDateTime expiredTime,
         Double latitude,
         Double longtitude,
-        String location) {}
+        String address,
+        String location
+) {}
