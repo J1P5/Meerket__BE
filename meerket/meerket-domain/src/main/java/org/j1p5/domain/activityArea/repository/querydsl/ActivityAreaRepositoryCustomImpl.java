@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
+import org.j1p5.domain.activityArea.dto.SimpleAddress;
 import org.j1p5.domain.activityArea.entity.QActivityArea;
 import org.j1p5.domain.user.entity.QEmdArea;
 import org.j1p5.domain.user.entity.QSggArea;
@@ -172,19 +173,15 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
     }
 
     @Override
-    public Optional<ActivityAreaAddress> getActivityAreaByUserId(Long userId) {
-        Optional<ActivityAreaAddress> areaInfos =
+    public Optional<SimpleAddress> getActivityAreaByUserId(Long userId) {
+        Optional<SimpleAddress> areaInfos =
                 Optional.ofNullable(queryFactory.selectDistinct(
                                 Projections.constructor(
-                                        ActivityAreaAddress.class,
+                                        SimpleAddress.class,
                                         qEmdArea.id.as("emdId"),
-                                        qSidoArea.sidoName.as("sidoName"),
-                                        qSggArea.sggName.as("sggName"),
                                         qEmdArea.emdName.as("emdName")))
                         .from(qActivityArea)
                         .join(qEmdArea).on(qEmdArea.eq(qActivityArea.emdArea)).fetchJoin()
-                        .join(qSggArea).on(qSggArea.eq(qEmdArea.sggArea)).fetchJoin()
-                        .join(qSidoArea).on(qSidoArea.eq(qSggArea.sidoArea)).fetchJoin()
                         .where(userIdCondition(userId))
                         .fetchOne());
 
