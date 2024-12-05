@@ -27,23 +27,17 @@ public class UserController {
     @PostMapping("/profile")
     @Operation(summary = "유저 프로필 등록", description = "로그인 후 추가 프로필 등록 API")
     @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "프로필 설정 성공"),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description =
-                                    "1. 닉네임 중복 \t\n 2. 15자 이상 입력 \t\n "
+            value = {@ApiResponse(responseCode = "200", description = "프로필 설정 성공"),
+                    @ApiResponse(responseCode = "400", description = "1. 닉네임 중복 \t\n 2. 15자 이상 입력 \t\n "
                                             + "3. null값  \t\n 4. 파일 확장자가 없습니다. \\t\\n" +
                                             "5. 유효한 파일 확장자가 아닙니다. \\t\\n\" + 6. 빈 파일입니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "1. 파일 업로드 중 오류가 발생했습니다. \t\n" +
+                    @ApiResponse(responseCode = "500", description = "1. 파일 업로드 중 오류가 발생했습니다. \t\n" +
                                     "2. 이미지 업로드 중 IO 예외가 발생했습니다",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
                     )
             })
-    public Response<Void> registerNickname(
+    public Response<Void> registerProfile(
             @LoginUser Long userId,
             @Valid @RequestPart(name = "request") NameRegisterRequest request,
             @RequestPart(name = "image", required = false) MultipartFile imageFile
