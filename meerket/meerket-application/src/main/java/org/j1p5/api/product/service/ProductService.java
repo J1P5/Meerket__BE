@@ -3,7 +3,7 @@ package org.j1p5.api.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.j1p5.api.product.converter.PointConverter;
+import org.j1p5.api.global.converter.PointConverter;
 import org.j1p5.api.product.dto.response.CreateProductResponseDto;
 import org.j1p5.api.product.dto.response.MyProductResponseDto;
 import org.j1p5.common.dto.Cursor;
