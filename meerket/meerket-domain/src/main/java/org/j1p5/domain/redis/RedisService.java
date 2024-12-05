@@ -8,7 +8,7 @@ public interface RedisService {
      * @param userId
      * @param roomId
      */
-    void saveUserRoomMapping(Long userId, String roomId);
+    void saveUserRoomMapping(String userId, String roomId);
 
     /**
      * 특정 사용자가 연결된 채팅방을 조회합니다.
@@ -16,13 +16,13 @@ public interface RedisService {
      * @param userId
      * @return
      */
-    String getUserCurrentRoom(Long userId);
+    String getUserCurrentRoom(String userId);
 
     /**
      * 특정 사용자와 채팅방 간의 매핑을 제거합니다.
      *
      * @param userId
      */
-    void removeUserRoomMapping(Long userId);
+    void removeUserRoomMapping(String userId);
 
 }

@@ -18,11 +18,11 @@ public class FcmService {
     private final UserRepository userRepository;
     private final FcmTokenRepository fcmTokenRepository;
 
-    public void sendFcmChatMessage(Long receiverId, Long userId, String content) {
+    public void sendFcmChatMessage(String roomId, Long receiverId, Long userId, String content) {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new InfraException(ChatException.CHAT_RECEIVER_NOT_FOUND));
 
-        fcmSender.sendPushChatMessageNotification(receiverId, userEntity.getNickname(), content);
+        fcmSender.sendPushChatMessageNotification(roomId,receiverId, userEntity.getNickname(), content);
     }
 
 

@@ -38,7 +38,7 @@ public class SendChatMessageUseCase {
 
         ChatMessageEntity chatMessageEntity = chatMessageService.saveMessage(roomObjectId, userId, content);
 
-        boolean receiverInChatRoom = chatRoomService.isReceiverInChatRoom(roomObjectId, receiverId);
+        boolean receiverInChatRoom = chatRoomService.isReceiverInChatRoom(roomObjectId, receiverId.toString());
 
         chatRoomService.updateChatRoomInfo(
                 roomObjectId, content,
@@ -46,7 +46,7 @@ public class SendChatMessageUseCase {
 
         chatMessageService.sendWebSocketMessage(chatMessageEntity);
 
-        if(receiverInChatRoom) fcmService.sendFcmChatMessage(receiverId,userId,chatMessageEntity.getContent());
+        if(receiverInChatRoom) fcmService.sendFcmChatMessage(roomId,receiverId,userId,chatMessageEntity.getContent());
 
         return ChatMessageResponse.fromEntity(chatMessageEntity);
     }

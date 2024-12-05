@@ -17,19 +17,19 @@ public class RedisServiceImpl implements RedisService {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void saveUserRoomMapping(Long userId, String roomId) {
+    public void saveUserRoomMapping(String userId, String roomId) {
         String redisKey = "user:" + userId;
         redisTemplate.opsForValue().set(redisKey, roomId);
     }
 
     @Override
-    public String getUserCurrentRoom(Long userId) {
+    public String getUserCurrentRoom(String userId) {
         String redisKey = "user:" + userId;
         return redisTemplate.opsForValue().get(redisKey);
     }
 
     @Override
-    public void removeUserRoomMapping(Long userId) {
+    public void removeUserRoomMapping(String userId) {
         String redisKey = "user:" + userId;
         redisTemplate.delete(redisKey);
     }

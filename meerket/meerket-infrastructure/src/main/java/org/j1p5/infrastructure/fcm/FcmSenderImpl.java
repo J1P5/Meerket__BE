@@ -12,6 +12,9 @@ import org.j1p5.infrastructure.fcm.exception.FcmException;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class FcmSenderImpl implements FcmSender {
 
     @Override
     public void sendPushChatMessageNotification(
-            Long receiverId, String senderNickname, String content) {
+            String roomId, Long receiverId, String senderNickname, String content) {
         try {
             FcmTokenEntity fcmTokenEntity =
                     fcmTokenRepository
@@ -34,10 +37,16 @@ public class FcmSenderImpl implements FcmSender {
                             .setBody(content)
                             .build();
 
+            Map<String, String> data = new HashMap<>();
+            data.put("roomId", roomId);
+            data.put("userId", receiverId.toString());
+
+
             Message message =
                     Message.builder()
                             .setToken(fcmTokenEntity.getToken())
                             .setNotification(notification)
+                            .putAllData(data)
                             .build();
 
             FirebaseMessaging.getInstance().send(message);
