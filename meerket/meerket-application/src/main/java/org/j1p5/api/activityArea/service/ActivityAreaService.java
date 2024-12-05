@@ -3,11 +3,13 @@ package org.j1p5.api.activityArea.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.exception.ActivityAreaAlreadyExistException;
+import org.j1p5.api.activityArea.exception.ActivityAreaNotFoundException;
 import org.j1p5.api.user.exception.EmdAreaNotFoundException;
 import org.j1p5.api.user.exception.UserNotFoundException;
 import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
 import org.j1p5.domain.activityArea.dto.ActivityAreaFullAddress;
+import org.j1p5.domain.activityArea.dto.SimpleAddress;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.j1p5.domain.activityArea.repository.ActivityAreaRepository;
 import org.j1p5.domain.user.entity.EmdArea;
@@ -59,8 +61,7 @@ public class ActivityAreaService {
         List<ActivityAreaFullAddress> activityAreaFullAddressList = new ArrayList<>();
 
         activityAreaInfoList.forEach(activityAreaInfo -> {
-            String fullAddress = activityAreaInfo.sidoName() + " " + activityAreaInfo.sggName() + " " + activityAreaInfo.emdName();
-            activityAreaFullAddressList.add(ActivityAreaFullAddress.of(fullAddress, activityAreaInfo.emdId()));
+            activityAreaFullAddressList.add(ActivityAreaFullAddress.of(activityAreaInfo));
         });
 
         return new PageResult<>(activityAreaFullAddressList, activityAreaInfos.getTotalPages(), activityAreaInfos.hasNext());
@@ -102,5 +103,13 @@ public class ActivityAreaService {
 
         List<ActivityArea> activityAreas = activityAreaRepository.findByUser(user);
         return activityAreas.isEmpty() ? null : activityAreas.get(0);
+    }
+
+    public SimpleAddress getActivityEmdAreaByUserId(Long userId) {
+        userRepository.findById((userId))
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        return activityAreaRepository.getActivityEmdAreaByUserId(userId)
+                .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
     }
 }
