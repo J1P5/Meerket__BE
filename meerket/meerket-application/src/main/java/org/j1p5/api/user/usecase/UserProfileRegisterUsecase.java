@@ -8,11 +8,12 @@ import java.io.File;
 
 @Service
 @RequiredArgsConstructor
-public class UserImageRegisterUsecase {
+public class UserProfileRegisterUsecase {
 
     private final UserRegisterService userRegisterService;
 
-    public void execute(Long userId, File imageFile) {
-        userRegisterService.updateProfile(userId, imageFile);
+    public void execute(Long userId, String nickname, File file) {
+        userRegisterService.updateNickname(userId, nickname);
+        userRegisterService.updateProfile(userId, file);
     }
 }
