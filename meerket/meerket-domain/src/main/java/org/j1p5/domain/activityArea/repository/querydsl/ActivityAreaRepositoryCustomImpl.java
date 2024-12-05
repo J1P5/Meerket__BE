@@ -1,10 +1,12 @@
 package org.j1p5.domain.activityArea.repository.querydsl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
 import org.j1p5.domain.activityArea.entity.QActivityArea;
@@ -42,6 +44,36 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
             return null; // 커서가 없으면 조건 생략
         }
         return qEmdArea.id.lt(cursor);
+    }
+
+    private BooleanBuilder keywordCondition(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return null;
+        }
+
+        StringTemplate fullAddress = Expressions.stringTemplate(
+                "CONCAT({0}, ' ', {1}, ' ', {2})",
+                qSidoArea.sidoName, qSggArea.sggName, qEmdArea.emdName
+        );
+
+        StringTemplate partialAddress = Expressions.stringTemplate(
+                "CONCAT({0}, ' ', {1})",
+                qSggArea.sggName, qEmdArea.emdName
+        );
+
+        return makeKeywordCondition(fullAddress, partialAddress, keyword);
+    }
+
+    private BooleanBuilder makeKeywordCondition(StringTemplate fullAddress, StringTemplate partialAddress, String keyword) {
+        BooleanBuilder builder = new BooleanBuilder();
+        //TODO : like검색 이외 성능 고도화
+        builder.or(fullAddress.like("%" + keyword + "%"));
+        builder.or(partialAddress.like("%" + keyword + "%"));
+        builder.or(qSidoArea.sidoName.like(keyword + "%"));
+        builder.or(qSggArea.sggName.like("%" + keyword + "%"));
+        builder.or(qEmdArea.emdName.like("%" + keyword + "%"));
+
+        return builder;
     }
 
     /**
@@ -82,6 +114,44 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
                 .from(qEmdArea)
                 .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
                 .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
+                .fetchOne();
+
+        if (totalCount == null) {
+            totalCount = 0L;
+        }
+
+        return new PageImpl<>(areaInfos, pageable, totalCount);
+    }
+
+    @Override
+    public Page<ActivityAreaAddress> getActivityAreasWithKeyword(String keyword, Pageable pageable) {
+        List<ActivityAreaAddress> areaInfos =
+                queryFactory
+                        .selectDistinct(
+                                Projections.constructor(
+                                        ActivityAreaAddress.class,
+                                        qEmdArea.id.as("emdId"),
+                                        qSidoArea.sidoName.as("sidoName"),
+                                        qSggArea.sggName.as("sggName"),
+                                        qEmdArea.emdName.as("emdName")))
+                        .from(qEmdArea)
+                        .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
+                        .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
+                        .where(keywordCondition(keyword))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        if (areaInfos.isEmpty()) {
+            return new PageImpl<>(areaInfos, pageable, 0);
+        }
+
+        Long totalCount = queryFactory
+                .selectDistinct(qEmdArea.count())
+                .from(qEmdArea)
+                .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
+                .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
+                .where(keywordCondition(keyword))
                 .fetchOne();
 
         if (totalCount == null) {

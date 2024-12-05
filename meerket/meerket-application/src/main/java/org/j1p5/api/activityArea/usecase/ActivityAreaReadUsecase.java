@@ -18,4 +18,8 @@ public class ActivityAreaReadUsecase {
 
         return activityAreaService.getAreas(coordinate, page, size);
     }
+
+    public PageResult<ActivityAreaFullAddress> getAreasWithKeyword(int page, int size, String keyword) {
+        return activityAreaService.getAreasWithKeyword(page, size, keyword);
+    }
 }
