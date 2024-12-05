@@ -66,7 +66,7 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
 
     private BooleanBuilder makeKeywordCondition(StringTemplate fullAddress, StringTemplate partialAddress, String keyword) {
         BooleanBuilder builder = new BooleanBuilder();
-
+        //TODO : like검색 이외 성능 고도화
         builder.or(fullAddress.like("%" + keyword + "%"));
         builder.or(partialAddress.like("%" + keyword + "%"));
         builder.or(qSidoArea.sidoName.like(keyword + "%"));
