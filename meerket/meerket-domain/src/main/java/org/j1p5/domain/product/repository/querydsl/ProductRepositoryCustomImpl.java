@@ -22,7 +22,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     QProductEntity qProduct = QProductEntity.productEntity;
 
-    private static final int MAX_DISTANCE = 100_0000000;
+    private static final int MAX_DISTANCE = 100_000;
 
     @Override
     public List<ProductEntity> findProductsByCursor(Point coordinate, Long cursor, Integer size) {

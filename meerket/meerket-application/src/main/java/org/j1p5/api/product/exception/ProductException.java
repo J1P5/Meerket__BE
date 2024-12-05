@@ -11,8 +11,8 @@ public enum ProductException implements BaseErrorCode {
     PRODUCT_NOT_AUTHORIZED(403, "PRODUCT403", "상품 수정 권한이 없습니다."),
     PRODUCT_HAS_BUYER(405, "PRODUCT405", "입찰자가 있는 상품은 수정할 수 없습니다."),
     PRODUCT_IS_DELETED(410, "PRODUCT410", "삭제된 게시물입니다."),
-    INVALID_PRODUCT_CATEGORY(406, "PRODUCT406","존재하지 않는 카테고리입니다."),
-    INVALID_PRODUCT_KEYWORD(407, "PRODUCT407","올바르지 않은 검색내용입니다."),
+    INVALID_PRODUCT_CATEGORY(400, "PRODUCT400","존재하지 않는 카테고리입니다."),
+    INVALID_PRODUCT_KEYWORD(400, "PRODUCT401","올바르지 않은 검색내용입니다."),
     ;
     private final int status;
     private final String errorCode;

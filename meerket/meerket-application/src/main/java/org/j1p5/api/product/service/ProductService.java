@@ -170,7 +170,9 @@ public class ProductService {
 
     @Transactional
     public CursorResult<ProductResponseInfo> getProductByKeyword(String keyword, Long userId, Cursor cursor){
-        if(keyword .isEmpty() || keyword == null) throw new DomainException(INVALID_PRODUCT_KEYWORD);
+        if(keyword .isEmpty() || keyword == null) {
+            throw new DomainException(INVALID_PRODUCT_KEYWORD);
+        }
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
         Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
