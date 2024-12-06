@@ -1,7 +1,8 @@
-package org.j1p5.domain.areaAuth.repository.custom;
+package org.j1p5.domain.user.repository.custom;
 
 import org.j1p5.domain.user.entity.EmdArea;
+import org.locationtech.jts.geom.Point;
 
-public interface AreaAuthRepositoryCustom {
-    boolean existsInRequestArea(Double longitude, Double latitude, EmdArea emdArea);
+public interface EmdAreaRepositoryCustom {
+    boolean existsInRequestArea(Point coordinate, EmdArea emdArea);
 }
