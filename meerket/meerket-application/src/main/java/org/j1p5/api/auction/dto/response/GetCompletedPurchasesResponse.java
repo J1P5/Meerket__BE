@@ -3,6 +3,7 @@ package org.j1p5.api.auction.dto.response;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+// 현재는 안쓰임 이후 프론트에서 변경 가능성 있다고 함
 public record GetCompletedPurchasesResponse(
         Long productId,
         Long auctionId,

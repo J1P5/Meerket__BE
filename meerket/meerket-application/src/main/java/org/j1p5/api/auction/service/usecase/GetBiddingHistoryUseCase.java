@@ -1,7 +1,7 @@
 package org.j1p5.api.auction.service.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.j1p5.api.auction.dto.response.GetBiddingHistoryResponse;
+import org.j1p5.api.auction.dto.response.BidHistoryResponse;
 import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.domain.auction.entity.AuctionEntity;
 import org.springframework.stereotype.Service;
@@ -14,11 +14,11 @@ public class GetBiddingHistoryUseCase {
 
     private final AuctionService auctionService;
 
-    public List<GetBiddingHistoryResponse> execute(Long userId) {
+    public List<BidHistoryResponse> execute(Long userId) {
 
-        List<AuctionEntity> biddingAuctionsEntities = auctionService.getBiddingAuctionsByUserId(userId);
+        List<AuctionEntity> entities = auctionService.getBiddingAuctionsByUserId(userId);
 
-        return auctionService.getAuctionHistoryResponses(biddingAuctionsEntities);
+        return auctionService.getAuctionHistoryResponses(entities);
 
     }
 }

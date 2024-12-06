@@ -1,17 +1,19 @@
 package org.j1p5.api.auction.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.j1p5.api.auction.dto.request.PlaceBidRequest;
 import org.j1p5.api.auction.dto.request.UpdateBidPriceRequest;
+import org.j1p5.api.auction.dto.response.BidHistoryResponse;
 import org.j1p5.api.auction.dto.response.PlaceBidResponse;
 import org.j1p5.api.auction.dto.response.UpdateBidPriceResponse;
-import org.j1p5.api.auction.service.usecase.CancelBidUseCase;
-import org.j1p5.api.auction.service.usecase.PlaceBidUseCase;
-import org.j1p5.api.auction.service.usecase.UpdateBidPriceUseCase;
+import org.j1p5.api.auction.service.usecase.*;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,14 +22,16 @@ public class AuctionController {
 
     private final PlaceBidUseCase placeBidUseCase;
     private final CancelBidUseCase cancelBidUseCase;
-    private UpdateBidPriceUseCase updateBidPriceUseCase;
+    private final UpdateBidPriceUseCase updateBidPriceUseCase;
+    private final GetBiddingHistoryUseCase getBiddingHistoryUseCase;
+    private final GetCompletedPurchasesUseCase getCompletedPurchasesUseCase;
 
 
     @PostMapping("/bid")
     public Response<PlaceBidResponse> bidPlace(
             @LoginUser Long userId,
             @Validated @RequestBody PlaceBidRequest request
-            ) {
+    ) {
 
         PlaceBidResponse placeBidResponse = placeBidUseCase.execute(userId, request.productId(), request.price());
         return Response.onSuccess(placeBidResponse);
@@ -46,7 +50,20 @@ public class AuctionController {
     }
 
 
+    @GetMapping("/bidding")
+    public Response<List<BidHistoryResponse>> getBiddingHistory(
+            @LoginUser Long userId
+    ) {
+        List<BidHistoryResponse> biddingHistoryResponses = getBiddingHistoryUseCase.execute(userId);
+        return Response.onSuccess(biddingHistoryResponses);
+    }
 
-
+    @GetMapping("/purchases")
+    public Response<List<BidHistoryResponse>> getPurchases(
+            @LoginUser Long userId
+    ) {
+        List<BidHistoryResponse> purchaseHistoryResponses = getCompletedPurchasesUseCase.execute(userId);
+        return Response.onSuccess(purchaseHistoryResponses);
+    }
 
 }
