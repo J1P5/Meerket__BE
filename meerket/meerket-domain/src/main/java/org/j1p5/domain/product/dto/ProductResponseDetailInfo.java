@@ -2,6 +2,7 @@ package org.j1p5.domain.product.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
@@ -21,9 +22,11 @@ public record ProductResponseDetailInfo(
         LocalDateTime uploadTime,
         LocalDateTime expiredTime,
         boolean isEarly,
-        List<String> images // 문자열 리스트로 이미지 URL 관리
-        ) {
+        List<String> images, // 문자열 리스트로 이미지 URL 관리
+        boolean isSeller // true이면 판매자인거 false이면 구매자인거
+) {
     public static ProductResponseDetailInfo of(ProductEntity product, UserEntity user) {
+        boolean isSeller = product.getUser().equals(user);
         return new ProductResponseDetailInfo(
                 new SellerInfo(user.getId(), user.getNickname(), user.getImageUrl()),
                 ProductLocationInfo.of(
@@ -38,6 +41,9 @@ public record ProductResponseDetailInfo(
                 product.getCreatedAt(),
                 product.getExpiredTime(),
                 product.isEarly(),
-                product.getImageEntityList().stream().map(ImageEntity::getImageUrl).toList());
+                product.getImageEntityList().stream().map(ImageEntity::getImageUrl).toList(),
+                isSeller
+        );
+
     }
 }

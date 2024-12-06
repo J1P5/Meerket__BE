@@ -7,6 +7,7 @@ import org.j1p5.api.global.response.Response;
 import org.j1p5.api.product.converter.MultipartFileConverter;
 import org.j1p5.api.product.dto.request.ProductCreateRequestDto;
 import org.j1p5.api.product.dto.request.ProductUpdateRequest;
+import org.j1p5.api.product.dto.response.CloseEarlyResponseDto;
 import org.j1p5.api.product.dto.response.CreateProductResponseDto;
 import org.j1p5.api.product.dto.response.MyProductResponseDto;
 import org.j1p5.api.product.service.ProductService;
@@ -134,6 +135,16 @@ public class ProductController {
                                                                             @CursorDefault Cursor cursor){
 
         return Response.onSuccess(productService.getProductByKeyword(keyword, userId, cursor));
+
+    }
+
+
+    @PostMapping("/{productId}/early-close")
+    public Response<CloseEarlyResponseDto> closeEarly(@PathVariable(name = "productId") Long productId,
+                                                      @LoginUser Long userId){
+        return Response.onSuccess(productService.closeProductEarly(productId,userId));
+
+
 
     }
 }

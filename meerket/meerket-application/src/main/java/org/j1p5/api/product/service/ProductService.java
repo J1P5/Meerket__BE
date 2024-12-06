@@ -3,12 +3,16 @@ package org.j1p5.api.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.j1p5.api.comment.service.CommentService;
 import org.j1p5.api.global.converter.PointConverter;
+import org.j1p5.api.global.excpetion.WebException;
+import org.j1p5.api.product.dto.response.CloseEarlyResponseDto;
 import org.j1p5.api.product.dto.response.CreateProductResponseDto;
 import org.j1p5.api.product.dto.response.MyProductResponseDto;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
+import org.j1p5.domain.comment.entity.CommentEntity;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.*;
@@ -22,6 +26,8 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.j1p5.api.product.exception.ProductException.*;
@@ -41,6 +47,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserLocationNameReader userLocationNameReader;
     private final UserRepository userRepository;
+
 
     @Transactional
     public CreateProductResponseDto registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
@@ -91,10 +98,8 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDetailInfo getProductDetail(Long productId, Long userId) {
-        ProductEntity product =
-                productRepository
-                        .findById(productId)
-                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         UserEntity user = userReader.getUser(userId);
         if (product.getStatus().equals(ProductStatus.DELETED)) {
             throw new DomainException(PRODUCT_IS_DELETED);
@@ -124,10 +129,8 @@ public class ProductService {
     public void removeProduct(Long productId, Long userId) {
         UserEntity user = userReader.getUser(userId);
 
-        ProductEntity product =
-                productRepository
-                        .findById(productId)
-                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         if (!product.getUser().equals(user)) {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
@@ -155,7 +158,7 @@ public class ProductService {
     }
 
     @Transactional
-    public CursorResult<MyProductResponseDto> getMyProducts(Long userId, Cursor cursor,ProductStatus status) {
+    public CursorResult<MyProductResponseDto> getMyProducts(Long userId, Cursor cursor, ProductStatus status) {
         List<ProductEntity> productEntityList = productRepository.findProductByUserId(userId, cursor.cursor(), cursor.size(), status);
 
         Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
@@ -169,23 +172,48 @@ public class ProductService {
     }
 
     @Transactional
-    public CursorResult<ProductResponseInfo> getProductByKeyword(String keyword, Long userId, Cursor cursor){
-        if(keyword .isEmpty() || keyword == null) {
+    public CursorResult<ProductResponseInfo> getProductByKeyword(String keyword, Long userId, Cursor cursor) {
+        if (keyword.isEmpty() || keyword == null) {
             throw new DomainException(INVALID_PRODUCT_KEYWORD);
         }
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
         Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
 
-        List<ProductEntity> productEntityList = productRepository.findProductByKeyword(userCoordinate,keyword, cursor.cursor(), cursor.size());
+        List<ProductEntity> productEntityList = productRepository.findProductByKeyword(userCoordinate, keyword, cursor.cursor(), cursor.size());
         Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
 
         List<ProductResponseInfo> productResponseInfos = productEntityList.stream()
                 .map(product -> {
                     MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(user.getActivityAreas().get(0)));
-                    return ProductResponseInfo.from(product,myLocationInfo);
+                    return ProductResponseInfo.from(product, myLocationInfo);
                 })
                 .toList();
-        return CursorResult.of(productResponseInfos,nextCursor);
+        return CursorResult.of(productResponseInfos, nextCursor);
+    }
+
+    public CloseEarlyResponseDto closeProductEarly(Long productId, Long userId) {
+        UserEntity user = userReader.getUser(userId);
+
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        if (!product.getUser().equals(user)) {
+            throw new DomainException(PRODUCT_NOT_AUTHORIZED);
+        }//판매자인지 확인
+        Duration remainingTime = Duration.between(LocalDateTime.now(), product.getExpiredTime());
+        if(remainingTime.toHours()<2){
+            throw new DomainException(INVALID_PRODUCT_EARLY_CLOSED);
+        }
+        if(!product.isHasBuyer()){
+            throw new DomainException(PRODUCT_HAS_NO_BUYER);
+        }
+        product.updateIsEarly();
+        product.updateExpiredTime();
+
+        //조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
+        //fcm을 통한 알림 구현로직 추가 예정
+
+        return CloseEarlyResponseDto.of(productId);
+
     }
 }
