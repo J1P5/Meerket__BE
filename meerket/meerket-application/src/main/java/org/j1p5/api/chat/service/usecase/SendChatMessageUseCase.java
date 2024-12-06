@@ -25,8 +25,8 @@ public class SendChatMessageUseCase {
 
     // 메시지 보내기
     //@Transactional 추후 적용
-    public ChatMessageResponse execute(
-            MessageInfo messageInfo) {
+    public ChatMessageResponse execute(MessageInfo messageInfo) {
+
         Long userId = messageInfo.getUserId();
         Long receiverId = messageInfo.getReceiverId();
         String roomId = messageInfo.getRoomId();
@@ -41,12 +41,13 @@ public class SendChatMessageUseCase {
         boolean receiverInChatRoom = chatRoomService.isReceiverInChatRoom(roomObjectId, receiverId.toString());
 
         chatRoomService.updateChatRoomInfo(
-                roomObjectId, content,
-                receiverId, receiverInChatRoom, chatMessageEntity.getCreatedAt());
+                roomObjectId, content, receiverId,
+                receiverInChatRoom, chatMessageEntity.getCreatedAt());
 
         chatMessageService.sendWebSocketMessage(chatMessageEntity);
 
-        if(receiverInChatRoom) fcmService.sendFcmChatMessage(roomId,receiverId,userId,chatMessageEntity.getContent());
+        if (receiverInChatRoom)
+            fcmService.sendFcmChatMessage(roomId, receiverId, userId, chatMessageEntity.getContent());
 
         return ChatMessageResponse.fromEntity(chatMessageEntity);
     }
