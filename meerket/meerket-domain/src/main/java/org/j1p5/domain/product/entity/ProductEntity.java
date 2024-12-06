@@ -2,6 +2,7 @@ package org.j1p5.domain.product.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -115,5 +116,12 @@ public class ProductEntity extends BaseEntity {
 
     public void createThumbnail(String thumbnail){
         this.thumbnail = thumbnail;
+    }
+
+    public void updateIsEarly(){
+        this.isEarly = true;
+    }
+    public void updateExpiredTime(){
+        this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
     }
 }
