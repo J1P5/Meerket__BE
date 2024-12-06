@@ -65,4 +65,13 @@ public class AuctionController {
         return Response.onSuccess(purchaseHistoryResponses);
     }
 
+
+    @DeleteMapping("/{auctionId}")
+    public Response<Void> cancelBid(
+            @LoginUser Long userId,
+            @PathVariable Long auctionId
+    ) {
+        cancelBidUseCase.execute(userId, auctionId);
+        return Response.onSuccess();
+    }
 }

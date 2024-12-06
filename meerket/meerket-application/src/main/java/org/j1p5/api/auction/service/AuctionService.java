@@ -8,6 +8,7 @@ import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.api.product.exception.ProductException;
 import org.j1p5.api.product.service.EmdNameReader;
 import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.auction.entity.AuctionStatus;
 import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
@@ -65,6 +66,15 @@ public class AuctionService {
         if (userEntity.getId() != auctionEntity.getUser().getId()) {
             throw new WebException(AuctionException.BID_USER_NOT_AUTHORIZED);
         }
+    }
+
+    // 입찰 취소하기
+    public void cancelBid(Long auctionId) {
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
+
+        auctionEntity.updateStatus(AuctionStatus.CANCELLED);
+        auctionRepository.save(auctionEntity);
     }
 
 
