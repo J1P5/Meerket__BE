@@ -23,6 +23,12 @@ public class FcmService {
     private final FcmTokenRepository fcmTokenRepository;
     private final ProductRepository productRepository;
 
+    private final static String BID_ALERT_MESSAGE = "상품에 누군가 입찰했어요!";
+    private final static String BID_UPDATE_MESSAGE = "상품에 입찰금액 변동이 발생했어요";
+    private final static String BID_CANCEL_MESSAGE = "상품에 입찰이 취소되었어요";
+
+
+
     // 채팅 알림
     public void sendFcmChatMessage(String roomId, Long receiverId, Long userId, String content) {
         UserEntity userEntity = userRepository.findById(userId)
@@ -33,18 +39,24 @@ public class FcmService {
 
     // 판매자에게 입찰 알림
     public void sendSellerBidMessage(Long productId) {
+
         ProductEntity productEntity = getProductEntity(productId);
 
-        String content = "상품에 누군가 입찰했어요!";
-        sendPushSellerBidNotification(productEntity, content);
+        sendPushSellerBidNotification(productEntity, BID_ALERT_MESSAGE);
     }
 
     // 판매자에게 입찰 수정 알림
     public void sendSellerBidUpdateMessage(Long productId) {
         ProductEntity productEntity = getProductEntity(productId);
 
-        String content = "상품에 입찰금액 변동이 발생했어요";
-        sendPushSellerBidNotification(productEntity, content);
+        sendPushSellerBidNotification(productEntity, BID_UPDATE_MESSAGE);
+    }
+
+    // 판매자에게 입찰 취소 알림
+    public void sendSellerBidCancelMessage(Long productId) {
+        ProductEntity productEntity = getProductEntity(productId);
+
+        sendPushSellerBidNotification(productEntity, BID_CANCEL_MESSAGE);
     }
 
 

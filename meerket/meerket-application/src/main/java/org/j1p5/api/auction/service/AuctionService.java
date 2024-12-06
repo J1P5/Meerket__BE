@@ -69,12 +69,13 @@ public class AuctionService {
     }
 
     // 입찰 취소하기
-    public void cancelBid(Long auctionId) {
+    public Long cancelBid(Long auctionId) {
         AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
 
         auctionEntity.updateStatus(AuctionStatus.CANCELLED);
         auctionRepository.save(auctionEntity);
+        return auctionEntity.getProduct().getId();
     }
 
 
