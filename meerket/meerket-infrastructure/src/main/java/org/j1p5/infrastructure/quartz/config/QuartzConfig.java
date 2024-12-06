@@ -3,6 +3,7 @@ package org.j1p5.infrastructure.quartz.config;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,11 +12,8 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 @Configuration
 public class QuartzConfig {
 
-    private final AutowireCapableBeanFactory beanFactory;
-
-    public QuartzConfig(AutowireCapableBeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
-    }
+    @Autowired
+    private AutowireCapableBeanFactory beanFactory;
 
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean() {
@@ -33,7 +31,11 @@ public class QuartzConfig {
 
     @Bean
     public Scheduler scheduler() throws SchedulerException {
-        return schedulerFactoryBean().getScheduler();
+        Scheduler scheduler = schedulerFactoryBean().getScheduler();
+        scheduler.start();
+        return scheduler;
+
+
     }
 
 }
