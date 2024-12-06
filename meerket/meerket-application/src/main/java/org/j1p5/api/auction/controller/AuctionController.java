@@ -1,7 +1,6 @@
 package org.j1p5.api.auction.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.j1p5.api.auction.dto.request.PlaceBidRequest;
 import org.j1p5.api.auction.dto.request.UpdateBidPriceRequest;
 import org.j1p5.api.auction.dto.response.BidHistoryResponse;

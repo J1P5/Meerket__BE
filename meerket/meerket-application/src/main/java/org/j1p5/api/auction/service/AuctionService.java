@@ -5,10 +5,11 @@ import org.j1p5.api.auction.dto.response.BidHistoryResponse;
 import org.j1p5.api.auction.dto.response.PlaceBidResponse;
 import org.j1p5.api.auction.exception.AuctionException;
 import org.j1p5.api.global.excpetion.WebException;
+import org.j1p5.api.product.exception.ProductException;
+import org.j1p5.api.product.service.EmdNameReader;
 import org.j1p5.domain.auction.entity.AuctionEntity;
 import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.product.entity.ProductEntity;
-import org.j1p5.domain.product.exception.ProductException;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
@@ -130,7 +131,7 @@ public class AuctionService {
                             productEntity.getTitle(),
                             productEntity.getThumbnail(),
                             auctionEntity.getPrice(),
-                            "임시",
+                            EmdNameReader.getEmdName(auctionEntity.getUser()),
                             productEntity.getCreatedAt(),
                             productEntity.getMinPrice(),
                             productEntity.getExpiredTime()

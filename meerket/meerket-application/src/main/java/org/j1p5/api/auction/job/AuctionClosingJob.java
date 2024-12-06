@@ -2,7 +2,7 @@ package org.j1p5.api.auction.job;
 
 import org.j1p5.api.chat.service.ChatRoomService;
 import org.j1p5.api.fcm.FcmService;
-import org.j1p5.domain.product.service.ProductService;
+import org.j1p5.api.product.service.ProductService;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;

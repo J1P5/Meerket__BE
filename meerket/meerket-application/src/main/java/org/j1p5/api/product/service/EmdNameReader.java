@@ -1,6 +1,5 @@
 package org.j1p5.api.product.service;
 
-import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.user.entity.UserEntity;
 
 public class EmdNameReader {
