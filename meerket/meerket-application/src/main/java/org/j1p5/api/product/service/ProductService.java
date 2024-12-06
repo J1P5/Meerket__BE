@@ -201,7 +201,7 @@ public class ProductService {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }//판매자인지 확인
         Duration remainingTime = Duration.between(LocalDateTime.now(), product.getExpiredTime());
-        if(remainingTime.toHours()<=2){
+        if(remainingTime.toHours()<2){
             throw new DomainException(INVALID_PRODUCT_EARLY_CLOSED);
         }
         if(!product.isHasBuyer()){
