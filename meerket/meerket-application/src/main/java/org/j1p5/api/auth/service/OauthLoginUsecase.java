@@ -18,15 +18,15 @@ public class OauthLoginUsecase {
     private final ActivityAreaService activityAreaService;
 
     public UserInfo login(String code, String provider) {
-        OauthProfile profile = oauthSenderService.request(code, provider);
-        UserEntity user = oauthService.login(profile, Provider.get(provider));
+        OauthProfile profile = oauthSenderService.request(code, provider); //서드 파티에 요청을 보내서 정보를 받아온다.
+        UserEntity user = oauthService.login(profile, Provider.get(provider)); // 로그인을 시도한다.
 
-        ActivityArea activityArea = activityAreaService.getActivityAreaByUser(user.getId());
+        ActivityArea activityArea = activityAreaService.getActivityAreaByUser(user.getId()); // 유저에 해당하는 활동 지역을 조회한다.
 
         if (activityArea == null) {
             return UserInfo.of(user, null);
         }
 
-        return UserInfo.of(user, activityArea.getId());
+        return UserInfo.of(user, activityArea.getId()); // 리턴한다.
     }
 }
