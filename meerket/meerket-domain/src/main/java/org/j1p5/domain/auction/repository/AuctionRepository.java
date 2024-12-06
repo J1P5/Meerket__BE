@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
@@ -39,6 +40,19 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
             
             """)
     boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
+
+
+    @Query("""
+        select a
+        from auction a
+        where a.product.id = :productId
+        and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
+        order by a.price desc , a.updatedAt asc 
+"""
+    )
+    Optional<AuctionEntity> findHighestBidder(@Param("productId") Long productId);
+
+
 }
 
 

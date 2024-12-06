@@ -216,4 +216,16 @@ public class ProductService {
         return CloseEarlyResponseDto.of(productId);
 
     }
+
+
+    public void updateWinningPrice(Long productId, int winningPrice) {
+
+        ProductEntity productEntity = productRepository.findById(productId)
+                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
+
+        productEntity.updateWinningPrice(winningPrice);
+    }
+
+
+
 }

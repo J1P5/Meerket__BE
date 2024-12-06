@@ -121,7 +121,12 @@ public class ProductEntity extends BaseEntity {
     public void updateIsEarly(){
         this.isEarly = true;
     }
+
     public void updateExpiredTime(){
         this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
+    }
+
+    public void updateWinningPrice(int winningPrice) {
+        this.winningPrice = winningPrice;
     }
 }
