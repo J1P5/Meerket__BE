@@ -1,4 +1,4 @@
-package org.j1p5.domain.auth.area.entity;
+package org.j1p5.domain.areaAuth.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -26,4 +26,24 @@ public class AreaAuthEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emd_id")
     private EmdArea emdArea;
+
+    private AreaAuthEntity(LocalDateTime timeStamp, UserEntity user, EmdArea emdArea) {
+        this.timeStamp = timeStamp;
+        this.user = user;
+        this.emdArea = emdArea;
+    }
+
+    public static AreaAuthEntity of(LocalDateTime timeStamp, UserEntity user, EmdArea emdArea) {
+        return new AreaAuthEntity(timeStamp, user, emdArea);
+    }
+
+    public void updateHistory() {
+        this.timeStamp = LocalDateTime.now();
+    }
+
+    public void updateEmdArea(EmdArea emdArea) {
+        this.emdArea = emdArea;
+    }
+
+
 }

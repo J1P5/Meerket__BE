@@ -18,6 +18,7 @@ import org.j1p5.api.user.usecase.UserProfileSettingUsecase;
 import org.j1p5.common.exception.ErrorResponse;
 import org.j1p5.domain.user.UserProfile;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,7 +42,7 @@ public class UserController {
         return Response.onSuccess(ProfileResponse.from(userProfile));
     }
 
-    @PostMapping("/profile")
+    @PostMapping(value = "/profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "유저 프로필 업데이트", description = "로그인 후 등록, 마이페이지 수정 시 유저 프로필 업데이트 API")
     @ApiResponses(
             value = {@ApiResponse(responseCode = "200", description = "프로필 설정 성공"),
