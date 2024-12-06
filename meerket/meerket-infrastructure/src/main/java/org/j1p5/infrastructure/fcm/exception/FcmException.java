@@ -4,7 +4,12 @@ import org.j1p5.common.exception.BaseErrorCode;
 import org.j1p5.common.exception.ErrorResponse;
 
 public enum FcmException implements BaseErrorCode {
+
+    // 채팅 관련
     RECEIVER_NOT_FOUND(404, "FCM404", "상대방을 찾을 수 없습니다."),
+
+    // 경매 관련
+    AUCTION_SELLER_FCM_TOKEN_NOT_FOUND(404, "SELLER_FCM_NOT_FOUND", "판매자가 존재하지 않습니다."),
 
 
 

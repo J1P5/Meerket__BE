@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.util.List;
+
 /**
  * @author
  *
@@ -30,8 +32,13 @@ public class WebSocketEventListener {
     public void handleWebSocketSubscribe(SessionSubscribeEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        Long userId = getUserId(headerAccessor);
+        String userId = getUserId(headerAccessor);
         String roomId = getRoomId(headerAccessor);
+
+        log.info("roomId = {}", roomId);
+        log.info("userId = {}", userId);
+
+        headerAccessor.getSessionAttributes().put("userId", userId);
 
         redisService.saveUserRoomMapping(userId, roomId);
         log.info("사용자 {}가 채팅방 {}에 입장했습니다. Redis에 기록했습니다.", userId, roomId);
@@ -46,20 +53,23 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        Long userId = getUserId(headerAccessor);
+        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
 
         redisService.removeUserRoomMapping(userId);
         log.info("사용자 {}의 채팅방 정보가 Redis에서 삭제되었습니다.", userId);
     }
 
-    private Long getUserId(StompHeaderAccessor headerAccessor) {
-        Long userId = (Long) headerAccessor.getSessionAttributes().get("userId");
 
-        if (userId == null) {
-            throw new NullPointerException("WebSocket 요청에서 userId를 찾을 수 없습니다.");
-        }
-        return userId;
+private String getUserId(StompHeaderAccessor headerAccessor) {
+    List<String> userIdHeaders = headerAccessor.getNativeHeader("userId");
+
+    if (userIdHeaders == null || userIdHeaders.isEmpty()) {
+        throw new NullPointerException("WebSocket 요청에서 userId 헤더를 찾을 수 없습니다.");
     }
+
+    return userIdHeaders.get(0);
+}
+
 
     private String getRoomId(StompHeaderAccessor headerAccessor) {
         String destination = headerAccessor.getDestination();

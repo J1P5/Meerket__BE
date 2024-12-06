@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public record ChatRoomInfoResponse(
+        Long userId,
         String roomId,
         String lastMessage,
         LocalDateTime lastMessageAt,
@@ -15,6 +16,7 @@ public record ChatRoomInfoResponse(
 ) {
 
     public ChatRoomInfoResponse{
+        Objects.requireNonNull(userId, "userId는 필수입니다.");
         Objects.requireNonNull(roomId, "roomId는 필수입니다.");
         Objects.requireNonNull(lastMessage, "lastMessage는 필수입니다.");
         Objects.requireNonNull(lastMessageAt, "lastMessageAt는 필수입니다.");

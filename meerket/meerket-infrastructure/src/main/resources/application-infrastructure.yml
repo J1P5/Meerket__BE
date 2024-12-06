@@ -20,3 +20,25 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket-name: ${AWS_S3_BUCKET_NAME}
+
+org:
+  quartz:
+    scheduler:
+      instanceName: MySQLScheduler
+      instanceId: AUTO
+
+    threadPool:
+      class: org.quartz.simpl.SimpleThreadPool
+      threadCount: 4
+
+    jobStore:
+      class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      dataSource: quartzDS
+
+    dataSource:
+      quartzDS:
+        driver: com.mysql.cj.jdbc.Driver
+        url: ${HOME_URL}
+        username: ${HOME_USERNAME}
+        password: ${HOME_PASSWORD}

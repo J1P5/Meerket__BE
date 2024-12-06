@@ -104,7 +104,7 @@ public class ChatRoomService {
      * @param receiverId 상대방 id
      * @return 상대방이 있으면 true, 없으면 false
      */
-    public boolean isReceiverInChatRoom(ObjectId roomId, Long receiverId) {
+    public boolean isReceiverInChatRoom(ObjectId roomId, String receiverId) {
 
         try {
             String userCurrentRoom = redisService.getUserCurrentRoom(receiverId);
@@ -133,6 +133,7 @@ public class ChatRoomService {
 
                 ChatRoomInfoResponse response =
                         new ChatRoomInfoResponse(
+                                userId,
                                 chatRoomEntity.getId().toString(),
                                 chatRoomEntity.getLastMessage(),
                                 chatRoomEntity.getLastMessageAt(),

@@ -71,7 +71,7 @@ public class ChatController {
     public Response<ChatRoomEnterResponse> enterChatRoom(
             @PathVariable String roomId,
             @LoginUser Long userId
-    ){
+    ) {
 
         ChatRoomEnterResponse response = enterChatRoomUseCase.execute(userId, roomId);
         return Response.onSuccess(response);
@@ -93,7 +93,7 @@ public class ChatController {
             @LoginUser Long userId
     ) {
 
-        exitChatRoomUseCase.execute(userId,roomId);
+        exitChatRoomUseCase.execute(userId, roomId);
         return Response.onSuccess();
     }
 
@@ -115,7 +115,7 @@ public class ChatController {
             @RequestParam(required = false) LocalDateTime beforeTime,
             @LoginUser Long userId
 
-            ) {
+    ) {
 
         List<ChatMessageResponse> response = getChatMessageUseCase.execute(roomId, beforeTime, userId);
         return Response.onSuccess(response);
@@ -135,11 +135,11 @@ public class ChatController {
     )
     @MessageMapping("/message")
     public Response<Void> sendChatMessage(
-            @RequestBody @Validated ChatMessageRequest request,
-            @LoginUser Long userId
-            ) {
+            @RequestBody @Validated ChatMessageRequest request
+    ) {
 
-        MessageInfo messageInfo = new MessageInfo(userId, request.receiverId(), request.content(), request.roomId());
+        MessageInfo messageInfo = new MessageInfo(
+                request.senderId(), request.receiverId(), request.content(), request.roomId());
 
         sendChatMessageUseCase.execute(messageInfo);
         return Response.onSuccess();
@@ -159,7 +159,6 @@ public class ChatController {
             @LoginUser Long userId,
             @RequestParam ChatRoomType type
     ) {
-
 
         List<ChatRoomInfoResponse> response = userChatRoomsUseCase.execute(userId, type);
         return Response.onSuccess(response);

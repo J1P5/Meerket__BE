@@ -22,4 +22,7 @@ dependencies {
     // websocket 의존성
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+    // quartz 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
 }
