@@ -1,7 +1,7 @@
 package org.j1p5.api.auction.service;
 
 import lombok.RequiredArgsConstructor;
-import org.j1p5.api.auction.dto.response.GetBiddingHistoryResponse;
+import org.j1p5.api.auction.dto.response.BidHistoryResponse;
 import org.j1p5.api.auction.dto.response.PlaceBidResponse;
 import org.j1p5.api.auction.exception.AuctionException;
 import org.j1p5.api.global.excpetion.WebException;
@@ -23,6 +23,14 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+
+    // 현재 사용자가 해당 상품에 이미 입찰한 기록이 없는지 확인
+    public void checkDuplicateBid(Long userId, Long productId) {
+        boolean exists = auctionRepository.existsByUserIdAndProductId(userId, productId);
+        if (exists) {
+            throw new WebException(AuctionException.DUPLICATE_BID);
+        }
+    }
 
 
     // 입찰하기
@@ -111,12 +119,12 @@ public class AuctionService {
     }
 
 
-    // 프론트로 넘겨줄 response 객체 생성
-    public List<GetBiddingHistoryResponse> getAuctionHistoryResponses(List<AuctionEntity> auctionEntities) {
+    // 입찰 내역 Response 생성
+    public List<BidHistoryResponse> getAuctionHistoryResponses(List<AuctionEntity> auctionEntities) {
         return auctionEntities.stream()
                 .map(auctionEntity -> {
                     ProductEntity productEntity = getProductEntity(auctionEntity.getProduct().getId());
-                    return new GetBiddingHistoryResponse(
+                    return new BidHistoryResponse(
                             productEntity.getId(),
                             auctionEntity.getId(),
                             productEntity.getTitle(),
@@ -137,11 +145,6 @@ public class AuctionService {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
     }
-
-
-
-
-
 
 
 }

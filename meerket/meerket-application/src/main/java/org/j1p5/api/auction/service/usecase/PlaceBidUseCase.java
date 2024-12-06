@@ -15,6 +15,8 @@ public class PlaceBidUseCase {
 
     public PlaceBidResponse execute(Long userId, Long productId, int price) {
 
+        auctionService.checkDuplicateBid(userId, productId);
+
         PlaceBidResponse placeBidResponse = auctionService.placeBid(userId, productId, price);
 
         fcmService.sendSellerBidMessage(productId);

@@ -31,6 +31,14 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
     List<AuctionEntity> findCompletedPurchasesByUserId(@Param("userId") Long userId);
 
 
+    @Query("""
+                    select case when count(a) > 0 then true else false end
+                    from auction a
+                    where a.user.id = :userId
+                    and a.product.id = :productId
+            
+            """)
+    boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
 }
 
 
