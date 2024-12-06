@@ -11,24 +11,24 @@ import java.util.Optional;
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     @Query("""
-        select a
-        from auction a
-        join a.product p
-        where a.user.id = :userId
-        and p.status = org.j1p5.domain.product.entity.ProductStatus.BIDDING
-        and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
-""")
+                select a
+                from auction a
+                join a.product p
+                where a.user.id = :userId
+                and p.status = org.j1p5.domain.product.entity.ProductStatus.BIDDING
+                and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
+            """)
     List<AuctionEntity> findBiddingAuctionsByUserId(@Param("userId") Long userId);
 
 
     @Query("""
-        select a
-        from auction a
-        join a.product p
-        where a.user.id = :userId
-        and p.status = org.j1p5.domain.product.entity.ProductStatus.COMPLETED
-        and a.status = org.j1p5.domain.auction.entity.AuctionStatus.AWARDED
-""")
+                select a
+                from auction a
+                join a.product p
+                where a.user.id = :userId
+                and p.status = org.j1p5.domain.product.entity.ProductStatus.COMPLETED
+                and a.status = org.j1p5.domain.auction.entity.AuctionStatus.AWARDED
+            """)
     List<AuctionEntity> findCompletedPurchasesByUserId(@Param("userId") Long userId);
 
 
@@ -43,12 +43,12 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
 
     @Query("""
-        select a
-        from auction a
-        where a.product.id = :productId
-        and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
-        order by a.price desc , a.updatedAt asc 
-"""
+                    select a
+                    from auction a
+                    where a.product.id = :productId
+                    and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
+                    order by a.price desc , a.updatedAt asc 
+            """
     )
     Optional<AuctionEntity> findHighestBidder(@Param("productId") Long productId);
 
