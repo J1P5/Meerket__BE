@@ -15,3 +15,10 @@ spring:
     multipart:
       enabled: true
       max-request-size: 50MB
+---
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true

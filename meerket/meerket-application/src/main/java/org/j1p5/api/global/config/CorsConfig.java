@@ -15,6 +15,10 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("https://localhost:8080");
+        config.addAllowedOrigin("https://tfinder.store");
+        config.addAllowedOrigin("https://meerket.vercel.app");
         config.addAllowedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
