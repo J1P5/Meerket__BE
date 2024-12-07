@@ -181,7 +181,8 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
                                         qEmdArea.id.as("emdId"),
                                         qEmdArea.emdName.as("emdName")))
                         .from(qActivityArea)
-                        .join(qEmdArea).on(qEmdArea.eq(qActivityArea.emdArea)).fetchJoin()
+                        .join(qUserEntity).on(qActivityArea.user.eq(qUserEntity))
+                        .join(qEmdArea).on(qEmdArea.eq(qActivityArea.emdArea))
                         .where(userIdCondition(userId))
                         .fetchOne());
 
