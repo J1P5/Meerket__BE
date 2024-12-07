@@ -58,7 +58,7 @@ public class UserController {
     public Response<Void> registerProfile(
             @LoginUser Long userId,
             @Valid @RequestPart(name = "request") ProfileSettingRequest request,
-            @RequestPart(name = "image", required = false) MultipartFile imageFile
+            @RequestParam(name = "image", required = false) MultipartFile imageFile
     ) {
         if (imageFile == null) {
             userProfileSettingUsecase.execute(userId, request.name(), null);

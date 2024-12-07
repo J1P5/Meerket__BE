@@ -1,7 +1,10 @@
-package org.j1p5.api.auth.service;
+package org.j1p5.api.auth.usecase;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.service.ActivityAreaService;
+import org.j1p5.api.auth.service.OauthSenderService;
+import org.j1p5.api.auth.service.OauthService;
+import org.j1p5.domain.activityArea.dto.SimpleAddress;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.j1p5.domain.auth.dto.OauthProfile;
 import org.j1p5.domain.user.UserInfo;
@@ -27,6 +30,6 @@ public class OauthLoginUsecase {
             return UserInfo.of(user, null);
         }
 
-        return UserInfo.of(user, activityArea.getId()); // 리턴한다.
+        return UserInfo.of(user, SimpleAddress.from(activityArea)); // 리턴한다.
     }
 }

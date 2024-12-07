@@ -3,7 +3,6 @@ package org.j1p5.api.auth;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auth.dto.SessionInfo;
 import org.j1p5.api.auth.util.AuthorityUtil;
-import org.j1p5.domain.user.UserInfo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.context.SecurityContext;

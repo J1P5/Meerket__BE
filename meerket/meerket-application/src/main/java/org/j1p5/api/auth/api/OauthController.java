@@ -8,7 +8,7 @@ import org.j1p5.api.auth.AuthManager;
 import org.j1p5.api.auth.dto.LoginRequest;
 import org.j1p5.api.auth.dto.LoginResponse;
 import org.j1p5.api.auth.dto.SessionInfo;
-import org.j1p5.api.auth.service.OauthLoginUsecase;
+import org.j1p5.api.auth.usecase.OauthLoginUsecase;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.domain.user.UserInfo;
 import org.springframework.security.core.context.SecurityContext;
