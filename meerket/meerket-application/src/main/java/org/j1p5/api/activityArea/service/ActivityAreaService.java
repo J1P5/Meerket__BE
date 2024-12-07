@@ -105,7 +105,7 @@ public class ActivityAreaService {
         EmdArea emdArea = emdAreaRepository.findById(emdId)
                 .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
 
-        ActivityArea activityArea = activityAreaRepository.findByUserAndEmdArea(user, emdArea)
+        ActivityArea activityArea = activityAreaRepository.findByUser(user)
                 .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
 
         activityArea.updateEmdArea(emdArea);
@@ -115,7 +115,7 @@ public class ActivityAreaService {
         UserEntity user = userRepository.findById((userId))
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
-        List<ActivityArea> activityAreas = activityAreaRepository.findByUser(user);
+        List<ActivityArea> activityAreas = activityAreaRepository.findAllByUser(user);
         return activityAreas.isEmpty() ? null : activityAreas.get(0);
     }
 

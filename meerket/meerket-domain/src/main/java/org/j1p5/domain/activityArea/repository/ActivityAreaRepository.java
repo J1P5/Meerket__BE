@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface ActivityAreaRepository extends JpaRepository<ActivityArea, Long>, ActivityAreaRepositoryCustom {
     boolean existsByUser(UserEntity user);
 
-    List<ActivityArea> findByUser(UserEntity user);
+    List<ActivityArea> findAllByUser(UserEntity user);
 
-    Optional<ActivityArea> findByUserAndEmdArea(UserEntity user, EmdArea emdArea);
+    Optional<ActivityArea> findByUser(UserEntity user);
 
     void deleteByUserAndEmdArea(UserEntity user, EmdArea emdArea);
 }
