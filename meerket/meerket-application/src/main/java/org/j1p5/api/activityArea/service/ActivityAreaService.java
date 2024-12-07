@@ -97,6 +97,20 @@ public class ActivityAreaService {
         activityAreaRepository.deleteByUserAndEmdArea(user, emdArea);
     }
 
+    @Transactional
+    public void update(Long userId, Integer emdId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        EmdArea emdArea = emdAreaRepository.findById(emdId)
+                .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
+
+        ActivityArea activityArea = activityAreaRepository.findByUserAndEmdArea(user, emdArea)
+                .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
+
+        activityArea.updateEmdArea(emdArea);
+    }
+
     public ActivityArea getActivityAreaByUser(Long userId) {
         UserEntity user = userRepository.findById((userId))
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));

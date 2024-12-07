@@ -7,11 +7,14 @@ import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ActivityAreaRepository extends JpaRepository<ActivityArea, Long>, ActivityAreaRepositoryCustom {
     boolean existsByUser(UserEntity user);
 
     List<ActivityArea> findByUser(UserEntity user);
+
+    Optional<ActivityArea> findByUserAndEmdArea(UserEntity user, EmdArea emdArea);
 
     void deleteByUserAndEmdArea(UserEntity user, EmdArea emdArea);
 }
