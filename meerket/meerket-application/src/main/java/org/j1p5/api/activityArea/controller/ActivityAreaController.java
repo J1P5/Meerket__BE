@@ -64,7 +64,7 @@ public class ActivityAreaController {
     }
 
     @Operation(summary = "설정 동네 수정", description = "설정한 동네 수정 API")
-    @DeleteMapping
+    @PatchMapping
     public Response<Void> update(
             @LoginUser Long userId,
             @Valid @RequestBody ActivityAreaSettingRequest request
