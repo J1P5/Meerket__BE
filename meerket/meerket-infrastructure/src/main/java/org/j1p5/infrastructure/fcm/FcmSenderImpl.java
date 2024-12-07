@@ -12,8 +12,12 @@ import org.j1p5.infrastructure.fcm.exception.FcmException;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.j1p5.infrastructure.fcm.exception.FcmException.AUCTION_BUYER_FCM_TOKEN_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -85,5 +89,32 @@ public class FcmSenderImpl implements FcmSender {
             log.error("fcm 판매자에게 메시지 보내기 실패", e);
         }
 
+    }
+
+    @Override
+    public void sendPushBuyerBidNotification(Long productId, List<Long> userIds, String title, String content) {
+        try {
+            List<FcmTokenEntity> fcmTokenEntities = fcmTokenRepository.findByUserIdIn(userIds);
+            if(fcmTokenEntities.isEmpty()){
+                throw new InfraException(AUCTION_BUYER_FCM_TOKEN_NOT_FOUND);
+            }
+
+            Notification notification = Notification.builder()
+                    .setTitle(title + "" + content)
+                    .build();
+            for(FcmTokenEntity fcmToken : fcmTokenEntities){
+                Map<String,String> data = new HashMap<>();
+                data.put("productId", productId.toString());
+
+                Message message = Message.builder()
+                        .setToken(fcmToken.getToken())
+                        .setNotification(notification)
+                        .putAllData(data)
+                        .build();
+                FirebaseMessaging.getInstance().send(message);
+            }
+        }catch (Exception e){
+            log.error("fcm 구매자에게 메세지 보내기 실패", e);
+        }
     }
 }

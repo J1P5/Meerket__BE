@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.comment.service.CommentService;
+import org.j1p5.api.fcm.FcmService;
 import org.j1p5.api.global.converter.PointConverter;
 import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.api.product.dto.response.CloseEarlyResponseDto;
@@ -47,6 +48,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserLocationNameReader userLocationNameReader;
     private final UserRepository userRepository;
+    private final FcmService fcmService;
 
 
     @Transactional
@@ -212,6 +214,7 @@ public class ProductService {
 
         //조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
         //fcm을 통한 알림 구현로직 추가 예정
+        fcmService.sendBuyerCloseEarlyMessage(productId);
 
         return CloseEarlyResponseDto.of(productId);
 

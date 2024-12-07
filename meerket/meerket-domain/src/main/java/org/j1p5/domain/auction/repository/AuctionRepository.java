@@ -53,6 +53,16 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
     Optional<AuctionEntity> findHighestBidder(@Param("productId") Long productId);
 
 
+
+
+    @Query("""
+                    select a
+                    from auction a
+                    where a.product.id = :productId
+                    and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
+            
+            """)
+    List<AuctionEntity> findAuctionEntitiesByProductId(@Param("productId") Long productId);
 }
 
 
