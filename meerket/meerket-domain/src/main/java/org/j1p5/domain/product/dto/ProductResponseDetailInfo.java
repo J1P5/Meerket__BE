@@ -30,7 +30,7 @@ public record ProductResponseDetailInfo(
     public static ProductResponseDetailInfo of(ProductEntity product, UserEntity user, AuctionEntity winningAuction, AuctionEntity myAuction) {
         boolean isSeller = product.getUser().equals(user);
         return new ProductResponseDetailInfo(
-                new SellerInfo(user.getId(), user.getNickname(), user.getImageUrl()),
+                new SellerInfo(product.getUser().getId(), product.getUser().getNickname(), product.getUser().getImageUrl()),
                 ProductLocationInfo.of(
                         product.getCoordinate(), product.getAddress(), product.getLocation()),
                 product.isHasBuyer(),

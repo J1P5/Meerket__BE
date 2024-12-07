@@ -100,8 +100,15 @@ public class FcmService {
     public void sendBuyerCloseEarlyMessage(Long productId) {
         ProductEntity product = this.getProductEntity(productId);
         String content = "판매자가 판매 조기마감을 하여 2시간뒤에 입찰이 마감됩니다";
-        this.sendPushBuyerBidNotification(product,content);
+        sendPushBuyerBidNotification(product,content);
     }
+
+    public void sendBuyerProductDeleted(Long productId){
+        ProductEntity product = this.getProductEntity(productId);
+        String content = "판매자가 게시물을 삭제하였습니다. 해당 입찰은 유효하지 않습니다.";
+        sendPushBuyerBidNotification(product,content);
+    }
+
     private void sendPushBuyerBidNotification(ProductEntity product, String content){
         List<AuctionEntity> auctionEntities = auctionRepository.findAuctionEntitiesByProductId(product.getId());
         List<Long> userIds = new ArrayList<>();

@@ -145,6 +145,7 @@ public class ProductService {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
         product.updateStatusToDelete(product);
+        fcmService.sendBuyerProductDeleted(productId);
     }
 
     @Transactional
