@@ -3,7 +3,6 @@ package org.j1p5.api.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.j1p5.api.comment.service.CommentService;
 import org.j1p5.api.fcm.FcmService;
 import org.j1p5.api.global.converter.PointConverter;
 import org.j1p5.api.global.excpetion.WebException;
@@ -13,7 +12,8 @@ import org.j1p5.api.product.dto.response.MyProductResponseDto;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
-import org.j1p5.domain.comment.entity.CommentEntity;
+import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.*;
@@ -31,6 +31,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.j1p5.api.auction.exception.AuctionException.BID_NOT_FOUND;
 import static org.j1p5.api.product.exception.ProductException.*;
 import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
 
@@ -49,6 +50,7 @@ public class ProductService {
     private final UserLocationNameReader userLocationNameReader;
     private final UserRepository userRepository;
     private final FcmService fcmService;
+    private final AuctionRepository auctionRepository;
 
 
     @Transactional
@@ -106,8 +108,11 @@ public class ProductService {
         if (product.getStatus().equals(ProductStatus.DELETED)) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
+        AuctionEntity winningAuction = auctionRepository.findHighestBidder(productId)
+                .orElseThrow(() -> new DomainException(BID_NOT_FOUND));
 
-        return ProductResponseDetailInfo.of(product, user);
+
+        return ProductResponseDetailInfo.of(product, user, winningAuction);
     }
 
     @Transactional
