@@ -34,4 +34,8 @@ public class ActivityArea {
     public static ActivityArea create(UserEntity user, EmdArea emdArea) {
         return new ActivityArea(user, emdArea);
     }
+
+    public void updateEmdArea(EmdArea emdArea) {
+        this.emdArea = emdArea;
+    }
 }

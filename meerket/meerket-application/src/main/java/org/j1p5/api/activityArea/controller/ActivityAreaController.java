@@ -62,4 +62,14 @@ public class ActivityAreaController {
         activityAreaSettingUsecase.delete(userId, request.emdId());
         return Response.onSuccess();
     }
+
+    @Operation(summary = "설정 동네 수정", description = "설정한 동네 수정 API")
+    @DeleteMapping
+    public Response<Void> update(
+            @LoginUser Long userId,
+            @Valid @RequestBody ActivityAreaSettingRequest request
+    ) {
+        activityAreaSettingUsecase.update(userId, request.emdId());
+        return Response.onSuccess();
+    }
 }

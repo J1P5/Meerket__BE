@@ -17,4 +17,8 @@ public class ActivityAreaSettingUsecase {
     public void delete(Long userId, Integer emdId) {
         activityAreaService.delete(userId, emdId);
     }
+
+    public void update(Long userId, Integer emdId) {
+        activityAreaService.update(userId, emdId);
+    }
 }
