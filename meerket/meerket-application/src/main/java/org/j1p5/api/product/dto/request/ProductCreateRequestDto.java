@@ -10,13 +10,12 @@ import org.j1p5.domain.product.entity.ProductStatus;
 public record ProductCreateRequestDto(
         String title,
         String content,
-        int price,
+        int minimumPrice,
         ProductCategory category,
         Double latitude,
         Double longitude,
         String address,
         String location,
-        ProductStatus status,
         LocalDateTime expiredTime) {
 
     public static ProductInfo toInfo(ProductCreateRequestDto requestDto) {
@@ -25,12 +24,11 @@ public record ProductCreateRequestDto(
                 .content(requestDto.content)
                 .address(requestDto.address)
                 .location(requestDto.location)
-                .price(requestDto.price)
+                .price(requestDto.minimumPrice)
                 .category(requestDto.category)
                 .latitude(requestDto.latitude)
                 .longtitude(requestDto.longitude)
                 .expiredTime(requestDto.expiredTime)
-                .status(requestDto.status)
                 .build();
     }
 }

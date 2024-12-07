@@ -22,7 +22,6 @@ public record ProductInfo(
         Double longtitude,
         String address,
         String location,
-        ProductStatus status,
         LocalDateTime expiredTime
 ) {
 
@@ -42,7 +41,7 @@ public record ProductInfo(
                 .category(productRequestDto.category)
                 .coordinate(coordinate)
                 .expiredTime(productRequestDto.expiredTime)
-                .status(productRequestDto.status)
+                .status(ProductStatus.BIDDING)
                 .user(user)
                 .build();
     }
