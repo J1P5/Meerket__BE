@@ -17,7 +17,7 @@ public record ProductResponseDetailInfo(
         String title,
         String content,
         int minimumPrice,
-        //        Integer myPrice, // 내가 입찰한 가격
+        Integer myPrice, // 내가 입찰한 가격
         //        Long auctionId,
         ProductCategory category,
         LocalDateTime uploadTime,
@@ -27,7 +27,7 @@ public record ProductResponseDetailInfo(
         boolean isSeller, // true이면 판매자인거 false이면 구매자인거
         Integer winningPrice
 ) {
-    public static ProductResponseDetailInfo of(ProductEntity product, UserEntity user, AuctionEntity winningAuction) {
+    public static ProductResponseDetailInfo of(ProductEntity product, UserEntity user, AuctionEntity winningAuction, AuctionEntity myAuction) {
         boolean isSeller = product.getUser().equals(user);
         return new ProductResponseDetailInfo(
                 new SellerInfo(user.getId(), user.getNickname(), user.getImageUrl()),
@@ -38,6 +38,7 @@ public record ProductResponseDetailInfo(
                 product.getTitle(),
                 product.getContent(),
                 product.getMinPrice(),
+                myAuction != null ? myAuction.getPrice() : null, // 입찰하지 않았다면 null
                 // product.getAuction()
                 product.getCategory(),
                 product.getCreatedAt(),

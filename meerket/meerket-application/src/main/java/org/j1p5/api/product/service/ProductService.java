@@ -108,11 +108,14 @@ public class ProductService {
         if (product.getStatus().equals(ProductStatus.DELETED)) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
+        log.info("");
         AuctionEntity winningAuction = auctionRepository.findHighestBidder(productId)
                 .orElseThrow(() -> new DomainException(BID_NOT_FOUND));
-
-
-        return ProductResponseDetailInfo.of(product, user, winningAuction);
+        log.info("최고가 "+ winningAuction.getPrice());
+        //userId로 각 구매자에 따른 auctionEntity조회 해야함.
+        AuctionEntity myAuction = auctionRepository.findAuctionByUserIdAndProductId(productId,userId);
+        log.info("내 입찰가 "+myAuction.getPrice());
+        return ProductResponseDetailInfo.of(product, user, winningAuction,myAuction);
     }
 
     @Transactional
