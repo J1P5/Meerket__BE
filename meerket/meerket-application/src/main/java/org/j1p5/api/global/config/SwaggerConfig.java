@@ -18,7 +18,7 @@ public class SwaggerConfig {
         server.setUrl("https://tfinder.store");
 
         Server localServer = new Server();
-        server.setUrl("http://localhost:8080");
+        localServer.setUrl("http://localhost:8080");
         return new OpenAPI().components(new Components()).info(apiInfo()).servers(List.of(server, localServer));
     }
 
