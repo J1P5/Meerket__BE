@@ -50,7 +50,6 @@ public class ChatRoomService {
      *
      * @param userId
      * @param roomId
-     * @throws AccessDeniedException
      */
     public void verifyAccess(Long userId, ObjectId roomId){
         ChatRoomEntity chatRoomEntity =
