@@ -50,4 +50,10 @@ public class AuctionEntity extends BaseEntity {
     public void updatePrice(int price) {
         this.price = price;
     }
+
+    public void updateStatus(AuctionStatus status) {
+        this.status = status;
+    }
+
+
 }

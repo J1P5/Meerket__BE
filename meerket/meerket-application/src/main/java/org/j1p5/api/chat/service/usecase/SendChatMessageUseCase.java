@@ -10,7 +10,6 @@ import org.j1p5.domain.chat.vo.MessageInfo;
 import org.springframework.stereotype.Service;
 import org.bson.types.ObjectId;
 
-import java.nio.file.AccessDeniedException;
 
 /**
  * 메시지를 보냈을때 메시지 저장과 채팅방 상태 업데이트
@@ -25,12 +24,13 @@ public class SendChatMessageUseCase {
 
     // 메시지 보내기
     //@Transactional 추후 적용
-    public ChatMessageResponse execute(
-            MessageInfo messageInfo) {
+    public ChatMessageResponse execute(MessageInfo messageInfo) {
+
         Long userId = messageInfo.getUserId();
         Long receiverId = messageInfo.getReceiverId();
         String roomId = messageInfo.getRoomId();
         String content = messageInfo.getContent();
+
 
         ObjectId roomObjectId = chatRoomService.validateRoomId(roomId);
 
@@ -41,12 +41,13 @@ public class SendChatMessageUseCase {
         boolean receiverInChatRoom = chatRoomService.isReceiverInChatRoom(roomObjectId, receiverId.toString());
 
         chatRoomService.updateChatRoomInfo(
-                roomObjectId, content,
-                receiverId, receiverInChatRoom, chatMessageEntity.getCreatedAt());
+                roomObjectId, content, receiverId,
+                receiverInChatRoom, chatMessageEntity.getCreatedAt());
 
         chatMessageService.sendWebSocketMessage(chatMessageEntity);
 
-        if(receiverInChatRoom) fcmService.sendFcmChatMessage(roomId,receiverId,userId,chatMessageEntity.getContent());
+        if (receiverInChatRoom)
+            fcmService.sendFcmChatMessage(roomId, receiverId, userId, chatMessageEntity.getContent());
 
         return ChatMessageResponse.fromEntity(chatMessageEntity);
     }

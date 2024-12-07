@@ -10,7 +10,6 @@ import org.j1p5.api.chat.dto.request.ChatMessageRequest;
 import org.j1p5.api.chat.dto.response.ChatMessageResponse;
 import org.j1p5.api.chat.dto.response.ChatRoomEnterResponse;
 import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
-import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
 import org.j1p5.api.chat.service.usecase.*;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
@@ -31,31 +30,12 @@ import java.util.List;
 @RequestMapping("/api/v1/chats")
 public class ChatController {
 
-    private final CreateChatRoomUseCase createChatRoomUseCase;
     private final EnterChatRoomUseCase enterChatRoomUseCase;
     private final ExitChatRoomUseCase exitChatRoomUseCase;
     private final GetChatMessageUseCase getChatMessageUseCase;
     private final SendChatMessageUseCase sendChatMessageUseCase;
     private final GetUserChatRoomsUseCase userChatRoomsUseCase;
 
-
-    @Operation(summary = "채팅방 생성", description = "낙찰자와 판매자 간의 채팅 생성")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "채팅방 생성 성공"),
-                    @ApiResponse(responseCode = "404", description = "PRODUCT404 상품 찾기 실패"),
-                    @ApiResponse(responseCode = "404", description = "CHAT_RECEIVER_404 상대 찾기 실패")
-            }
-    )
-    @PostMapping("/{productId}")
-    public Response<CreateChatRoomResponse> createChatRoom(
-            @PathVariable Long productId,
-            @LoginUser Long userId
-    ) {
-
-        CreateChatRoomResponse response = createChatRoomUseCase.execute(userId, productId);
-        return Response.onSuccess(response);
-    }
 
 
     @Operation(summary = "채팅방 입장", description = "특정 채팅방에 입장시 채팅방 정보와 최근 메시지30개를 반환합니다.")

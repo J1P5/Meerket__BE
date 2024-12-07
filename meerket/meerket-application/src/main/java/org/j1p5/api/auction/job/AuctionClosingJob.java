@@ -1,8 +1,10 @@
 package org.j1p5.api.auction.job;
 
+import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.api.chat.service.ChatRoomService;
 import org.j1p5.api.fcm.FcmService;
 import org.j1p5.api.product.service.ProductService;
+import org.j1p5.domain.auction.entity.AuctionEntity;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -13,7 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuctionClosingJob implements Job {
 
-
     @Autowired
     private ProductService productService;
 
@@ -23,8 +24,8 @@ public class AuctionClosingJob implements Job {
     @Autowired
     private FcmService fcmService;
 
-//    @Autowired
-//    private BidService bidService;
+    @Autowired
+    private AuctionService auctionService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -32,13 +33,13 @@ public class AuctionClosingJob implements Job {
         Long productId = dataMap.getLong("productId");
 
         // 최고 입찰자 찾기
-//        Bid highestBid = bidService.findHighestBidByProductId(productId);
+        AuctionEntity auctionEntity = auctionService.findByHighestBidder(productId);
 
         // 상품의 낙찰 가격 업데이트
-//        productService.updateWinningPrice(productId, highestBid.getPrice());
+        productService.updateWinningPrice(productId, auctionEntity.getPrice());
 
         // 채팅방 생성
-//        chatRoomService.createChatRoom(highestBid.getUserId(), highestBid.getProductId())
+        chatRoomService.createChatRoom(auctionEntity, productId);
 
         // FCM 알림 전송
 //        fcmService.sendAuctionWonNotification(highestBid.getUserId(), productId);

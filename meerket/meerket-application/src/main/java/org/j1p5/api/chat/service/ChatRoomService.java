@@ -13,6 +13,7 @@ import org.j1p5.api.chat.dto.OtherProfile;
 import org.j1p5.api.chat.dto.response.ChatRoomInfoResponse;
 import org.j1p5.api.chat.dto.response.CreateChatRoomResponse;
 import org.j1p5.api.global.excpetion.WebException;
+import org.j1p5.domain.auction.entity.AuctionEntity;
 import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
 import org.j1p5.domain.product.entity.ProductEntity;
@@ -49,7 +50,6 @@ public class ChatRoomService {
      *
      * @param userId
      * @param roomId
-     * @throws AccessDeniedException
      */
     public void verifyAccess(Long userId, ObjectId roomId){
         ChatRoomEntity chatRoomEntity =
@@ -153,13 +153,7 @@ public class ChatRoomService {
         }
     }
 
-    public CreateChatRoomResponse createChatRoom(Long userId, Long productId) {
-        //TODO 낙찰자, 구매자 찾는과정 필요
-        // 지금은 userId == sellerId 이고 otherUserId == buyerId 라고 가정
-        Long otherUserId = 2L;
-
-        // TODO 낙찰가는 아직 반영x 임시 변수
-        int successfulBid = 100000;
+    public CreateChatRoomResponse createChatRoom(AuctionEntity auctionEntity, Long productId) {
 
         ProductEntity productEntity =
                 productRepository
@@ -168,18 +162,16 @@ public class ChatRoomService {
 
         ChatRoomEntity chatRoomEntity =
                 ChatRoomEntity.create(
-                        userId,
-                        otherUserId,
+                        productEntity.getUser().getId(),
+                        auctionEntity.getUser().getId(),
                         productId,
                         productEntity.getThumbnail(),
                         productEntity.getTitle(),
-                        successfulBid);
+                        auctionEntity.getPrice());
 
         chatRoomRepository.save(chatRoomEntity);
 
-        CreateChatRoomResponse response =
-                new CreateChatRoomResponse(chatRoomEntity.getId().toString());
-        return response;
+        return new CreateChatRoomResponse(chatRoomEntity.getId().toString());
     }
 
     public void exitChatRoom(Long userId, ObjectId roomId) {
