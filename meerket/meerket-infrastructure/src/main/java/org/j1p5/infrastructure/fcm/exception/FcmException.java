@@ -14,8 +14,6 @@ public enum FcmException implements BaseErrorCode {
     AUCTION_BUYER_FCM_TOKEN_NOT_FOUND(404,"BUYER_FCM_NOT_FOUN","구매자들의 FCM토큰이 존재하지 않습니다"),
 
 
-
-
     ;
     private final int status;
     private final String errorCode;
@@ -29,7 +27,7 @@ public enum FcmException implements BaseErrorCode {
 
     @Override
     public ErrorResponse getErrorResponse() {
-        return null;
+        return ErrorResponse.of(false, status, errorCode, message);
     }
 
 }
