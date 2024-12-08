@@ -32,6 +32,8 @@ public class FcmService {
     private final static String BID_ALERT_MESSAGE = "상품에 누군가 입찰했어요!";
     private final static String BID_UPDATE_MESSAGE = "상품에 입찰금액 변동이 발생했어요";
     private final static String BID_CANCEL_MESSAGE = "상품에 입찰이 취소되었어요";
+    private final static String BID_EARLY_CLOSED_MESSAGE = "판매자가 판매 조기마감을 하여 2시간뒤에 입찰이 마감됩니다";
+    private final static String BID_DELETED_MESSAGE = "판매자가 게시물을 삭제하였습니다. 해당 입찰은 유효하지 않습니다.";
 
 
 
@@ -99,13 +101,13 @@ public class FcmService {
 
     public void sendBuyerCloseEarlyMessage(Long productId) {
         ProductEntity product = this.getProductEntity(productId);
-        String content = "판매자가 판매 조기마감을 하여 2시간뒤에 입찰이 마감됩니다";
+        String content = BID_EARLY_CLOSED_MESSAGE;
         sendPushBuyerBidNotification(product,content);
     }
 
     public void sendBuyerProductDeleted(Long productId){
         ProductEntity product = this.getProductEntity(productId);
-        String content = "판매자가 게시물을 삭제하였습니다. 해당 입찰은 유효하지 않습니다.";
+        String content = BID_DELETED_MESSAGE;
         sendPushBuyerBidNotification(product,content);
     }
 

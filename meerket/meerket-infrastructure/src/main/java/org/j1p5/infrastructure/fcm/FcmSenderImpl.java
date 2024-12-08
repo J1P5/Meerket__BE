@@ -96,11 +96,11 @@ public class FcmSenderImpl implements FcmSender {
         try {
             List<FcmTokenEntity> fcmTokenEntities = fcmTokenRepository.findByUserIdIn(userIds);
             if(fcmTokenEntities.isEmpty()){
-                throw new InfraException(AUCTION_BUYER_FCM_TOKEN_NOT_FOUND);
+                log.info("사용자 fcm이 없음");
             }
 
             Notification notification = Notification.builder()
-                    .setTitle(title + "" + content)
+                    .setTitle(title + " " + content)
                     .build();
             for(FcmTokenEntity fcmToken : fcmTokenEntities){
                 Map<String,String> data = new HashMap<>();
