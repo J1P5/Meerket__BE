@@ -46,7 +46,7 @@ public record ProductResponseDetailInfo(
                 product.isEarly(),
                 product.getImageEntityList().stream().map(ImageEntity::getImageUrl).toList(),
                 isSeller,
-                winningAuction.getPrice() // 입찰 최고가 표시 -> 판매자 입장에서 보여주면 됨.
+                winningAuction != null ? winningAuction.getPrice() : null // 입찰 최고가 표시 -> 판매자 입장에서 보여주면 됨.
         );
 
     }
