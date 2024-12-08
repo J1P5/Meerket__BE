@@ -144,6 +144,7 @@ public class ProductService {
         if (!product.getUser().equals(user)) {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
+        //입찰자가 있을 시 삭제요청하면 패널티 적용해야함
         product.updateStatusToDelete(product);
         fcmService.sendBuyerProductDeleted(productId);
     }
