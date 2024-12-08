@@ -2,6 +2,8 @@ package org.j1p5.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
@@ -18,10 +20,10 @@ public class EmdArea {
     @Column(name = "emd_name", nullable = false, length = 20)
     private String emdName;
 
-    @Column(name = "geom", nullable = false)
-    private Polygon geom;
+    @Column(name = "geom", nullable = false, columnDefinition = "geometry(MULTIPOLYGON)")
+    private Geometry geom;
 
-    @Column(name = "coordinate", nullable = false)
+    @Column(name = "coordinate", nullable = false, columnDefinition = "geometry(POINT)")
     private Point coordinate;
 
     @ManyToOne(fetch = FetchType.LAZY)
