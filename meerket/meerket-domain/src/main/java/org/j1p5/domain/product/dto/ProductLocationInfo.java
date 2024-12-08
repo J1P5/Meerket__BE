@@ -3,7 +3,7 @@ package org.j1p5.domain.product.dto;
 import org.locationtech.jts.geom.Point;
 
 public record ProductLocationInfo(
-        double longtitude,
+        double longitude,
         double latitube,
         String address, // ~ 동 ~구 까지표기한 주소
         String location // 상세주소

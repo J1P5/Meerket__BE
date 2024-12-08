@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.j1p5.api.chat.exception.ChatException;
 import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.api.product.exception.ProductException;
+import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.fcm.entity.FcmTokenEntity;
 import org.j1p5.domain.fcm.repository.FcmTokenRepository;
@@ -14,6 +16,9 @@ import org.j1p5.domain.user.repository.UserRepository;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FcmService {
@@ -22,10 +27,13 @@ public class FcmService {
     private final UserRepository userRepository;
     private final FcmTokenRepository fcmTokenRepository;
     private final ProductRepository productRepository;
+    private final AuctionRepository auctionRepository;
 
     private final static String BID_ALERT_MESSAGE = "상품에 누군가 입찰했어요!";
     private final static String BID_UPDATE_MESSAGE = "상품에 입찰금액 변동이 발생했어요";
     private final static String BID_CANCEL_MESSAGE = "상품에 입찰이 취소되었어요";
+    private final static String BID_EARLY_CLOSED_MESSAGE = "판매자가 판매 조기마감을 하여 2시간뒤에 입찰이 마감됩니다";
+    private final static String BID_DELETED_MESSAGE = "판매자가 게시물을 삭제하였습니다. 해당 입찰은 유효하지 않습니다.";
 
 
 
@@ -91,7 +99,28 @@ public class FcmService {
 
     }
 
+    public void sendBuyerCloseEarlyMessage(Long productId) {
+        ProductEntity product = this.getProductEntity(productId);
+        String content = BID_EARLY_CLOSED_MESSAGE;
+        sendPushBuyerBidNotification(product,content);
+    }
 
+    public void sendBuyerProductDeleted(Long productId){
+        ProductEntity product = this.getProductEntity(productId);
+        String content = BID_DELETED_MESSAGE;
+        sendPushBuyerBidNotification(product,content);
+    }
+
+    private void sendPushBuyerBidNotification(ProductEntity product, String content){
+        List<AuctionEntity> auctionEntities = auctionRepository.findAuctionEntitiesByProductId(product.getId());
+        List<Long> userIds = new ArrayList<>();
+        for(AuctionEntity auction : auctionEntities){
+            userIds.add(auction.getUser().getId());
+        }//경매애 참여한 userId들
+
+        fcmSender.sendPushBuyerBidNotification(product.getId(), userIds,product.getTitle(),content);
+
+    }
 
 
 

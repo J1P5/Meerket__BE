@@ -11,10 +11,10 @@ import org.j1p5.infrastructure.global.exception.InfraException;
 public class ImageValidator {
 
     // 허용되는 확장자 목록
-    private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png");
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png","webp");
 
     // 허용되는 MIME 타입 목록
-    private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png");
+    private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png","image/webp");
 
     /** 이미지 파일 유효성 검사 (확장자 + MIME 타입) */
     public static void validateImageFile(File file) {

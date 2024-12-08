@@ -3,7 +3,8 @@ package org.j1p5.api.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.j1p5.api.comment.service.CommentService;
+import org.j1p5.api.auction.quartz.QuartzService;
+import org.j1p5.api.fcm.FcmService;
 import org.j1p5.api.global.converter.PointConverter;
 import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.api.product.dto.response.CloseEarlyResponseDto;
@@ -12,7 +13,8 @@ import org.j1p5.api.product.dto.response.MyProductResponseDto;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
-import org.j1p5.domain.comment.entity.CommentEntity;
+import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.*;
@@ -30,6 +32,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.j1p5.api.auction.exception.AuctionException.BID_NOT_FOUND;
 import static org.j1p5.api.product.exception.ProductException.*;
 import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
 
@@ -47,6 +50,9 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserLocationNameReader userLocationNameReader;
     private final UserRepository userRepository;
+    private final FcmService fcmService;
+    private final AuctionRepository auctionRepository;
+    private final QuartzService quartzService;
 
 
     @Transactional
@@ -70,6 +76,8 @@ public class ProductService {
         product.createThumbnail(imageUrls.get(0));
 
         productAppender.saveProduct(product); // 이떄 연관된 ImageEntity도 같이 저장
+
+        quartzService.scheduleAuctionClosingJob(product);// 스케줄링 잡
 
         return CreateProductResponseDto.from(product);
     }
@@ -104,8 +112,14 @@ public class ProductService {
         if (product.getStatus().equals(ProductStatus.DELETED)) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
-
-        return ProductResponseDetailInfo.of(product, user);
+        log.info("");
+        AuctionEntity winningAuction = auctionRepository.findHighestBidder(productId)
+                .orElseThrow(() -> new DomainException(BID_NOT_FOUND));
+        log.info("최고가 "+ winningAuction.getPrice());
+        //userId로 각 구매자에 따른 auctionEntity조회 해야함.
+        AuctionEntity myAuction = auctionRepository.findAuctionByUserIdAndProductId(productId,userId);
+        log.info("내 입찰가 "+myAuction.getPrice());
+        return ProductResponseDetailInfo.of(product, user, winningAuction,myAuction);
     }
 
     @Transactional
@@ -134,7 +148,10 @@ public class ProductService {
         if (!product.getUser().equals(user)) {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
+        //입찰자가 있을 시 삭제요청하면 패널티 적용해야함
         product.updateStatusToDelete(product);
+        quartzService.cancelAuctionJob(productId);
+        fcmService.sendBuyerProductDeleted(productId);
     }
 
     @Transactional
@@ -212,6 +229,7 @@ public class ProductService {
 
         //조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
         //fcm을 통한 알림 구현로직 추가 예정
+        fcmService.sendBuyerCloseEarlyMessage(productId);
 
         return CloseEarlyResponseDto.of(productId);
 
