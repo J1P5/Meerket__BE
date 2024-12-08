@@ -59,7 +59,7 @@ public class SendChatMessageUseCase {
 
         sendWebSocketMessage(chatMessageEntity);
 
-        if (receiverInChatRoom)
+        if (!receiverInChatRoom)
             fcmService.sendFcmChatMessage(roomId, receiverId, userId, chatMessageEntity.getContent());
 
         return ChatMessageResponse.fromEntity(chatMessageEntity);
