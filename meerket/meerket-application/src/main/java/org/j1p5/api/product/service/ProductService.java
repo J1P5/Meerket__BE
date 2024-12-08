@@ -77,7 +77,11 @@ public class ProductService {
 
         productAppender.saveProduct(product); // 이떄 연관된 ImageEntity도 같이 저장
 
+        log.info("상품 등록완료");
+
         quartzService.scheduleAuctionClosingJob(product);// 스케줄링 잡
+
+        log.info("스케줄링 완료{}", product);
 
         return CreateProductResponseDto.from(product);
     }

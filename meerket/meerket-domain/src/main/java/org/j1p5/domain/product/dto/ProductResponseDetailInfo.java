@@ -25,7 +25,8 @@ public record ProductResponseDetailInfo(
         boolean isEarly,
         List<String> images, // 문자열 리스트로 이미지 URL 관리
         boolean isSeller, // true이면 판매자인거 false이면 구매자인거
-        Integer winningPrice
+        Integer winningPrice,
+        Long myAuctionId
 ) {
     public static ProductResponseDetailInfo of(ProductEntity product, UserEntity user, AuctionEntity winningAuction, AuctionEntity myAuction) {
         boolean isSeller = product.getUser().equals(user);
@@ -46,7 +47,8 @@ public record ProductResponseDetailInfo(
                 product.isEarly(),
                 product.getImageEntityList().stream().map(ImageEntity::getImageUrl).toList(),
                 isSeller,
-                winningAuction != null ? winningAuction.getPrice() : null // 입찰 최고가 표시 -> 판매자 입장에서 보여주면 됨.
+                winningAuction != null ? winningAuction.getPrice() : null, // 입찰 최고가 표시 -> 판매자 입장에서 보여주면 됨.
+                myAuction.getId()
         );
 
     }

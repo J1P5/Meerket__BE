@@ -1,5 +1,6 @@
 package org.j1p5.api.global.excpetion;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.common.exception.CustomException;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionAdvice {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<?> onCustomException(CustomException e) {
-        log.error(e.getMessage());
+    public ResponseEntity<?> onCustomException(CustomException e, HttpServletRequest request) {
+        log.error("{} - {}", request.getRequestURI(), e.getMessage());
         return ResponseEntity.status(e.getBaseErrorCode().getErrorResponse().getStatus())
                 .body(
                         Response.onFailure(
@@ -24,8 +25,8 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> onException(Exception e) {
-        log.error(e.getMessage());
+    public ResponseEntity<?> onException(Exception e, HttpServletRequest request) {
+        log.error("{} - {}", request.getRequestURI(), e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Response.onFailure("UNKNOWN500", "unknown server error"));
     }

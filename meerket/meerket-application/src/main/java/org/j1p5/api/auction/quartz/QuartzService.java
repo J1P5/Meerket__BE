@@ -21,18 +21,24 @@ public class QuartzService {
 
     // 물품 등록시 job 등록
     public void scheduleAuctionClosingJob(ProductEntity product) {
+        log.info("product잘들어옴?{}", product);
+
         JobDetail jobDetail = JobBuilder.newJob(AuctionClosingJob.class)
                 .withIdentity("auctionJob_" + product.getId(), "auctionGroup")
                 .usingJobData("productId", product.getId())
                 .build();
+
 
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("auctionTrigger_" + product.getId(), "auctionGroup")
                 .startAt(Date.from(product.getExpiredTime().atZone(ZoneId.systemDefault()).toInstant()))
                 .build();
 
+        log.info("job + trigger{}{}", jobDetail, trigger);
+
         try {
             scheduler.scheduleJob(jobDetail, trigger);
+            log.info("작업 완료");
         } catch (SchedulerException e) {
             log.error("스케줄 등록 과정 중 에러 발생 ",e);
         }
