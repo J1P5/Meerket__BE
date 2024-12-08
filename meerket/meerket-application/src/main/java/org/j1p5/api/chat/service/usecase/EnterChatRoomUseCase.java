@@ -9,8 +9,12 @@ import org.j1p5.api.chat.dto.response.ChatRoomEnterResponse;
 import org.j1p5.api.chat.service.ChatMessageService;
 import org.j1p5.api.chat.service.ChatRoomService;
 import org.j1p5.api.global.excpetion.WebException;
+import org.j1p5.api.product.exception.ProductException;
+import org.j1p5.api.product.service.EmdNameReader;
 import org.j1p5.domain.chat.entity.ChatRoomEntity;
 import org.j1p5.domain.chat.repository.ChatRoomRepository;
+import org.j1p5.domain.product.entity.ProductEntity;
+import org.j1p5.domain.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +32,7 @@ public class EnterChatRoomUseCase {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
     private final ChatRoomRepository chatRoomRepository;
+    private final ProductRepository productRepository;
 
 
     public ChatRoomEnterResponse execute(Long userId, String roomId) {
@@ -50,6 +55,9 @@ public class EnterChatRoomUseCase {
                         .findById(roomObjectId)
                         .orElseThrow(() -> new WebException(NOT_FOUND_CHATROOM));
 
+        ProductEntity productEntity = productRepository.findById(chatRoomEntity.getProductId())
+                .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
+
         OtherProfile otherProfile = chatRoomService.getOtherProfile(chatRoomEntity, userId);
         boolean isSeller = chatRoomEntity.getSellerId() == userId;
 
@@ -63,7 +71,10 @@ public class EnterChatRoomUseCase {
                 chatRoomEntity.getProductImage(),
                 chatRoomEntity.getPrice(),
                 isSeller,
-                chatRoomEntity.isChatAvailable());
+                chatRoomEntity.isChatAvailable(),
+                EmdNameReader.getEmdName(productEntity.getUser()),
+                productEntity.getCreatedAt()
+        );
     }
 
 }

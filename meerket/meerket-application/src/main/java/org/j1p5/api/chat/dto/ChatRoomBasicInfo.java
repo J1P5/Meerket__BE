@@ -1,6 +1,7 @@
 package org.j1p5.api.chat.dto;
 
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public record ChatRoomBasicInfo(
@@ -13,7 +14,9 @@ public record ChatRoomBasicInfo(
         String productImage,
         int price,
         boolean isSeller,
-        boolean isChatAvailable
+        boolean isChatAvailable,
+        String sellerAddress,
+        LocalDateTime productCreatedAt
 ) {
     public ChatRoomBasicInfo{
         Objects.requireNonNull(roomId,"roomId는 필수입니다.");
@@ -22,5 +25,8 @@ public record ChatRoomBasicInfo(
         Objects.requireNonNull(productId,"productId는 필수입니다.");
         Objects.requireNonNull(productTitle,"productTitle은 필수입니다.");
         Objects.requireNonNull(isChatAvailable, "isChatAvailable은 필수입니다.");
+        Objects.requireNonNull(sellerAddress, "sellerAddress 는 필수입니다.");
+        Objects.requireNonNull(productCreatedAt, "productCreatedAt 은 필수입니다.");
+
     }
 }
