@@ -23,18 +23,18 @@ public class UserProfileService {
 
     @Transactional
     public void updateNickname(Long userId, String nickname) {
-        nickNameValidation(nickname);
-
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        nickNameValidation(user, nickname);
 
         user.updateNickname(nickname);
     }
 
-    public void nickNameValidation(String nickname) {
+    public void nickNameValidation(UserEntity user, String nickname) {
         boolean isExist = userRepository.existsByNickname(nickname);
 
-        if (isExist) {
+        if (isExist && !nickname.equals(user.getNickname())) {
             throw new NicknameAlreadyExistException(NICKNAME_ALREADY_EXIST);
         }
     }
