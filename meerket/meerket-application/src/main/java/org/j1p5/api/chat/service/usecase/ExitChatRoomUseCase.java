@@ -3,6 +3,7 @@ package org.j1p5.api.chat.service.usecase;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.j1p5.api.chat.service.ChatRoomService;
+import org.j1p5.domain.chat.repository.ChatRoomRepository;
 import org.springframework.stereotype.Service;
 
 
@@ -15,12 +16,13 @@ import org.springframework.stereotype.Service;
 public class ExitChatRoomUseCase {
 
     private final ChatRoomService chatRoomService;
+    private final ChatRoomRepository chatRoomRepository;
 
     public void execute(Long userId, String roomId) {
         ObjectId roomObjectId = chatRoomService.validateRoomId(roomId);
 
         chatRoomService.verifyAccess(userId, roomObjectId);
 
-        chatRoomService.exitChatRoom(userId, roomObjectId);
+        chatRoomRepository.exitChatRoom(userId, roomObjectId);
     }
 }
