@@ -20,7 +20,7 @@ public class ChatMessageCustomRepositoryImpl implements  ChatMessageCustomReposi
 
     private final MongoTemplate mongoTemplate;
 
-    private static final int CHAT_LIST_LIMIT = 30;
+    private static final int CHAT_LIST_LIMIT = 100;
 
 
     @Override
