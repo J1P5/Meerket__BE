@@ -8,7 +8,7 @@ public enum ProductException implements BaseErrorCode {
     REGION_AUTH_NOT_FOUND(404, "REGION404", "사용자의 동네 인증 정보가 없습니다."),
     PRODUCT_NOT_FOUND(404, "PRODUCT404", "상품 조회에 실패하였습니다."),
     PRODUCT_NOT_AUTHORIZED(403, "PRODUCT403", "상품 수정 권한이 없습니다."),
-    PRODUCT_HAS_BUYER(4050, "PRODUCT400", "입찰자가 있는 상품은 수정할 수 없습니다."),
+    PRODUCT_HAS_BUYER(405, "PRODUCT400", "입찰자가 있는 상품은 수정할 수 없습니다."),
     PRODUCT_HAS_NO_BUYER(400,"PRODUCT400","입찰자가 없어서 조기마감을 할 수 없습니다."),
     PRODUCT_IS_DELETED(410, "PRODUCT410", "삭제된 게시물입니다."),
     INVALID_PRODUCT_CATEGORY(400, "PRODUCT400","존재하지 않는 카테고리입니다."),
