@@ -16,7 +16,8 @@ public record CommentReadResponseDto(
         boolean isSeller,//판매자인지
         boolean isUpdatable,//수정된 글인지
         LocalDateTime createdAt,
-        List<CommentReadResponseDto> replies
+        List<CommentReadResponseDto> replies,
+        CommentStatus status
 ) {
     public static CommentReadResponseDto of(CommentEntity commentEntity,UserEntity user){
         boolean isUpdated = commentEntity.getStatus().equals(CommentStatus.UPDATED);//수정여부 판단하기 위해
@@ -28,8 +29,9 @@ public record CommentReadResponseDto(
                 isUpdated,
                 commentEntity.getCreatedAt(),
                 commentEntity.getReplies().stream()
-                        .map(reply -> CommentReadResponseDto.of(reply,user))
-                        .collect(Collectors.toList())
+                        .map(reply -> CommentReadResponseDto.of(reply,reply.getUser()))
+                        .collect(Collectors.toList()),
+                commentEntity.getStatus()
         );
     }
 }

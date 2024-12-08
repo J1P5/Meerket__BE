@@ -28,8 +28,10 @@ public class PlaceBidUseCase {
         ProductEntity product = productRepository.findById(productId)
                         .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         product.updateHasBuyer();
+        productRepository.save(product);
 
         fcmService.sendSellerBidMessage(productId);
+
 
         return placeBidResponse;
     }
