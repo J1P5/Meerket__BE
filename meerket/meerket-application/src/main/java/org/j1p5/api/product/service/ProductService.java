@@ -3,6 +3,7 @@ package org.j1p5.api.product.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.j1p5.api.auction.quartz.QuartzService;
 import org.j1p5.api.fcm.FcmService;
 import org.j1p5.api.global.converter.PointConverter;
 import org.j1p5.api.global.excpetion.WebException;
@@ -51,6 +52,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final FcmService fcmService;
     private final AuctionRepository auctionRepository;
+    private final QuartzService quartzService;
 
 
     @Transactional
@@ -74,6 +76,8 @@ public class ProductService {
         product.createThumbnail(imageUrls.get(0));
 
         productAppender.saveProduct(product); // 이떄 연관된 ImageEntity도 같이 저장
+
+        quartzService.scheduleAuctionClosingJob(product);// 스케줄링 잡
 
         return CreateProductResponseDto.from(product);
     }
@@ -146,6 +150,7 @@ public class ProductService {
         }
         //입찰자가 있을 시 삭제요청하면 패널티 적용해야함
         product.updateStatusToDelete(product);
+        quartzService.cancelAuctionJob(productId);
         fcmService.sendBuyerProductDeleted(productId);
     }
 

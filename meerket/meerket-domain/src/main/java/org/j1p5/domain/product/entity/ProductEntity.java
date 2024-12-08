@@ -129,4 +129,6 @@ public class ProductEntity extends BaseEntity {
     public void updateWinningPrice(int winningPrice) {
         this.winningPrice = winningPrice;
     }
+
+    public void updateHasBuyer(){this.hasBuyer = true;}
 }
