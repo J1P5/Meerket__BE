@@ -68,4 +68,11 @@ public class UserController {
         userProfileSettingUsecase.execute(userId, request.name(), MultipartFileConverter.convertMultipartFileToFile(imageFile));
         return Response.onSuccess();
     }
+
+    @Operation(summary = "유저 세션 확인용 API", description = "유저 세션 확인용 임시 API")
+    @GetMapping("/session")
+    public Response<UserProfile> getUserInfo(@LoginUser Long userId) {
+        UserProfile userProfile = userProfileReadUsecase.getSessionInfo(userId);
+        return Response.onSuccess(userProfile);
+    }
 }
