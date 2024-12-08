@@ -77,7 +77,11 @@ public class ProductService {
 
         productAppender.saveProduct(product); // 이떄 연관된 ImageEntity도 같이 저장
 
+        log.info("상품 등록완료");
+
         quartzService.scheduleAuctionClosingJob(product);// 스케줄링 잡
+
+        log.info("스케줄링 완료{}", product);
 
         return CreateProductResponseDto.from(product);
     }
@@ -112,13 +116,14 @@ public class ProductService {
         if (product.getStatus().equals(ProductStatus.DELETED)) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
-        log.info("");
+
         AuctionEntity winningAuction = auctionRepository.findHighestBidder(productId)
-                .orElseThrow(() -> new DomainException(BID_NOT_FOUND));
-        log.info("최고가 "+ winningAuction.getPrice());
+                .orElse(null);
+
         //userId로 각 구매자에 따른 auctionEntity조회 해야함.
-        AuctionEntity myAuction = auctionRepository.findAuctionByUserIdAndProductId(productId,userId);
-        log.info("내 입찰가 "+myAuction.getPrice());
+        AuctionEntity myAuction = auctionRepository.findAuctionByUserIdAndProductId(productId,userId)
+                .orElse(null);
+
         return ProductResponseDetailInfo.of(product, user, winningAuction,myAuction);
     }
 

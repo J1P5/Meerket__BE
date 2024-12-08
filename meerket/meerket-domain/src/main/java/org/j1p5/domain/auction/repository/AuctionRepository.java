@@ -74,7 +74,7 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
     and a.user.id = :userId
     and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
 """)
-    AuctionEntity findAuctionByUserIdAndProductId(
+    Optional<AuctionEntity> findAuctionByUserIdAndProductId(
             @Param("productId") Long productId,
             @Param("userId") Long userId
     );
