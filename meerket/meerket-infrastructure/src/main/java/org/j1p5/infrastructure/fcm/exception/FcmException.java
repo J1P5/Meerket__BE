@@ -17,6 +17,8 @@ public enum FcmException implements BaseErrorCode {
 
     CREATE_BID_FCM_ERROR(500,"FCM500","입찰 생성시 판매자에게 FCM알림 전송오류가 발생하였습니다"),
 
+    CANCEL_BID_FCM_SELLER_ERROR(500,"FCM500","입찰 취소시 판매자에게 FCM알림 전송오류가 발생하였습니다"),
+
 
     ;
     private final int status;

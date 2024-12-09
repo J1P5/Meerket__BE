@@ -39,7 +39,7 @@ public class PlaceBidUseCase {
         if(product.getUser().equals(user)){
             throw new DomainException(SELLER_CANNOT_CREATE_BID);
         }
-        
+
         auctionService.checkDuplicateBid(userId, productId);
 
         PlaceBidResponse placeBidResponse = auctionService.placeBid(userId, productId, price);
