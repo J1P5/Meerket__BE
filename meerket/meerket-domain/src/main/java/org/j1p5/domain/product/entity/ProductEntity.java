@@ -114,6 +114,10 @@ public class ProductEntity extends BaseEntity {
         this.status = ProductStatus.DELETED;
     }
 
+    public void updateStatusToInProgress() {
+        this.status = ProductStatus.IN_PROGRESS;
+    }
+
     public void createThumbnail(String thumbnail){
         this.thumbnail = thumbnail;
     }

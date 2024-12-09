@@ -264,6 +264,16 @@ public class ProductService {
         productEntity.updateWinningPrice(winningPrice);
     }
 
+    @Transactional
+    public void updateProductStatusToProgress(Long productId) {
+
+        ProductEntity productEntity = productRepository.findById(productId)
+                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND
+        ));
+        productEntity.updateStatusToInProgress();
+
+    }
+
 
 
 }

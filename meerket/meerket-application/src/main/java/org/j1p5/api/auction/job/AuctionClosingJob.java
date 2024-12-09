@@ -42,6 +42,9 @@ public class AuctionClosingJob implements Job {
         // 상품의 낙찰 가격 업데이트
         productService.updateWinningPrice(productId, auctionEntity.getPrice());
 
+        // 상품 상태 업데이트
+        productService.updateProductStatusToProgress(productId);
+
         // 채팅방 생성
         chatRoomService.createChatRoom(auctionEntity, productId);
 
