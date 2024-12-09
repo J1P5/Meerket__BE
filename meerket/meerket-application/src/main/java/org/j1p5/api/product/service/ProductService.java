@@ -24,6 +24,7 @@ import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.product.service.ImageService;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
+import org.j1p5.infrastructure.global.exception.InfraException;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ import java.util.List;
 import static org.j1p5.api.auction.exception.AuctionException.BID_NOT_FOUND;
 import static org.j1p5.api.product.exception.ProductException.*;
 import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
+import static org.j1p5.infrastructure.fcm.exception.FcmException.EARLY_CLOSED_FCM_ERROR;
 
 
 @Service
@@ -214,6 +216,7 @@ public class ProductService {
         return CursorResult.of(productResponseInfos, nextCursor);
     }
 
+    @Transactional
     public CloseEarlyResponseDto closeProductEarly(Long productId, Long userId) {
         UserEntity user = userReader.getUser(userId);
 
@@ -234,13 +237,18 @@ public class ProductService {
 
         //조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
         //fcm을 통한 알림 구현로직 추가 예정
-        fcmService.sendBuyerCloseEarlyMessage(productId);
+        try {
+            fcmService.sendBuyerCloseEarlyMessage(productId);
+        } catch (Exception e) {
+            throw new InfraException(EARLY_CLOSED_FCM_ERROR);
+        }
 
         return CloseEarlyResponseDto.of(productId);
 
     }
 
 
+    @Transactional
     public void updateWinningPrice(Long productId, int winningPrice) {
 
         ProductEntity productEntity = productRepository.findById(productId)

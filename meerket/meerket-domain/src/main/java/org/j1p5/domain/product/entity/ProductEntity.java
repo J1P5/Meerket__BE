@@ -131,4 +131,6 @@ public class ProductEntity extends BaseEntity {
     }
 
     public void updateHasBuyer(){this.hasBuyer = true;}
+
+    public void updateHasBuyerFalse(){this.hasBuyer = false;}
 }
