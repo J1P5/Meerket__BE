@@ -57,6 +57,7 @@ public class QuartzService {
         try {
             scheduler.rescheduleJob(triggerKey, newTrigger);
             log.info("경매 마감 시간을 재설정. productId = {}",productId);
+            log.info("수정된 경매 마감 시간은. newExpiredTime = {}", newExpiredTime);
         } catch (SchedulerException e) {
             log.error("스케줄 재설정 과정 중 에러 발생",e);
         }

@@ -114,6 +114,10 @@ public class ProductEntity extends BaseEntity {
         this.status = ProductStatus.DELETED;
     }
 
+    public void updateStatusToInProgress() {
+        this.status = ProductStatus.IN_PROGRESS;
+    }
+
     public void createThumbnail(String thumbnail){
         this.thumbnail = thumbnail;
     }
@@ -123,7 +127,8 @@ public class ProductEntity extends BaseEntity {
     }
 
     public void updateExpiredTime(){
-        this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
+//        this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
+        this.expiredTime = LocalDateTime.now().plus(10, ChronoUnit.SECONDS); // 시연을 위한 20초
     }
 
     public void updateWinningPrice(int winningPrice) {

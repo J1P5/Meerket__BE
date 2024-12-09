@@ -235,6 +235,12 @@ public class ProductService {
         product.updateIsEarly();
         product.updateExpiredTime();
 
+        try {
+            quartzService.rescheduleAuctionClosing(productId, product.getExpiredTime());
+        } catch (Exception e) {
+            log.error("job 만료시간 재설정 에러 발생");
+        }
+
         //조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
         //fcm을 통한 알림 구현로직 추가 예정
         try {
@@ -242,6 +248,7 @@ public class ProductService {
         } catch (Exception e) {
             throw new InfraException(EARLY_CLOSED_FCM_ERROR);
         }
+
 
         return CloseEarlyResponseDto.of(productId);
 
@@ -255,6 +262,16 @@ public class ProductService {
                 .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
 
         productEntity.updateWinningPrice(winningPrice);
+    }
+
+    @Transactional
+    public void updateProductStatusToProgress(Long productId) {
+
+        ProductEntity productEntity = productRepository.findById(productId)
+                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND
+        ));
+        productEntity.updateStatusToInProgress();
+
     }
 
 
