@@ -26,19 +26,17 @@ org:
     scheduler:
       instanceName: MySQLScheduler
       instanceId: AUTO
-
     threadPool:
-      class: org.quartz.simpl.SimpleThreadPool
+      className: org.quartz.simpl.SimpleThreadPool
       threadCount: 4
-
     jobStore:
-      class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      className: org.quartz.impl.jdbcjobstore.JobStoreTX
       driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
       dataSource: quartzDS
-
     dataSource:
       quartzDS:
+        provider: hikaricp
         driver: com.mysql.cj.jdbc.Driver
-        url: ${HOME_URL}
-        username: ${HOME_USERNAME}
+        URL: ${HOME_URL}
+        user: ${HOME_USERNAME}
         password: ${HOME_PASSWORD}
