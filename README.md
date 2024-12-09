@@ -1,6 +1,14 @@
 # 🐱 meerket
 
-![Logo (1)](https://github.com/user-attachments/assets/243072f3-21b3-41e8-8369-960c80e7b8d7)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/243072f3-21b3-41e8-8369-960c80e7b8d7" alt="미어켓_로고">
+</p>
+
+___
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/192bc07f-eb66-40e4-b881-ef8a870ba368" alt="미어켓_메인화면">
+</p>
 
 ## 배포 주소
 
