@@ -9,9 +9,9 @@
 ## 스토리북 링크
 [swagger](http://13.209.165.156:8080/swagger-ui/index.html#/)
 
-## 백앤드 레포지토리
+## 프론트 레포지토리
 
-[meerket-backend](https://github.com/prgrms-web-devcourse-final-project/WEB1_1_J1P5_BE)
+[meerket-frontend](https://github.com/prgrms-web-devcourse-final-project/WEB1_1_J1P5_FE)
 
 ## 시연 영상
 [시연 영상 유투브 링크](https://www.youtube.com/watch?v=SZBPjolv118)
