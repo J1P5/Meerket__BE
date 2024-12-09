@@ -6,7 +6,7 @@
 
 [meerket.vercel.appp](https://meerket.vercel.app/)
 
-## 스토리북 링크
+## 스웨거 링크
 [swagger](http://13.209.165.156:8080/swagger-ui/index.html#/)
 
 ## 프론트 레포지토리
