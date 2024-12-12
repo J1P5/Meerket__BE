@@ -23,4 +23,13 @@ public class BlockEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    private BlockEntity(Long targetId, UserEntity user) {
+        this.targetId = targetId;
+        this.user = user;
+    }
+
+    public static BlockEntity create(Long targetId, UserEntity user) {
+        return new BlockEntity(targetId, user);
+    }
 }
