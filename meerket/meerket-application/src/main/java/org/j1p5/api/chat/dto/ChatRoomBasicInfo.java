@@ -1,6 +1,8 @@
 package org.j1p5.api.chat.dto;
 
 
+import org.j1p5.domain.product.entity.ProductStatus;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -16,7 +18,8 @@ public record ChatRoomBasicInfo(
         boolean isSeller,
         boolean isChatAvailable,
         String sellerAddress,
-        LocalDateTime productCreatedAt
+        LocalDateTime productCreatedAt,
+        ProductStatus productStatus
 ) {
     public ChatRoomBasicInfo{
         Objects.requireNonNull(roomId,"roomId는 필수입니다.");
@@ -27,6 +30,7 @@ public record ChatRoomBasicInfo(
         Objects.requireNonNull(isChatAvailable, "isChatAvailable은 필수입니다.");
         Objects.requireNonNull(sellerAddress, "sellerAddress 는 필수입니다.");
         Objects.requireNonNull(productCreatedAt, "productCreatedAt 은 필수입니다.");
+        Objects.requireNonNull(productStatus, "productStatus는 필수입니다.");
 
     }
 }
