@@ -10,7 +10,6 @@ import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.api.product.dto.response.CloseEarlyResponseDto;
 import org.j1p5.api.product.dto.response.CreateProductResponseDto;
 import org.j1p5.api.product.dto.response.MyProductResponseDto;
-import org.j1p5.api.product.exception.ProductException;
 import org.j1p5.common.dto.Cursor;
 import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
@@ -110,6 +109,35 @@ public class ProductService {
 
         return CursorResult.of(productResponseInfos, nextCursor); // Dto ->CursorResult형으로 변환
     }
+
+    // 마감 된 상품만 따로 조회(임시 시세 조회 api)
+    //TODO 추후 리팩토링(위에 getProducts랑 겹치는 부분)
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public CursorResult<ProductResponseInfo> getCompletedProducts(Long userId, Cursor cursor) {
+
+        UserEntity user = userReader.getUser(userId);
+
+        List<ActivityArea> activityAreas = user.getActivityAreas();
+        Point coordinate = activityAreaReader.getActivityArea(activityAreas);
+
+        List<ProductEntity> products = productRepository
+                .findCompletedProductsByCursor(coordinate, cursor.cursor(), cursor.size());
+
+        Long nextCursor = products.isEmpty() ? null : products.get(products.size() - 1).getId();
+
+        List<ProductResponseInfo> productResponseInfos = products.stream()
+                .map(product -> {
+                    MyLocationInfo myLocationInfo = MyLocationInfo
+                            .of(userLocationNameReader.getLocationName(activityAreas.get(0)));
+                    return ProductResponseInfo.from(product, myLocationInfo);
+                })
+                .toList();
+
+        return CursorResult.of(productResponseInfos, nextCursor);
+    }
+
+
+
 
     @Transactional
     public ProductResponseDetailInfo getProductDetail(Long productId, Long userId) {

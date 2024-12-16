@@ -90,10 +90,22 @@ public class ProductController {
         return Response.onSuccess(products);
     }
 
+    @GetMapping("/completed")
+    public Response<CursorResult<ProductResponseInfo>> getCompletedProducts(
+            @CursorDefault Cursor cursor,
+            @LoginUser Long userId
+    ) {
+
+        CursorResult<ProductResponseInfo> completedProducts = productService.getCompletedProducts(userId, cursor);
+
+        return Response.onSuccess(completedProducts);
+    }
+
 
     @GetMapping("/{productId}")
     public Response<ProductResponseDetailInfo> getProductDetails(
             @PathVariable(name = "productId") Long productId, @LoginUser Long userId) {
+
         return Response.onSuccess(productService.getProductDetail(productId, userId));
     }
 
@@ -156,5 +168,10 @@ public class ProductController {
         productService.markProductAsCompleted(productId, userId);
         return Response.onSuccess();
     }
+
+
+
+
+
 
 }

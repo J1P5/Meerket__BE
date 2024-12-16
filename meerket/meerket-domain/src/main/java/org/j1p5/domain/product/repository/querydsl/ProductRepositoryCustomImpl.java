@@ -38,6 +38,22 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 .fetch();
     }
 
+    // 마감된 물품만 조회 (임시 시세조회 api)
+    @Override
+    public List<ProductEntity> findCompletedProductsByCursor(Point coordinate, Long cursor, Integer size) {
+        return queryFactory
+                .selectFrom(qProduct)
+                .where(
+                        withinDistance(coordinate, MAX_DISTANCE),
+                        cursorCondition(cursor),
+                        isNotDeleted(),
+                        qProduct.status.eq(ProductStatus.COMPLETED)
+                )
+                .orderBy(qProduct.id.desc())
+                .limit(size)
+                .fetch();
+    }
+
     @Override
     public List<ProductEntity> findProductByCategory(Point coordinate, String category, Long cursor, Integer size) {
         return queryFactory.selectFrom(qProduct)
