@@ -90,9 +90,22 @@ public class ProductController {
         return Response.onSuccess(products);
     }
 
+    @GetMapping("/completed")
+    public Response<CursorResult<ProductResponseInfo>> getCompletedProducts(
+            @CursorDefault Cursor cursor,
+            @LoginUser Long userId
+    ) {
+
+        CursorResult<ProductResponseInfo> completedProducts = productService.getCompletedProducts(userId, cursor);
+
+        return Response.onSuccess(completedProducts);
+    }
+
+
     @GetMapping("/{productId}")
     public Response<ProductResponseDetailInfo> getProductDetails(
             @PathVariable(name = "productId") Long productId, @LoginUser Long userId) {
+
         return Response.onSuccess(productService.getProductDetail(productId, userId));
     }
 
@@ -116,23 +129,23 @@ public class ProductController {
 
     @GetMapping("/categories")
     public Response<CursorResult<ProductResponseInfo>> getProductByCategory(@RequestParam(name = "category") String category,
-                                                                            @LoginUser Long userId,@CursorDefault Cursor cursor){
+                                                                            @LoginUser Long userId, @CursorDefault Cursor cursor) {
 
-        return Response.onSuccess(productService.getProductsByCategory(userId,cursor,category));
+        return Response.onSuccess(productService.getProductsByCategory(userId, cursor, category));
     }
 
     @GetMapping("/my")
     public Response<CursorResult<MyProductResponseDto>> getMyProducts(@LoginUser Long userId,
                                                                       @CursorDefault Cursor cursor,
-                                                                      @RequestParam(name = "status")ProductStatus status
-                                                                      ){
-        return Response.onSuccess(productService.getMyProducts(userId,cursor,status));
+                                                                      @RequestParam(name = "status") ProductStatus status
+    ) {
+        return Response.onSuccess(productService.getMyProducts(userId, cursor, status));
     }
 
     @GetMapping("/keywords")
     private Response<CursorResult<ProductResponseInfo>> getProductByKeyword(@RequestParam(name = "keyword") String keyword,
                                                                             @LoginUser Long userId,
-                                                                            @CursorDefault Cursor cursor){
+                                                                            @CursorDefault Cursor cursor) {
 
         return Response.onSuccess(productService.getProductByKeyword(keyword, userId, cursor));
 
@@ -141,10 +154,24 @@ public class ProductController {
 
     @PostMapping("/{productId}/early-close")
     public Response<CloseEarlyResponseDto> closeEarly(@PathVariable(name = "productId") Long productId,
-                                                      @LoginUser Long userId){
-        return Response.onSuccess(productService.closeProductEarly(productId,userId));
-
-
-
+                                                      @LoginUser Long userId) {
+        return Response.onSuccess(productService.closeProductEarly(productId, userId));
     }
+
+
+    @PatchMapping("/{productId}/complete")
+    public Response<Void> markProductAsCompleted(
+            @PathVariable Long productId,
+            @LoginUser Long userId
+    ) {
+
+        productService.markProductAsCompleted(productId, userId);
+        return Response.onSuccess();
+    }
+
+
+
+
+
+
 }

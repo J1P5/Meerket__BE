@@ -15,6 +15,7 @@ import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.domain.chat.vo.MessageInfo;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,7 +116,7 @@ public class ChatController {
     )
     @MessageMapping("/message")
     public Response<Void> sendChatMessage(
-            @RequestBody @Validated ChatMessageRequest request
+            @Payload @Validated ChatMessageRequest request
     ) {
 
         MessageInfo messageInfo = new MessageInfo(

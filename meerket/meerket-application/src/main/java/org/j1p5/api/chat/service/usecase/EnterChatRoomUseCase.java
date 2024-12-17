@@ -73,7 +73,8 @@ public class EnterChatRoomUseCase {
                 isSeller,
                 chatRoomEntity.isChatAvailable(),
                 EmdNameReader.getEmdName(productEntity.getUser()),
-                productEntity.getCreatedAt()
+                productEntity.getCreatedAt(),
+                productEntity.getStatus()
         );
     }
 

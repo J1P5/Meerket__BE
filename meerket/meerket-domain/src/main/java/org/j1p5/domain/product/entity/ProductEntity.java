@@ -138,4 +138,11 @@ public class ProductEntity extends BaseEntity {
     public void updateHasBuyer(){this.hasBuyer = true;}
 
     public void updateHasBuyerFalse(){this.hasBuyer = false;}
+
+
+    public void updateStatusToComplete() {
+        this.status = ProductStatus.COMPLETED;
+    }
+
+
 }
