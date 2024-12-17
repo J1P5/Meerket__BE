@@ -307,7 +307,7 @@ public class ProductService {
 
 
     // 거래 완료를 눌렀을때 물품의 상태를 변경하는것
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
     public void markProductAsCompleted(Long productId, Long userId) {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new WebException(USER_NOT_FOUND));
