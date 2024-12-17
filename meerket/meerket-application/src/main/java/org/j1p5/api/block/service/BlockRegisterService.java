@@ -1,6 +1,7 @@
 package org.j1p5.api.block.service;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.block.validator.BlockValidator;
 import org.j1p5.api.user.exception.UserNotFoundException;
 import org.j1p5.domain.block.entity.BlockEntity;
 import org.j1p5.domain.block.repository.BlockRepository;
@@ -16,9 +17,10 @@ public class BlockRegisterService {
 
     private final BlockRepository blockRepository;
     private final UserRepository userRepository;
+    private final BlockValidator blockValidator;
 
     public void register(Long userId, Long blockUserId) {
-        UserEntity blockedUser = validateUserId(blockUserId);
+        UserEntity blockedUser = blockValidator.validateUser(blockUserId);
 
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));

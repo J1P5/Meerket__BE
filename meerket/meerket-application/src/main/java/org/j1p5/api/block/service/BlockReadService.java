@@ -1,6 +1,7 @@
 package org.j1p5.api.block.service;
 
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.block.validator.BlockValidator;
 import org.j1p5.api.user.exception.UserNotFoundException;
 import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.block.BlockUserInfo;
@@ -22,21 +23,17 @@ public class BlockReadService {
 
     private final BlockRepository blockRepository;
     private final UserRepository userRepository;
+    private final BlockValidator blockValidator;
 
     public PageResult<BlockUserInfo> read(Long userId, Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        UserEntity user = validateUserId(userId);
+        UserEntity user = blockValidator.validateUser(userId);
         List<BlockEntity> blockedUsers = blockRepository.findByUser(user);
         List<Long> blockedUserIds = blockedUsers.stream()
                 .map(b -> b.getBlockedUserId().getId()).toList();
 
         Page<BlockUserInfo> blockUserInfos = userRepository.findBlockUserByIds(blockedUserIds, pageRequest);
         return PageResult.of(blockUserInfos.getContent(), blockUserInfos.getTotalPages(), blockUserInfos.hasNext());
-    }
-
-    private UserEntity validateUserId(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 }
