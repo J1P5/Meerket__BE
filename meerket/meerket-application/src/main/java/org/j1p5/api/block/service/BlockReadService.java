@@ -31,7 +31,7 @@ public class BlockReadService {
         UserEntity user = blockValidator.validateUser(userId);
         List<BlockEntity> blockedUsers = blockRepository.findByUser(user);
         List<Long> blockedUserIds = blockedUsers.stream()
-                .map(b -> b.getBlockedUserId().getId()).toList();
+                .map(b -> b.getBlockedUser().getId()).toList();
 
         Page<BlockUserInfo> blockUserInfos = userRepository.findBlockUserByIds(blockedUserIds, pageRequest);
         return PageResult.of(blockUserInfos.getContent(), blockUserInfos.getTotalPages(), blockUserInfos.hasNext());

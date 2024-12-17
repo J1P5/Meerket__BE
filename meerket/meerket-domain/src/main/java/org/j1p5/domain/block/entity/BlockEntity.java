@@ -19,18 +19,18 @@ public class BlockEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_user_id")
-    private UserEntity blockedUserId;
+    private UserEntity blockedUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    private BlockEntity(UserEntity blockedUserId, UserEntity user) {
-        this.blockedUserId = blockedUserId;
+    private BlockEntity(UserEntity blockedUser, UserEntity user) {
+        this.blockedUser = blockedUser;
         this.user = user;
     }
 
-    public static BlockEntity create(UserEntity blockedUserId, UserEntity user) {
-        return new BlockEntity(blockedUserId, user);
+    public static BlockEntity create(UserEntity blockedUser, UserEntity user) {
+        return new BlockEntity(blockedUser, user);
     }
 }
