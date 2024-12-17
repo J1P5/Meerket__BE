@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.auction.quartz.QuartzService;
+import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.api.fcm.FcmService;
 import org.j1p5.api.global.converter.PointConverter;
 import org.j1p5.api.global.excpetion.WebException;
@@ -55,6 +56,7 @@ public class ProductService {
     private final FcmService fcmService;
     private final AuctionRepository auctionRepository;
     private final QuartzService quartzService;
+    private final AuctionService auctionService;
 
 
     @Transactional
@@ -321,6 +323,7 @@ public class ProductService {
             throw new WebException(PRODUCT_HAS_NO_BUYER);
         }
 
+        auctionService.updateAuctionStatusToAwarded(productId);
         productEntity.updateStatusToComplete();
     }
 

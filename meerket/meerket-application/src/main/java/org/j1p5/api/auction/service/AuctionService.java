@@ -159,6 +159,13 @@ public class AuctionService {
         return auctionEntity;
     }
 
+    // 거래완료 시 Auction의 status변경
+    public void updateAuctionStatusToAwarded(Long productId) {
+        AuctionEntity auctionEntity = findByHighestBidder(productId);
+        auctionEntity.updateStatus(AuctionStatus.AWARDED);
+    }
+
+
 
 
 
