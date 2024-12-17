@@ -18,17 +18,16 @@ public class BlockRegisterService {
     private final UserRepository userRepository;
 
     public void register(Long userId, Long blockUserId) {
-        validateUserId(blockUserId);
+        UserEntity blockedUser = validateUserId(blockUserId);
 
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
-        blockRepository.save(BlockEntity.create(blockUserId, user));
+        blockRepository.save(BlockEntity.create(blockedUser, user));
     }
 
-    private void validateUserId(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException(USER_NOT_FOUND);
-        }
+    private UserEntity validateUserId(Long blockedUserId) {
+        return userRepository.findById(blockedUserId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 }
