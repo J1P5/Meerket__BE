@@ -8,6 +8,7 @@ import org.j1p5.domain.product.entity.ProductStatus;
 import java.time.LocalDateTime;
 
 public record MyProductResponseDto(
+        Long productId,
         String title,
         String imageUrl,
         String productAddress,//읍면동 주소가 들어가야하네
@@ -20,6 +21,7 @@ public record MyProductResponseDto(
 ) {
     public static MyProductResponseDto from(ProductEntity product){
         return new MyProductResponseDto(
+                product.getId(),
                 product.getTitle(),
                 product.getThumbnail(),
                 EmdNameReader.getEmdName(product.getUser()),
