@@ -2,7 +2,9 @@ package org.j1p5.api.block.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.block.dto.BlockDeleteRequest;
 import org.j1p5.api.block.dto.BlockRegisterRequest;
+import org.j1p5.api.block.service.BlockDeleteService;
 import org.j1p5.api.block.service.BlockReadService;
 import org.j1p5.api.block.service.BlockRegisterService;
 import org.j1p5.api.global.annotation.LoginUser;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class BlockController {
     private final BlockRegisterService blockRegisterService;
     private final BlockReadService blockReadService;
+    private final BlockDeleteService blockDeleteService;
 
     @Operation(summary = "차단", description = "사용자 차단 등록 API")
     @PostMapping
@@ -36,5 +39,15 @@ public class BlockController {
             @RequestParam("size") Integer size
     ) {
         return Response.onSuccess(blockReadService.read(userId, page, size));
+    }
+
+    @Operation(summary = "차단 해제", description = "사용자 차단 해제 API")
+    @DeleteMapping
+    public Response<Void> deleteBlock(
+            @LoginUser Long userId,
+            @RequestBody BlockDeleteRequest blockDeleteRequest
+    ) {
+        blockDeleteService.delete(userId, blockDeleteRequest.unblockId());
+        return Response.onSuccess();
     }
 }

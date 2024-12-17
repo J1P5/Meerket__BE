@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface BlockRepository extends JpaRepository<BlockEntity, Long> {
     List<BlockEntity> findByUser(UserEntity user);
+    void deleteByUserAndBlockedUser(UserEntity user, UserEntity blockedUser);
 }
