@@ -25,7 +25,7 @@ public class CommentReadUsecase {
 
         UserEntity user = commentService.getUser(userId);
 
-        List<CommentEntity> commentEntityList = commentService.getComments(productId,pageable); //일단 부모 댓글만 가져오기
+        List<CommentEntity> commentEntityList = commentService.getComments(user, productId,pageable); //일단 부모 댓글만 가져오기
         //엔티티 dto로 변환return CommentReadResponseDto.of().str
         return commentEntityList.stream()
                 .map(commentEntity -> CommentReadResponseDto.of(commentEntity,commentEntity.getUser()))

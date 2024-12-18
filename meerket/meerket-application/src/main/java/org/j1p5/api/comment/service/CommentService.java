@@ -3,6 +3,8 @@ package org.j1p5.api.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.comment.dto.request.CommentUpdateRequestDto;
 import org.j1p5.api.global.excpetion.WebException;
+import org.j1p5.domain.block.entity.BlockEntity;
+import org.j1p5.domain.block.repository.BlockRepository;
 import org.j1p5.domain.comment.entity.CommentEntity;
 import org.j1p5.domain.comment.repository.CommentRepository;
 import org.j1p5.domain.global.exception.DomainException;
@@ -26,6 +28,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ProductRepository productRepository;
     private final UserReader userReader;
+    private final BlockRepository blockRepository;
 
     public void appendComment(CommentEntity comment){
         commentRepository.save(comment);
@@ -62,8 +65,11 @@ public class CommentService {
         return comment;
     }
 
-    public List<CommentEntity> getComments(Long productId, Pageable pageable) {
-        return commentRepository.findParentCommentByProductId(productId, pageable);
+    public List<CommentEntity> getComments(UserEntity user, Long productId, Pageable pageable) {
+        List<Long> blockUserIds = blockRepository.findByUser(user)
+                .stream().map(b -> b.getBlockedUser().getId()).toList();
+
+        return commentRepository.findParentCommentByProductId(blockUserIds, productId, pageable);
     }
 
     public void validateCommentUpdate(Long commentId, Long userId,CommentUpdateRequestDto request) {
