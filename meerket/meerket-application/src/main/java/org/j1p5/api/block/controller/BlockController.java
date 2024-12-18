@@ -27,7 +27,7 @@ public class BlockController {
             @LoginUser Long userId,
             @RequestBody BlockRegisterRequest blockRegisterRequest
     ) {
-        blockRegisterService.register(userId, blockRegisterRequest.blockId());
+        blockRegisterService.register(userId, blockRegisterRequest.blockUserId());
         return Response.onSuccess();
     }
 
