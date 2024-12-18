@@ -13,18 +13,10 @@ public class NaverProfile implements OauthProfile {
     public static class Response {
         @JsonProperty("id")
         private String id;
-
-        @JsonProperty("email")
-        private String email;
     }
 
     @Override
     public String getId() {
         return response.getId();
-    }
-
-    @Override
-    public String getEmail() {
-        return response.getEmail();
     }
 }

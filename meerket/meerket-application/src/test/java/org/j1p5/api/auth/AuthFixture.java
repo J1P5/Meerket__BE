@@ -11,21 +11,14 @@ public class AuthFixture {
     private static class OauthProfileFixture implements OauthProfile {
 
         private final String id;
-        private final String email;
 
         private OauthProfileFixture() {
             this.id = "1234";
-            this.email = "test@test.com";
         }
 
         @Override
         public String getId() {
             return id;
-        }
-
-        @Override
-        public String getEmail() {
-            return email;
         }
     }
 }

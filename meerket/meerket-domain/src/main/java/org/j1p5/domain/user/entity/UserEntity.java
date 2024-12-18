@@ -19,9 +19,6 @@ public class UserEntity extends BaseEntity {
     @Column(name = "social_id", nullable = false, length = 50)
     private String socialId;
 
-    @Column(name = "social_email", nullable = false, length = 50)
-    private String socialEmail;
-
     @Column(name = "provider", nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     private Provider provider;
@@ -39,16 +36,15 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<ActivityArea> activityAreas = new ArrayList<>();
 
-    private UserEntity(String SocialId, String SocialEmail, Provider Provider, Role role) {
+    private UserEntity(String SocialId, Provider Provider, Role role) {
         this.socialId = SocialId;
-        this.socialEmail = SocialEmail;
         this.provider = Provider;
         this.role = role;
     }
 
     public static UserEntity create(
-            String SocialId, String SocialEmail, Provider Provider, Role role) {
-        return new UserEntity(SocialId, SocialEmail, Provider, role);
+            String SocialId, Provider Provider, Role role) {
+        return new UserEntity(SocialId, Provider, role);
     }
 
     public void updateNickname(String nickname) {
