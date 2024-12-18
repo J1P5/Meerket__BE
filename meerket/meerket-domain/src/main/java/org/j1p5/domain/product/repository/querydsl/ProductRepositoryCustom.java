@@ -7,7 +7,7 @@ import org.locationtech.jts.geom.Point;
 
 public interface ProductRepositoryCustom {
 
-    List<ProductEntity> findProductsByCursor(Point coordinate, Long cursor, Integer size);
+    List<ProductEntity> findProductsByCursor(List<Long> blockUserIds, Point coordinate, Long cursor, Integer size);
 
     List<ProductEntity> findCompletedProductsByCursor(Point coordinate, Long cursor, Integer size);
 

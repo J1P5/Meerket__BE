@@ -3,6 +3,7 @@ package org.j1p5.api.comment.usecase;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.comment.dto.response.CommentReadResponseDto;
 import org.j1p5.api.comment.service.CommentService;
+import org.j1p5.domain.comment.CommentInfo;
 import org.j1p5.domain.comment.entity.CommentEntity;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -25,10 +26,10 @@ public class CommentReadUsecase {
 
         UserEntity user = commentService.getUser(userId);
 
-        List<CommentEntity> commentEntityList = commentService.getComments(productId,pageable); //일단 부모 댓글만 가져오기
+        List<CommentInfo> commentInfos = commentService.getComments(user, productId,pageable); //일단 부모 댓글만 가져오기
         //엔티티 dto로 변환return CommentReadResponseDto.of().str
-        return commentEntityList.stream()
-                .map(commentEntity -> CommentReadResponseDto.of(commentEntity,commentEntity.getUser()))
+        return commentInfos.stream()
+                .map(c -> CommentReadResponseDto.of(c))
                 .collect(Collectors.toList());
     }
 
