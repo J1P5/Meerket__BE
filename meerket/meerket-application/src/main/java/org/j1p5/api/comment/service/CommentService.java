@@ -5,6 +5,7 @@ import org.j1p5.api.comment.dto.request.CommentUpdateRequestDto;
 import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.block.entity.BlockEntity;
 import org.j1p5.domain.block.repository.BlockRepository;
+import org.j1p5.domain.comment.CommentInfo;
 import org.j1p5.domain.comment.entity.CommentEntity;
 import org.j1p5.domain.comment.repository.CommentRepository;
 import org.j1p5.domain.global.exception.DomainException;
@@ -65,11 +66,17 @@ public class CommentService {
         return comment;
     }
 
-    public List<CommentEntity> getComments(UserEntity user, Long productId, Pageable pageable) {
+    public List<CommentInfo> getComments(UserEntity user, Long productId, Pageable pageable) {
         List<Long> blockUserIds = blockRepository.findByUser(user)
                 .stream().map(b -> b.getBlockedUser().getId()).toList();
 
-        return commentRepository.findParentCommentByProductId(blockUserIds, productId, pageable);
+        List<CommentEntity> comments = commentRepository.findParentCommentByProductId(productId, pageable);
+
+        Long sellerId = getProduct(productId).getUser().getId();
+
+        return comments.stream()
+                .map(c -> CommentInfo.of(c, blockUserIds, sellerId))
+                .toList();
     }
 
     public void validateCommentUpdate(Long commentId, Long userId,CommentUpdateRequestDto request) {
