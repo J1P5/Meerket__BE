@@ -17,10 +17,20 @@ public class BlockEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "target_id", nullable = false)
-    private Long targetId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blocked_user_id")
+    private UserEntity blockedUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    private BlockEntity(UserEntity blockedUser, UserEntity user) {
+        this.blockedUser = blockedUser;
+        this.user = user;
+    }
+
+    public static BlockEntity create(UserEntity blockedUser, UserEntity user) {
+        return new BlockEntity(blockedUser, user);
+    }
 }
