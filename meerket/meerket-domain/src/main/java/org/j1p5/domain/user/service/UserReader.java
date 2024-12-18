@@ -15,9 +15,9 @@ public class UserReader {
 
     private final UserRepository userRepository;
 
-    public UserEntity read(String email, String provider) {
+    public UserEntity read(String socialId, String provider) {
         return userRepository
-                .findBySocialEmailAndProvider(email, Provider.valueOf(provider))
+                .findBySocialIdAndProvider(socialId, Provider.valueOf(provider))
                 .orElse(null);
     }
 

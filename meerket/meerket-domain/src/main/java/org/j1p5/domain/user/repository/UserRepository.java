@@ -7,6 +7,6 @@ import org.j1p5.domain.user.repository.custom.UserRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRepositoryCustom {
-    Optional<UserEntity> findBySocialEmailAndProvider(String email, Provider provider);
+    Optional<UserEntity> findBySocialIdAndProvider(String socialId, Provider provider);
     boolean existsByNickname(String nickname);
 }

@@ -18,7 +18,6 @@ public class UserAppender {
         return userRepository.save(
                 UserEntity.create(
                         profile.getId(),
-                        profile.getEmail(),
                         Provider.valueOf(provider),
                         Role.USER));
     }

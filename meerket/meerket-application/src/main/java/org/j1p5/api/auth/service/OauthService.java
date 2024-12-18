@@ -15,12 +15,12 @@ public class OauthService {
     private final UserRepository userRepository;
 
     public UserEntity login(OauthProfile profile, Provider provider) {
-        UserEntity user = userRepository.findBySocialEmailAndProvider(profile.getEmail(), provider)
+        UserEntity user = userRepository.findBySocialIdAndProvider(profile.getId(), provider)
                         .orElse(null);
 
         if (user == null) {
             return userRepository.save(
-                    UserEntity.create(profile.getId(), profile.getEmail(), provider, Role.USER)
+                    UserEntity.create(profile.getId(), provider, Role.USER)
             );
         }
         return user;
