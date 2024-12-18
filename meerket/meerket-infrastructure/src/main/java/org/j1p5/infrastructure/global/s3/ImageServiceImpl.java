@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.j1p5.domain.product.service.ImageService;
+import org.j1p5.domain.report.ReportImageClient;
 import org.j1p5.domain.user.UserImageClient;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ImageServiceImpl implements ImageService, UserImageClient {
+public class ImageServiceImpl implements ImageService, UserImageClient, ReportImageClient {
 
     private final AmazonS3 amazonS3;
 
