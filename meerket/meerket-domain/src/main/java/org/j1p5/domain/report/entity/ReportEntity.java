@@ -18,7 +18,7 @@ public class ReportEntity extends BaseEntity {
     private Long id;
 
     @Column(name = "target_type", nullable = false)
-    private ReportTarget reportTarget;
+    private ReportType reportType;
 
     @Column(name = "target_id", nullable = false)
     private Long targetId;

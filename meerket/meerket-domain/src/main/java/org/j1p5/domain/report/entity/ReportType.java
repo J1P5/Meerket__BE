@@ -1,6 +1,6 @@
 package org.j1p5.domain.report.entity;
 
-public enum ReportTarget {
+public enum ReportType {
     USER,
     POST,
     COMMENT
