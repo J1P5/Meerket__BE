@@ -11,6 +11,7 @@ import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.entity.QProductEntity;
+import org.j1p5.domain.user.entity.QUserEntity;
 import org.locationtech.jts.geom.Point;
 
 public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
@@ -21,15 +22,17 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     }
 
     QProductEntity qProduct = QProductEntity.productEntity;
+    QUserEntity qUserEntity = QUserEntity.userEntity;
 
     private static final int MAX_DISTANCE = 100_000;
 
     @Override
-    public List<ProductEntity> findProductsByCursor(Point coordinate, Long cursor, Integer size) {
+    public List<ProductEntity> findProductsByCursor(List<Long> blockUserIds, Point coordinate, Long cursor, Integer size) {
         // QueryDSL을 사용한 커서 기반 조회
         return queryFactory
                 .selectFrom(qProduct)
                 .where(
+                        qUserEntity.id.notIn(blockUserIds),
                         withinDistance(coordinate, MAX_DISTANCE), // 거리 조건 (100km 이내)
                         cursorCondition(cursor), // 커서 조건
                         isNotDeleted())

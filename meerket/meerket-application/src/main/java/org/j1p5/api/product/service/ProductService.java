@@ -16,6 +16,7 @@ import org.j1p5.common.dto.CursorResult;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.j1p5.domain.auction.entity.AuctionEntity;
 import org.j1p5.domain.auction.repository.AuctionRepository;
+import org.j1p5.domain.block.repository.BlockRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.image.entitiy.ImageEntity;
 import org.j1p5.domain.product.dto.*;
@@ -57,6 +58,7 @@ public class ProductService {
     private final AuctionRepository auctionRepository;
     private final QuartzService quartzService;
     private final AuctionService auctionService;
+    private final BlockRepository blockRepository;
 
 
     @Transactional
@@ -98,7 +100,10 @@ public class ProductService {
         List<ActivityArea> activityAreas = user.getActivityAreas();
         Point coordinate = activityAreaReader.getActivityArea(activityAreas); // 이상 사용자 활동지역 좌표
 
-        List<ProductEntity> products = productRepository.findProductsByCursor(coordinate, cursor.cursor(), cursor.size()); // 거리별 + 커서별 productEntity list조회
+        List<Long> blockUserIds = blockRepository.findByUser(user)
+                .stream().map(b -> b.getBlockedUser().getId()).toList();
+
+        List<ProductEntity> products = productRepository.findProductsByCursor(blockUserIds, coordinate, cursor.cursor(), cursor.size()); // 거리별 + 커서별 productEntity list조회
 
         Long nextCursor = products.isEmpty() ? null : products.get(products.size() - 1).getId(); // 조회된 마지막 물품의 id값 저장
 
