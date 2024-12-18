@@ -27,6 +27,9 @@ public class AreaAuthEntity {
     @JoinColumn(name = "emd_id")
     private EmdArea emdArea;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     private AreaAuthEntity(LocalDateTime timeStamp, UserEntity user, EmdArea emdArea) {
         this.timeStamp = timeStamp;
         this.user = user;

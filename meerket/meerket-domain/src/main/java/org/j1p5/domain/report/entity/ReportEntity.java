@@ -26,6 +26,9 @@ public class ReportEntity extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;

@@ -20,7 +20,10 @@ public class ImageEntity extends BaseEntity {
     @Column(name = "image_url", nullable = false, length = 2048)
     private String imageUrl;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     public static ImageEntity from(String imageUrl) {
-        return new ImageEntity(null, imageUrl);
+        return new ImageEntity(null, imageUrl, false);
     }
 }

@@ -77,6 +77,9 @@ public class ProductEntity extends BaseEntity {
     @Column(name = "winning_price")
     private Integer winningPrice;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     public void addImage(ImageEntity image) {
         imageEntityList.add(image);
     }

@@ -26,6 +26,9 @@ public class ActivityArea {
     @JoinColumn(name = "emd_id")
     private EmdArea emdArea;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     private ActivityArea(UserEntity user, EmdArea emdArea) {
         this.user = user;
         this.emdArea = emdArea;
