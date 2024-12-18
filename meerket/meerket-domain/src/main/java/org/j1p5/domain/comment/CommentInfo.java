@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record CommentInfo(
+        Long userId,
         String userNickname,
         String userProfileImage,
         Long commentId,
@@ -25,6 +26,7 @@ public record CommentInfo(
         boolean isBlocked = blockUserIds.contains(commentEntity.getUser().getId());
 
         return new CommentInfo(
+                commentEntity.getUser().getId(),
                 commentEntity.getUser().getNickname(),
                 commentEntity.getUser().getImageUrl(),
                 commentEntity.getId(),

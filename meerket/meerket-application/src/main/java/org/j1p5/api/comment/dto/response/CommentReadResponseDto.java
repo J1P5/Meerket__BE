@@ -23,7 +23,11 @@ public record CommentReadResponseDto(
 ) {
     public static CommentReadResponseDto of(CommentInfo commentInfo){
         return new CommentReadResponseDto(
-                new CommentMemeberDto(commentInfo.userNickname(), commentInfo.userProfileImage()),
+                new CommentMemeberDto(
+                        commentInfo.userId(),
+                        commentInfo.userNickname(),
+                        commentInfo.userProfileImage()
+                ),
                 commentInfo.commentId(),
                 commentInfo.content(),
                 commentInfo.isBlocked(),
