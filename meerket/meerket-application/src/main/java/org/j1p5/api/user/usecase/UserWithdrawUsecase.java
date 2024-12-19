@@ -7,6 +7,7 @@ import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.api.block.service.BlockDeleteService;
 import org.j1p5.api.comment.service.CommentService;
 import org.j1p5.api.product.service.ProductService;
+import org.j1p5.api.report.service.ReportService;
 import org.j1p5.api.user.exception.UserNotFoundException;
 import org.j1p5.api.user.service.UserWithdrawService;
 import org.j1p5.domain.user.entity.UserEntity;
@@ -27,6 +28,7 @@ public class UserWithdrawUsecase {
     private final ProductService productService;
     private final BlockDeleteService blockDeleteService;
     private final UserWithdrawService userWithdrawService;
+    private final ReportService reportService;
 
     public void execute(Long userId) {
         UserEntity user = userRepository.findById(userId)
@@ -38,8 +40,8 @@ public class UserWithdrawUsecase {
         auctionService.withdraw(user);
         productService.withdraw(user);
         blockDeleteService.withdraw(user);
-        //TODO : report delete 처리
-        userWithdrawService.withdraw(user);
+        reportService.withdraw(user);
 
+        userWithdrawService.withdraw(user);
     }
 }

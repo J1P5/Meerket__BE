@@ -16,7 +16,7 @@ public class UserEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "social_id", nullable = false, length = 50)
+    @Column(name = "social_id", length = 50)
     private String socialId;
 
     @Column(name = "provider", nullable = false, length = 10)
@@ -60,5 +60,6 @@ public class UserEntity extends BaseEntity {
 
     public void withdraw() {
         this.isDeleted = true;
+        this.socialId = null;
     }
 }

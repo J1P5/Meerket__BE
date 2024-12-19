@@ -43,4 +43,8 @@ public class ReportEntity extends BaseEntity {
     public static ReportEntity create(ReportType reportType, Long targetId, String content, UserEntity user) {
         return new ReportEntity(reportType, targetId, content, user);
     }
+
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }
