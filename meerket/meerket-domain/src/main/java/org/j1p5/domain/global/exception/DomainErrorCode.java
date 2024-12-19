@@ -7,7 +7,8 @@ import org.j1p5.common.exception.ErrorResponse;
 @Getter
 public enum DomainErrorCode implements BaseErrorCode {
     INVALID_PROVIDER(400, "AUTH400", "invalid provider"),
-    USER_NOT_FOUND(401, "AUTH401", "user not found");
+    USER_NOT_FOUND(401, "AUTH401", "user not found"),
+    INVALID_REPORT_TYPE(400, "REPORT400", "invalid report type");
 
     private final int status;
     private final String errorCode;

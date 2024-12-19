@@ -18,7 +18,7 @@ public class ReportEntity extends BaseEntity {
     private Long id;
 
     @Column(name = "target_type", nullable = false)
-    private ReportTarget reportTarget;
+    private ReportType reportType;
 
     @Column(name = "target_id", nullable = false)
     private Long targetId;
@@ -29,4 +29,15 @@ public class ReportEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    private ReportEntity(ReportType reportType, Long targetId, String content, UserEntity user) {
+        this.reportType = reportType;
+        this.targetId = targetId;
+        this.content = content;
+        this.user = user;
+    }
+
+    public static ReportEntity create(ReportType reportType, Long targetId, String content, UserEntity user) {
+        return new ReportEntity(reportType, targetId, content, user);
+    }
 }
