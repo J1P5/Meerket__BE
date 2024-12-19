@@ -57,5 +57,7 @@ public class AuctionEntity extends BaseEntity {
         this.status = status;
     }
 
-
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

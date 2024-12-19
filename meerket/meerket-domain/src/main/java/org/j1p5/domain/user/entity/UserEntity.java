@@ -57,4 +57,8 @@ public class UserEntity extends BaseEntity {
     public void updateProfile(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

@@ -48,5 +48,7 @@ public class AreaAuthEntity {
         this.emdArea = emdArea;
     }
 
-
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

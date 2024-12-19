@@ -147,5 +147,9 @@ public class ProductEntity extends BaseEntity {
         this.status = ProductStatus.COMPLETED;
     }
 
+    public void withdraw() {
+        this.isDeleted = true;
+    }
+
 
 }

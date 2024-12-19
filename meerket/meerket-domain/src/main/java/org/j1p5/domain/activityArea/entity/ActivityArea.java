@@ -41,4 +41,8 @@ public class ActivityArea {
     public void updateEmdArea(EmdArea emdArea) {
         this.emdArea = emdArea;
     }
+
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

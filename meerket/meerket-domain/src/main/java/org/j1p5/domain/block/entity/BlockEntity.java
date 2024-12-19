@@ -36,4 +36,8 @@ public class BlockEntity extends BaseEntity {
     public static BlockEntity create(UserEntity blockedUser, UserEntity user) {
         return new BlockEntity(blockedUser, user);
     }
+
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

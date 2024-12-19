@@ -1,6 +1,7 @@
 package org.j1p5.domain.auction.repository;
 
 import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -78,6 +79,8 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
             @Param("productId") Long productId,
             @Param("userId") Long userId
     );
+
+    List<AuctionEntity> findByUser(UserEntity user);
 
 
 }
