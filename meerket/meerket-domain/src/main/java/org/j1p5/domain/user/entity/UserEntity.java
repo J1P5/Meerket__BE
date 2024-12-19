@@ -33,6 +33,9 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "user")
     private List<ActivityArea> activityAreas = new ArrayList<>();
 
