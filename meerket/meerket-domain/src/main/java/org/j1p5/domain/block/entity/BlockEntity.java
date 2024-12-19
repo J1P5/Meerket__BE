@@ -25,6 +25,9 @@ public class BlockEntity extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     private BlockEntity(UserEntity blockedUser, UserEntity user) {
         this.blockedUser = blockedUser;
         this.user = user;
@@ -32,5 +35,9 @@ public class BlockEntity extends BaseEntity {
 
     public static BlockEntity create(UserEntity blockedUser, UserEntity user) {
         return new BlockEntity(blockedUser, user);
+    }
+
+    public void withdraw() {
+        this.isDeleted = true;
     }
 }

@@ -35,6 +35,8 @@ public class AuctionEntity extends BaseEntity {
     @Column(name = "auction_status", nullable = false)
     private AuctionStatus status;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
 
     private AuctionEntity(UserEntity user, ProductEntity product, int price) {
         this.product = product;
@@ -55,5 +57,7 @@ public class AuctionEntity extends BaseEntity {
         this.status = status;
     }
 
-
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

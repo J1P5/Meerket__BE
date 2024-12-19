@@ -1,6 +1,5 @@
 package org.j1p5.api.product.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.auction.quartz.QuartzService;
@@ -29,6 +28,7 @@ import org.j1p5.domain.user.repository.UserRepository;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.time.Duration;
@@ -49,6 +49,7 @@ public class ProductService {
     private final ProductUserReader userReader;
     private final ProductAppender productAppender;
     private final ImageService imageService;
+    private final ProductImageService productImageService;
     private final RegionAuthHandler userRegionauth;
     private final ActivityAreaReader activityAreaReader;
     private final ProductRepository productRepository;
@@ -151,7 +152,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         UserEntity user = userReader.getUser(userId);
-        if (product.getStatus().equals(ProductStatus.DELETED)) {
+        if (product.getStatus().equals(ProductStatus.DELETED) || product.isDeleted()) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
 
@@ -332,6 +333,17 @@ public class ProductService {
         productEntity.updateStatusToComplete();
     }
 
+    @Transactional
+    public void withdraw(UserEntity user) {
+        List<ProductEntity> products = productRepository.findByUser(user);
 
+        if (products.isEmpty()) {
+            return;
+        }
 
+        products.forEach(p -> {
+            productImageService.withdraw(p);
+            p.withdraw();
+        });
+    }
 }

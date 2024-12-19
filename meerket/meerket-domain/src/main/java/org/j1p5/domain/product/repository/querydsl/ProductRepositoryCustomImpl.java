@@ -35,7 +35,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                         qUserEntity.id.notIn(blockUserIds),
                         withinDistance(coordinate, MAX_DISTANCE), // 거리 조건 (100km 이내)
                         cursorCondition(cursor), // 커서 조건
-                        isNotDeleted())
+                        isNotDeleted(),
+                        isNotWithdrawalUser())
                 .orderBy(qProduct.id.desc()) // 내림차순 정렬
                 .limit(size) // 페이지 크기 제한
                 .fetch();
@@ -50,6 +51,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                         withinDistance(coordinate, MAX_DISTANCE),
                         cursorCondition(cursor),
                         isNotDeleted(),
+                        isNotWithdrawalUser(),
                         qProduct.status.eq(ProductStatus.COMPLETED)
                 )
                 .orderBy(qProduct.id.desc())
@@ -64,6 +66,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                         withinDistance(coordinate, MAX_DISTANCE),
                         cursorCondition(cursor),
                         isNotDeleted(),
+                        isNotWithdrawalUser(),
                         findCategory(category)
                 )
                 .orderBy(qProduct.id.desc())
@@ -153,5 +156,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return null;
         }
         return qProduct.title.like("%" +keyword + "%");
+    }
+
+    private BooleanExpression isNotWithdrawalUser() {
+        return qProduct.isDeleted.eq(false);
     }
 }

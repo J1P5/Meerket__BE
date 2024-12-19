@@ -15,6 +15,7 @@ import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.service.UserReader;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -104,5 +105,15 @@ public class CommentService {
         comment.updateStatusDelete();
     }
 
+    @Transactional
+    public void withdraw(UserEntity user) {
+        List<CommentEntity> comments = commentRepository.findByUser(user);
+
+        if (comments.isEmpty()) {
+            return;
+        }
+
+        comments.forEach(CommentEntity::updateStatusDelete);
+    }
 
 }

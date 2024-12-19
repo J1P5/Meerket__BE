@@ -16,7 +16,7 @@ public class UserEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "social_id", nullable = false, length = 50)
+    @Column(name = "social_id", length = 50)
     private String socialId;
 
     @Column(name = "provider", nullable = false, length = 10)
@@ -32,6 +32,9 @@ public class UserEntity extends BaseEntity {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "user")
     private List<ActivityArea> activityAreas = new ArrayList<>();
@@ -53,5 +56,10 @@ public class UserEntity extends BaseEntity {
 
     public void updateProfile(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void withdraw() {
+        this.isDeleted = true;
+        this.socialId = null;
     }
 }

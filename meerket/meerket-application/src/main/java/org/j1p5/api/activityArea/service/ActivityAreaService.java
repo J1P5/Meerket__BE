@@ -1,6 +1,5 @@
 package org.j1p5.api.activityArea.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.exception.ActivityAreaAlreadyExistException;
 import org.j1p5.api.activityArea.exception.ActivityAreaNotFoundException;
@@ -23,6 +22,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,5 +125,17 @@ public class ActivityAreaService {
 
         return activityAreaRepository.getActivityEmdAreaByUserId(userId)
                 .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
+    }
+
+    @Transactional
+    public void withdraw(UserEntity user) {
+        ActivityArea activityArea = activityAreaRepository.findByUser(user)
+                        .orElse(null);
+
+        if (activityArea == null) {
+            return;
+        }
+
+        activityArea.withdraw();
     }
 }

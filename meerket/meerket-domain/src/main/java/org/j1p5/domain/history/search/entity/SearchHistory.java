@@ -21,6 +21,9 @@ public class SearchHistory {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime searchDatetime;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
