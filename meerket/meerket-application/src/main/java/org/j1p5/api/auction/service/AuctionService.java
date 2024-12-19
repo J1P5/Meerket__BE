@@ -15,6 +15,7 @@ import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -165,14 +166,20 @@ public class AuctionService {
         auctionEntity.updateStatus(AuctionStatus.AWARDED);
     }
 
-
-
-
-
     private ProductEntity getProductEntity(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
     }
 
+    @Transactional
+    public void withdraw(UserEntity user) {
+        List<AuctionEntity> auctions = auctionRepository.findByUser(user);
+
+        if (auctions.isEmpty()) {
+            return;
+        }
+
+        auctions.forEach(AuctionEntity::withdraw);
+    }
 
 }

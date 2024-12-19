@@ -72,4 +72,15 @@ public class AreaAuthService {
 
         areaAuthRepository.save(areaAuth);
     }
+
+    public void withdraw(UserEntity user) {
+        AreaAuthEntity areaAuth = areaAuthRepository.findByUser(user)
+                        .orElse(null);
+
+        if (areaAuth == null) {
+            return;
+        }
+
+        areaAuth.withdraw();
+    }
 }

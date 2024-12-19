@@ -2,10 +2,14 @@ package org.j1p5.api.block.service;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.block.validator.BlockValidator;
+import org.j1p5.domain.block.entity.BlockEntity;
 import org.j1p5.domain.block.repository.BlockRepository;
 import org.j1p5.domain.user.entity.UserEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,5 +24,16 @@ public class BlockDeleteService {
         UserEntity blockedUser = blockValidator.validateUser(unblockId);
 
         blockRepository.deleteByUserAndBlockedUser(user, blockedUser);
+    }
+
+    @Transactional
+    public void withdraw(UserEntity user) {
+        List<BlockEntity> blocks = blockRepository.findByUser(user);
+
+        if (blocks.isEmpty()) {
+            return;
+        }
+
+        blocks.forEach(BlockEntity::withdraw);
     }
 }

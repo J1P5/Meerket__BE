@@ -15,6 +15,7 @@ import org.j1p5.api.user.dto.request.ProfileSettingRequest;
 import org.j1p5.api.user.dto.response.ProfileResponse;
 import org.j1p5.api.user.usecase.UserProfileReadUsecase;
 import org.j1p5.api.user.usecase.UserProfileSettingUsecase;
+import org.j1p5.api.user.usecase.UserWithdrawUsecase;
 import org.j1p5.common.exception.ErrorResponse;
 import org.j1p5.domain.user.UserProfile;
 import org.springframework.context.annotation.Profile;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserProfileSettingUsecase userProfileSettingUsecase;
     private final UserProfileReadUsecase userProfileReadUsecase;
+    private final UserWithdrawUsecase userWithdrawUsecase;
 
     @GetMapping("/profile")
     @Operation(summary = "유저 프로필 조회", description = "유저 프로필 조회 API")
@@ -74,5 +76,12 @@ public class UserController {
     public Response<UserProfile> getUserInfo(@LoginUser Long userId) {
         UserProfile userProfile = userProfileReadUsecase.getSessionInfo(userId);
         return Response.onSuccess(userProfile);
+    }
+
+    @Operation(summary = "회원 탈퇴 API", description = "회원 탈퇴 API")
+    @GetMapping("/withdraw")
+    public Response<Void> withdraw(@LoginUser Long userId) {
+        userWithdrawUsecase.execute(userId);
+        return Response.onSuccess();
     }
 }
