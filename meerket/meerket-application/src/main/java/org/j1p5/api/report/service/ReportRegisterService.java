@@ -41,7 +41,9 @@ public class ReportRegisterService {
         validateTargetId(reportType, reportInfo.targetId());
 
         //TODO : 이미지 테이블에 저장 기능 구현할 것.
-        reportImageClient.upload(images);
+        if (!images.isEmpty()) {
+            reportImageClient.upload(images);
+        }
         reportRepository.save(ReportEntity.create(reportType, reportInfo.targetId(), reportInfo.content(), user));
     }
 
