@@ -1,5 +1,6 @@
 package org.j1p5.api.auth.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ public class OauthController {
             new HttpSessionSecurityContextRepository();
 
     @PostMapping
+    @Operation(summary = "소셜 로그인 API", description = "소셜 로그인 API. provider는 \"NAVER\", \"KAKAO\" 문자열을 입력해야 한다.")
     public Response<LoginResponse> login(
             @RequestBody @Valid LoginRequest loginRequest,
             HttpServletRequest request,
@@ -39,6 +41,7 @@ public class OauthController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "로그아웃 API. 세션을 무효화시킨다.")
     public Response<Void> logout(HttpServletRequest request) {
         request.getSession().invalidate();
         return Response.onSuccess();
