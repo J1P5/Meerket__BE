@@ -80,7 +80,7 @@ public class UserController {
     }
 
     @Operation(summary = "회원 탈퇴 API", description = "회원 탈퇴 API")
-    @GetMapping("/withdraw")
+    @DeleteMapping("/withdraw")
     public Response<Void> withdraw(
             @LoginUser Long userId,
             HttpServletRequest request
