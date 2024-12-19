@@ -152,7 +152,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         UserEntity user = userReader.getUser(userId);
-        if (product.getStatus().equals(ProductStatus.DELETED)) {
+        if (product.getStatus().equals(ProductStatus.DELETED) || product.isDeleted()) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
 

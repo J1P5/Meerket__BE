@@ -15,7 +15,8 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
                 select a
                 from auction a
                 join a.product p
-                where a.user.id = :userId
+                where a.isDelete = false
+                and a.user.id = :userId
                 and p.status = org.j1p5.domain.product.entity.ProductStatus.BIDDING
                 and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
             """)

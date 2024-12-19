@@ -14,6 +14,7 @@ public record CommentReadResponseDto(
         CommentMemeberDto commentMemeberDto,
         Long commentId,
         String content,
+        boolean isWithdrawUser,
         boolean isBlocked,
         boolean isSeller,//판매자인지
         boolean isUpdatable,//수정된 글인지
@@ -30,6 +31,7 @@ public record CommentReadResponseDto(
                 ),
                 commentInfo.commentId(),
                 commentInfo.content(),
+                commentInfo.isWithdrawUser(),
                 commentInfo.isBlocked(),
                 commentInfo.isSeller(),
                 commentInfo.isUpdatable(),

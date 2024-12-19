@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.global.annotation.LoginUser;
@@ -80,8 +81,13 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴 API", description = "회원 탈퇴 API")
     @GetMapping("/withdraw")
-    public Response<Void> withdraw(@LoginUser Long userId) {
+    public Response<Void> withdraw(
+            @LoginUser Long userId,
+            HttpServletRequest request
+    ) {
         userWithdrawUsecase.execute(userId);
+        request.getSession().invalidate();
+
         return Response.onSuccess();
     }
 }
