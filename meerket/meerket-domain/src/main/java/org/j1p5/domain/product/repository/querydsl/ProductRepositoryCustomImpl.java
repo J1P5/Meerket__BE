@@ -136,7 +136,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return null;
         }
 
-        return qUserEntity.id.notIn(blockUserIds);
+        return qProduct.user.id.notIn(blockUserIds);
     }
 
     private BooleanExpression isNotDeleted() {
