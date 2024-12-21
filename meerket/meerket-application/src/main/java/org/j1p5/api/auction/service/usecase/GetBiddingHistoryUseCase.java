@@ -14,6 +14,12 @@ public class GetBiddingHistoryUseCase {
 
     private final AuctionService auctionService;
 
+    /**
+     * 입찰 내역 조회
+     * @author yechan
+     * @param userId
+     * @return 입찰 내역 리스트
+     */
     public List<BidHistoryResponse> execute(Long userId) {
 
         List<AuctionEntity> entities = auctionService.getBiddingAuctionsByUserId(userId);

@@ -26,6 +26,13 @@ public class CancelBidUseCase {
     private final AuctionRepository auctionRepository;
     private final ProductRepository productRepository;
 
+    /**
+     * 입찰취소. 자신의 입찰만 취소 가능
+     * 입찰 취소 후 상품에 대한 구매자 유무에 따라 상태 업데이트, 알림 발송
+     * @author yechan, sunghyun
+     * @param userId
+     * @param auctionId
+     */
     @Transactional
     public void execute(Long userId, Long auctionId) {
 

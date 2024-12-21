@@ -1,13 +1,20 @@
 package org.j1p5.api.product.converter;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 public class MultipartFileConverter {
 
+    /**
+     * 멀티파트 파일에서 파일로 변환
+     * author sunghyun
+     * @param multipartFiles
+     * @return
+     */
     public static List<File> convertMultipartFilesToFiles(List<MultipartFile> multipartFiles) {
         List<File> files = new ArrayList<>();
 

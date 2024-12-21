@@ -27,6 +27,15 @@ public class PlaceBidUseCase {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 입찰 후 알림 전송
+     * 판매자는 입찰 불가, 중복 입찰 불가
+     * @author sunghyun, yechan
+     * @param userId
+     * @param productId
+     * @param price
+     * @return
+     */
     @Transactional
     public PlaceBidResponse execute(Long userId, Long productId, int price) {
 

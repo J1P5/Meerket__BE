@@ -19,6 +19,12 @@ public class BlockRegisterService {
     private final UserRepository userRepository;
     private final BlockValidator blockValidator;
 
+    /**
+     * 차단 등록
+     * @author icecoff22
+     * @param userId
+     * @param blockUserId
+     */
     public void register(Long userId, Long blockUserId) {
         UserEntity blockedUser = blockValidator.validateUser(blockUserId);
 

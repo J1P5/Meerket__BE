@@ -68,6 +68,7 @@ public class FcmService {
     }
 
 
+    // 판매자에게 알림 전송 요청
     private void sendPushSellerBidNotification(ProductEntity productEntity, String content) {
         fcmSender.sendPushSellerBidNotification(
                 productEntity.getId(), productEntity.getUser().getId(), productEntity.getTitle(), content
@@ -99,18 +100,21 @@ public class FcmService {
 
     }
 
+    // 조기마감 시 구매자에게 알림
     public void sendBuyerCloseEarlyMessage(Long productId) {
         ProductEntity product = this.getProductEntity(productId);
         String content = BID_EARLY_CLOSED_MESSAGE;
         sendPushBuyerBidNotification(product,content);
     }
 
+    // 상품 삭제되었을 때 구매자에게 알림
     public void sendBuyerProductDeleted(Long productId){
         ProductEntity product = this.getProductEntity(productId);
         String content = BID_DELETED_MESSAGE;
         sendPushBuyerBidNotification(product,content);
     }
 
+    // 구매자에게 알림 전송 요청
     private void sendPushBuyerBidNotification(ProductEntity product, String content){
         List<AuctionEntity> auctionEntities = auctionRepository.findAuctionEntitiesByProductId(product.getId());
         List<Long> userIds = new ArrayList<>();

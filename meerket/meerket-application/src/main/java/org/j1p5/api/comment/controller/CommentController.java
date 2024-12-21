@@ -1,13 +1,10 @@
 package org.j1p5.api.comment.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-
 import org.j1p5.api.comment.dto.request.CommentCreateRequestDto;
 import org.j1p5.api.comment.dto.request.CommentDeleteRequestDto;
 import org.j1p5.api.comment.dto.request.CommentUpdateRequestDto;
 import org.j1p5.api.comment.dto.response.CommentReadResponseDto;
-import org.j1p5.api.comment.service.CommentService;
 import org.j1p5.api.comment.usecase.CommentCreateUsecase;
 import org.j1p5.api.comment.usecase.CommentDeleteUsecase;
 import org.j1p5.api.comment.usecase.CommentReadUsecase;

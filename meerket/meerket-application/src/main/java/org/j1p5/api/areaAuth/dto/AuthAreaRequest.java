@@ -2,7 +2,6 @@ package org.j1p5.api.areaAuth.dto;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.j1p5.domain.areaAuth.vo.AreaAuthInfo;
 

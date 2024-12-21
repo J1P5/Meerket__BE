@@ -2,7 +2,6 @@ package org.j1p5.api.block.service;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.block.validator.BlockValidator;
-import org.j1p5.api.user.exception.UserNotFoundException;
 import org.j1p5.common.dto.PageResult;
 import org.j1p5.domain.block.BlockUserInfo;
 import org.j1p5.domain.block.entity.BlockEntity;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.j1p5.api.global.excpetion.WebErrorCode.USER_NOT_FOUND;
-
 @Service
 @RequiredArgsConstructor
 public class BlockReadService {
@@ -25,6 +22,14 @@ public class BlockReadService {
     private final UserRepository userRepository;
     private final BlockValidator blockValidator;
 
+    /**
+     * 차단 조회
+     * @author icecoff22
+     * @param userId
+     * @param page
+     * @param size
+     * @return 차단 유저 정보 리스트
+     */
     public PageResult<BlockUserInfo> read(Long userId, Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 

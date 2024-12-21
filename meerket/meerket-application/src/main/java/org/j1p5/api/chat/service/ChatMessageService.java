@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.j1p5.api.chat.exception.ChatException.*;
+import static org.j1p5.api.chat.exception.ChatException.CHAT_READ_ERROR;
 
 /**
  * @author yechan
