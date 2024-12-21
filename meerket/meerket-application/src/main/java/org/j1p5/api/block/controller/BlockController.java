@@ -1,6 +1,7 @@
 package org.j1p5.api.block.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.block.dto.BlockDeleteRequest;
 import org.j1p5.api.block.dto.BlockRegisterRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/blocks")
+@Tag(name = "blocks", description = "차단 관련 API")
 public class BlockController {
     private final BlockRegisterService blockRegisterService;
     private final BlockReadService blockReadService;

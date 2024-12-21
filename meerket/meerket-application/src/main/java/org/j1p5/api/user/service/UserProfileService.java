@@ -21,6 +21,7 @@ public class UserProfileService {
     private final UserRepository userRepository;
     private final UserImageClient imageClient;
 
+    // 유저 닉네임 업데이트
     @Transactional
     public void updateNickname(Long userId, String nickname) {
         UserEntity user = userRepository.findById(userId)
@@ -31,6 +32,7 @@ public class UserProfileService {
         user.updateNickname(nickname);
     }
 
+    // 유저 닉네임 업데이트
     public void nickNameValidation(UserEntity user, String nickname) {
         boolean isExist = userRepository.existsByNickname(nickname);
 
@@ -39,6 +41,7 @@ public class UserProfileService {
         }
     }
 
+    // 유저 프로필 업데이트
     @Transactional
     public void updateProfile(Long userId, File imageFile) {
         UserEntity user = userRepository.findById(userId)

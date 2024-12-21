@@ -32,6 +32,13 @@ public class ReportRegisterService {
     private final ReportImageClient reportImageClient;
     private final ReportRepository reportRepository;
 
+    /**
+     * 신고 등록 함수. reportInfo 속 target type에 달라 신고 카테고리가 달라짐.
+     * @author icecoff22
+     * @param userId
+     * @param reportInfo
+     * @param images
+     */
     public void register(Long userId, ReportInfo reportInfo, List<File> images) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
@@ -47,6 +54,12 @@ public class ReportRegisterService {
         reportRepository.save(ReportEntity.create(reportType, reportInfo.targetId(), reportInfo.content(), user));
     }
 
+    /**
+     * report type에 따라 신고 대상이 있는지 확인
+     * @author icecoff22
+     * @param reportType
+     * @param targetId
+     */
     private void validateTargetId(ReportType reportType, Long targetId) {
         //TODO : 추상화시키고 if-else문을 없앨지 논의 필요.
         if (reportType == ReportType.COMMENT) {

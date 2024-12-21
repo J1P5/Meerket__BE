@@ -3,7 +3,6 @@ package org.j1p5.api.areaAuth.usecase;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.areaAuth.exception.PointNotMatchException;
 import org.j1p5.api.areaAuth.service.AreaAuthService;
-import org.j1p5.domain.areaAuth.entity.AreaAuthEntity;
 import org.j1p5.domain.areaAuth.vo.AreaAuthInfo;
 import org.springframework.stereotype.Service;
 

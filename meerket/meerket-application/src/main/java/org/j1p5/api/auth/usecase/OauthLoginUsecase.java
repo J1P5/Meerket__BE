@@ -20,6 +20,13 @@ public class OauthLoginUsecase {
     private final OauthService oauthService;
     private final ActivityAreaService activityAreaService;
 
+    /**
+     * 소셜 로그인
+     * @author icecoff22
+     * @param code
+     * @param provider
+     * @return 유저 정보, 활동 지역
+     */
     public UserInfo login(String code, String provider) {
         OauthProfile profile = oauthSenderService.request(code, provider); //서드 파티에 요청을 보내서 정보를 받아온다.
         UserEntity user = oauthService.login(profile, Provider.get(provider)); // 로그인을 시도한다.

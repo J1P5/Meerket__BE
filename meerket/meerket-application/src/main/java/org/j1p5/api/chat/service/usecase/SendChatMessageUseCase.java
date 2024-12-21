@@ -1,6 +1,7 @@
 package org.j1p5.api.chat.service.usecase;
 
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.j1p5.api.chat.dto.response.ChatMessageResponse;
 import org.j1p5.api.chat.dto.response.ChatSocketMessageResponse;
 import org.j1p5.api.chat.service.ChatRoomService;
@@ -14,13 +15,13 @@ import org.j1p5.domain.chat.vo.MessageInfo;
 import org.j1p5.domain.redis.RedisService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.bson.types.ObjectId;
 
 import static org.j1p5.api.chat.exception.ChatException.CHAT_RECEIVER_FIND_ERROR;
 import static org.j1p5.api.chat.exception.ChatException.CHAT_SAVE_ERROR;
 
 
 /**
+ * @author yechan
  * 메시지를 보냈을때 메시지 저장과 채팅방 상태 업데이트
  */
 @Service
