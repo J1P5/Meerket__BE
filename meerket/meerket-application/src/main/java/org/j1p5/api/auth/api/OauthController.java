@@ -1,6 +1,7 @@
 package org.j1p5.api.auth.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/oauth")
+@Tag(name = "oauth", description = "소셜 인증 관련 API")
 public class OauthController {
 
     private final OauthLoginUsecase oauthLoginUsecase;

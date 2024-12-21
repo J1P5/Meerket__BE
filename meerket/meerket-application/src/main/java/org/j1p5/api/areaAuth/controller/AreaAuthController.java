@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.areaAuth.dto.AuthAreaRequest;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/area-auth")
+@Tag(name = "area-auth", description = "동네 인증 관련 API")
+
 public class AreaAuthController {
 
     private final AreaAuthUsecase areaAuthUsecase;

@@ -30,6 +30,10 @@ public class UserWithdrawUsecase {
     private final UserWithdrawService userWithdrawService;
     private final ReportService reportService;
 
+    /**
+     * @author 회원 탈퇴 시 유저 도메인 삭제 처리
+     * @param userId
+     */
     public void execute(Long userId) {
         UserEntity user = userRepository.findById(userId)
                         .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));

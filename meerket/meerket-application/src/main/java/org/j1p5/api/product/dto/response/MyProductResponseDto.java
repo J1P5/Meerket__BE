@@ -1,7 +1,6 @@
 package org.j1p5.api.product.dto.response;
 
 import org.j1p5.api.product.service.EmdNameReader;
-import org.j1p5.domain.product.dto.MyProductResponseInfo;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 

@@ -16,6 +16,12 @@ public class UserProfileReadUsecase {
     private final UserProfileService userProfileService;
     private final ActivityAreaService activityAreaService;
 
+    /**
+     * 유저의 프로필을 조회한다.
+     * @author icecoff22
+     * @param userId
+     * @return 유저 프로필 정보
+     */
     public UserProfile execute(Long userId) {
         UserEntity user = userProfileService.getUserById(userId);
         SimpleAddress emdAddress = activityAreaService.getActivityEmdAreaByUserId(userId);

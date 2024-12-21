@@ -1,5 +1,6 @@
 package org.j1p5.api.auction.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auction.dto.request.PlaceBidRequest;
 import org.j1p5.api.auction.dto.request.UpdateBidPriceRequest;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auctions")
+@Tag(name = "auctions", description = "입찰 관련 API")
 public class AuctionController {
 
     private final PlaceBidUseCase placeBidUseCase;

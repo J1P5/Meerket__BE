@@ -35,7 +35,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.j1p5.api.auction.exception.AuctionException.BID_NOT_FOUND;
 import static org.j1p5.api.product.exception.ProductException.*;
 import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
 import static org.j1p5.infrastructure.fcm.exception.FcmException.EARLY_CLOSED_FCM_ERROR;
@@ -62,6 +61,15 @@ public class ProductService {
     private final BlockRepository blockRepository;
 
 
+    /**
+     * 중고물품 등록
+     *
+     * @param productInfo
+     * @param images
+     * @param userId
+     * @return user Id
+     * @author sunghyun0610
+     */
     @Transactional
     public CreateProductResponseDto registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
         // multipart 자료형은 web에서 처리하고 file만 내려줘라
@@ -93,6 +101,14 @@ public class ProductService {
         return CreateProductResponseDto.from(product);
     }
 
+    /**
+     * 사용자 활동지역 거리 기반 100km이내 중고물품 조회
+     *
+     * @param userId
+     * @param cursor
+     * @return 커서기반 물품 조회 리스트
+     * @author sunghyun0610
+     */
     @Transactional
     public CursorResult<ProductResponseInfo> getProducts(Long userId, Cursor cursor) {
         // 사용자 활동지역 반경 100km까지 조회
@@ -146,7 +162,14 @@ public class ProductService {
 
 
 
-
+    /**
+     * 특정 중고물품 상세조회. 마감되었다면 최대 입찰가, 입찰 내역이 있다면 입찰 내역까지 return
+     *
+     * @param userId
+     * @param productId
+     * @return 특정 중고물품 상세 정보
+     * @author sunghyun0610
+     */
     @Transactional
     public ProductResponseDetailInfo getProductDetail(Long productId, Long userId) {
         ProductEntity product = productRepository.findById(productId)
@@ -166,6 +189,15 @@ public class ProductService {
         return ProductResponseDetailInfo.of(product, user, winningAuction,myAuction);
     }
 
+    /**
+     * 중고물품 수정.
+     *
+     * @param userId
+     * @param productId
+     * @param info
+     *
+     * @author sunghyun0610
+     */
     @Transactional
     public void updateProduct(Long productId, Long userId, ProductUpdateInfo info) {
         UserEntity user = userReader.getUser(userId);
@@ -183,6 +215,14 @@ public class ProductService {
         } else throw new DomainException(PRODUCT_HAS_BUYER);
     }
 
+
+    /**
+     * 중고물품 삭제. 입찰자가 있을 시 패널티 적용, 판매자만 삭제 가능
+     *
+     * @param userId
+     * @param productId
+     * @author sunghyun0610
+     */
     @Transactional
     public void removeProduct(Long productId, Long userId) {
         UserEntity user = userReader.getUser(userId);
@@ -198,6 +238,17 @@ public class ProductService {
         fcmService.sendBuyerProductDeleted(productId);
     }
 
+
+    /**
+     * 카테고리별 조회
+     *
+     * @param userId
+     * @param cursor
+     * @param category
+     *
+     * @return 카테고리별 물품 조회 리스트
+     * @author sunghyun0610
+     */
     @Transactional
     public CursorResult<ProductResponseInfo> getProductsByCategory(Long userId, Cursor cursor, String category) {
         if (category.isEmpty() || category == null) throw new DomainException(INVALID_PRODUCT_CATEGORY);
@@ -218,6 +269,17 @@ public class ProductService {
         return CursorResult.of(productResponseInfos, nextCursor);
     }
 
+
+    /**
+     * 나의 내역(입찰, 거래중, 거래완료, 삭제) 조회
+     *
+     * @param userId
+     * @param cursor
+     * @param status
+     *
+     * @return 커서기반 물품 조회 리스트
+     * @author sunghyun0610
+     */
     @Transactional
     public CursorResult<MyProductResponseDto> getMyProducts(Long userId, Cursor cursor, ProductStatus status) {
         List<ProductEntity> productEntityList = productRepository.findProductByUserId(userId, cursor.cursor(), cursor.size(), status);
@@ -232,6 +294,17 @@ public class ProductService {
 
     }
 
+
+    /**
+     * 키워드 기반 조회
+     *
+     * @param userId
+     * @param cursor
+     * @param keyword
+     *
+     * @return 커서기반 물품 조회 리스트
+     * @author sunghyun0610
+     */
     @Transactional
     public CursorResult<ProductResponseInfo> getProductByKeyword(String keyword, Long userId, Cursor cursor) {
         if (keyword.isEmpty() || keyword == null) {
@@ -253,6 +326,15 @@ public class ProductService {
         return CursorResult.of(productResponseInfos, nextCursor);
     }
 
+
+    /**
+     * 조기마감 등록. 판매자만 등록 가능. 입찰자가 있어야 등록 가능. 2시간 이내 조기마감 불가
+     *
+     * @param userId
+     * @param productId
+     * @return 커서기반 물품 조회 리스트
+     * @author sunghyun0610
+     */
     @Transactional
     public CloseEarlyResponseDto closeProductEarly(Long productId, Long userId) {
         UserEntity user = userReader.getUser(userId);
@@ -292,6 +374,14 @@ public class ProductService {
     }
 
 
+    /**
+     * 최고 입찰가 업데이트
+     *
+     * @param productId
+     * @param winningPrice
+     * @return 커서기반 물품 조회 리스트
+     * @author yechan
+     */
     @Transactional
     public void updateWinningPrice(Long productId, int winningPrice) {
 
@@ -301,6 +391,12 @@ public class ProductService {
         productEntity.updateWinningPrice(winningPrice);
     }
 
+    /**
+     * 상품 상태 거래중으로 변경
+     *
+     * @param productId
+     * @author yechan
+     */
     @Transactional
     public void updateProductStatusToProgress(Long productId) {
 
@@ -312,7 +408,13 @@ public class ProductService {
     }
 
 
-    // 거래 완료를 눌렀을때 물품의 상태를 변경하는것
+    /**
+     * 거래 완료 시 물품 상태 변경. 판매자만 변경 가능. 입찰자가 있어야 변경가능.
+     *
+     * @param userId
+     * @param productId
+     * @author sunghyun0610
+     */
     @org.springframework.transaction.annotation.Transactional
     public void markProductAsCompleted(Long productId, Long userId) {
         UserEntity userEntity = userRepository.findById(userId)
@@ -333,6 +435,12 @@ public class ProductService {
         productEntity.updateStatusToComplete();
     }
 
+    /**
+     * 회원 탈퇴 시 상품 관련 삭제 처리
+     *
+     * @param user
+     * @author icecoff22
+     */
     @Transactional
     public void withdraw(UserEntity user) {
         List<ProductEntity> products = productRepository.findByUser(user);
