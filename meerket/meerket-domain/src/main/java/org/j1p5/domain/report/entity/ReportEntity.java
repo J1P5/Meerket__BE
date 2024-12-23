@@ -40,7 +40,8 @@ public class ReportEntity extends BaseEntity {
         this.user = user;
     }
 
-    public static ReportEntity create(ReportType reportType, Long targetId, String content, UserEntity user) {
+    public static ReportEntity create(
+            ReportType reportType, Long targetId, String content, UserEntity user) {
         return new ReportEntity(reportType, targetId, content, user);
     }
 

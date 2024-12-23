@@ -13,8 +13,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @RequiredArgsConstructor
-@EnableMongoRepositories(
-        basePackages = "org.j1p5.domain.chat.repository")
+@EnableMongoRepositories(basePackages = "org.j1p5.domain.chat.repository")
 public class MongoConfig {
 
     @Value("${spring.data.mongodb.uri}")

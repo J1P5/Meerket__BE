@@ -1,5 +1,10 @@
 package org.j1p5.api.chat.service.usecase;
 
+import static org.j1p5.api.chat.exception.ChatException.CHATROOM_LIST_ERROR;
+import static org.j1p5.api.chat.exception.ChatException.INVALID_ROOM_TYPE;
+
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.chat.dto.ChatRoomType;
@@ -12,15 +17,8 @@ import org.j1p5.domain.chat.repository.ChatRoomRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.j1p5.api.chat.exception.ChatException.CHATROOM_LIST_ERROR;
-import static org.j1p5.api.chat.exception.ChatException.INVALID_ROOM_TYPE;
-
 /**
- * @author yechan
- * 유저가 속한 채팅방 목록 조회
+ * @author yechan 유저가 속한 채팅방 목록 조회
  */
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,6 @@ public class GetUserChatRoomsUseCase {
     public List<ChatRoomInfoResponse> execute(Long userId, ChatRoomType type) {
         return getUserChatRooms(userId, type);
     }
-
 
     private List<ChatRoomInfoResponse> getUserChatRooms(Long userId, ChatRoomType type) {
         List<ChatRoomEntity> chatRoomEntities;
@@ -65,7 +62,6 @@ public class GetUserChatRoomsUseCase {
             throw new WebException(CHATROOM_LIST_ERROR);
         }
     }
-
 
     private List<ChatRoomEntity> getChatRoomEntities(Long userId, ChatRoomType type) {
         return switch (type) {

@@ -32,7 +32,9 @@ public class OauthController {
             new HttpSessionSecurityContextRepository();
 
     @PostMapping
-    @Operation(summary = "소셜 로그인 API", description = "소셜 로그인 API. provider는 \"NAVER\", \"KAKAO\" 문자열을 입력해야 한다.")
+    @Operation(
+            summary = "소셜 로그인 API",
+            description = "소셜 로그인 API. provider는 \"NAVER\", \"KAKAO\" 문자열을 입력해야 한다.")
     public Response<LoginResponse> login(
             @RequestBody @Valid LoginRequest loginRequest,
             HttpServletRequest request,

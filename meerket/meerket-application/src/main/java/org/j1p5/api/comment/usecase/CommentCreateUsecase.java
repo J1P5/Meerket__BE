@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 public class CommentCreateUsecase {
     private final CommentService commentService;
 
-
     /**
      * 댓글 생성. 대댓글 depth는 1개 까지만
+     *
      * @author sunghyun
      * @param productId
      * @param userId
@@ -32,15 +32,15 @@ public class CommentCreateUsecase {
 
         CommentEntity parentComment = commentService.validateParentComment(request.parentId());
 
-        CommentEntity comment = CommentEntity.builder()
-                .content(request.content())
-                .parentComment(parentComment)
-                .status(CommentStatus.ACTIVE)
-                .product(product)
-                .user(user)
-                .build();
+        CommentEntity comment =
+                CommentEntity.builder()
+                        .content(request.content())
+                        .parentComment(parentComment)
+                        .status(CommentStatus.ACTIVE)
+                        .product(product)
+                        .user(user)
+                        .build();
 
         commentService.appendComment(comment);
     }
-
 }

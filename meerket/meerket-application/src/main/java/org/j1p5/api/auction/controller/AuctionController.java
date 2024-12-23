@@ -1,6 +1,7 @@
 package org.j1p5.api.auction.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auction.dto.request.PlaceBidRequest;
 import org.j1p5.api.auction.dto.request.UpdateBidPriceRequest;
@@ -12,8 +13,6 @@ import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,52 +26,40 @@ public class AuctionController {
     private final GetBiddingHistoryUseCase getBiddingHistoryUseCase;
     private final GetCompletedPurchasesUseCase getCompletedPurchasesUseCase;
 
-
     @PostMapping("/bid")
     public Response<PlaceBidResponse> bidPlace(
-            @LoginUser Long userId,
-            @Validated @RequestBody PlaceBidRequest request
-    ) {
+            @LoginUser Long userId, @Validated @RequestBody PlaceBidRequest request) {
 
-        PlaceBidResponse placeBidResponse = placeBidUseCase.execute(userId, request.productId(), request.price());
+        PlaceBidResponse placeBidResponse =
+                placeBidUseCase.execute(userId, request.productId(), request.price());
         return Response.onSuccess(placeBidResponse);
     }
 
-
     @PatchMapping("/bid")
     public Response<UpdateBidPriceResponse> updateBidPrice(
-            @LoginUser Long userId,
-            @Validated @RequestBody UpdateBidPriceRequest request
-    ) {
-        UpdateBidPriceResponse updateBidPriceResponse = updateBidPriceUseCase
-                .execute(request.productId(), userId, request.auctionId(), request.price());
+            @LoginUser Long userId, @Validated @RequestBody UpdateBidPriceRequest request) {
+        UpdateBidPriceResponse updateBidPriceResponse =
+                updateBidPriceUseCase.execute(
+                        request.productId(), userId, request.auctionId(), request.price());
 
         return Response.onSuccess(updateBidPriceResponse);
     }
 
-
     @GetMapping("/bidding")
-    public Response<List<BidHistoryResponse>> getBiddingHistory(
-            @LoginUser Long userId
-    ) {
+    public Response<List<BidHistoryResponse>> getBiddingHistory(@LoginUser Long userId) {
         List<BidHistoryResponse> biddingHistoryResponses = getBiddingHistoryUseCase.execute(userId);
         return Response.onSuccess(biddingHistoryResponses);
     }
 
     @GetMapping("/purchases")
-    public Response<List<BidHistoryResponse>> getPurchases(
-            @LoginUser Long userId
-    ) {
-        List<BidHistoryResponse> purchaseHistoryResponses = getCompletedPurchasesUseCase.execute(userId);
+    public Response<List<BidHistoryResponse>> getPurchases(@LoginUser Long userId) {
+        List<BidHistoryResponse> purchaseHistoryResponses =
+                getCompletedPurchasesUseCase.execute(userId);
         return Response.onSuccess(purchaseHistoryResponses);
     }
 
-
     @DeleteMapping("/{auctionId}")
-    public Response<Void> cancelBid(
-            @LoginUser Long userId,
-            @PathVariable Long auctionId
-    ) {
+    public Response<Void> cancelBid(@LoginUser Long userId, @PathVariable Long auctionId) {
         cancelBidUseCase.execute(userId, auctionId);
         return Response.onSuccess();
     }

@@ -15,6 +15,7 @@ public class ActivityAreaReadUsecase {
 
     /**
      * 위경도 기반 동네 조회 기능
+     *
      * @author Icecoff22
      * @param longitude 경도 값
      * @param latitude 위도 값
@@ -22,7 +23,8 @@ public class ActivityAreaReadUsecase {
      * @param size 페이지 크기
      * @return pagination된 dto
      */
-    public PageResult<ActivityAreaFullAddress> getAreas(Double longitude, Double latitude, int page, int size) {
+    public PageResult<ActivityAreaFullAddress> getAreas(
+            Double longitude, Double latitude, int page, int size) {
         Point coordinate = activityAreaService.getPoint(longitude, latitude);
 
         return activityAreaService.getAreas(coordinate, page, size);
@@ -30,13 +32,15 @@ public class ActivityAreaReadUsecase {
 
     /**
      * 키워드 기반 동네 검색 기능
+     *
      * @author Icecoff22
      * @param page 페이지 번호
      * @param size 페이지 크기
      * @param keyword 키워드
      * @return pagination된 dto
      */
-    public PageResult<ActivityAreaFullAddress> getAreasWithKeyword(int page, int size, String keyword) {
+    public PageResult<ActivityAreaFullAddress> getAreasWithKeyword(
+            int page, int size, String keyword) {
         return activityAreaService.getAreasWithKeyword(page, size, keyword);
     }
 }

@@ -26,9 +26,7 @@ public class BlockController {
     @Operation(summary = "차단", description = "사용자 차단 등록 API")
     @PostMapping
     public Response<Void> registerBlock(
-            @LoginUser Long userId,
-            @RequestBody BlockRegisterRequest blockRegisterRequest
-    ) {
+            @LoginUser Long userId, @RequestBody BlockRegisterRequest blockRegisterRequest) {
         blockRegisterService.register(userId, blockRegisterRequest.blockUserId());
         return Response.onSuccess();
     }
@@ -38,17 +36,14 @@ public class BlockController {
     public Response<PageResult<BlockUserInfo>> readBlocks(
             @LoginUser Long userId,
             @RequestParam("page") Integer page,
-            @RequestParam("size") Integer size
-    ) {
+            @RequestParam("size") Integer size) {
         return Response.onSuccess(blockReadService.read(userId, page, size));
     }
 
     @Operation(summary = "차단 해제", description = "사용자 차단 해제 API")
     @DeleteMapping
     public Response<Void> deleteBlock(
-            @LoginUser Long userId,
-            @RequestBody BlockDeleteRequest blockDeleteRequest
-    ) {
+            @LoginUser Long userId, @RequestBody BlockDeleteRequest blockDeleteRequest) {
         blockDeleteService.delete(userId, blockDeleteRequest.unblockId());
         return Response.onSuccess();
     }

@@ -1,5 +1,9 @@
 package org.j1p5.api.activityArea.service;
 
+import static org.j1p5.api.global.excpetion.WebErrorCode.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.exception.ActivityAreaAlreadyExistException;
 import org.j1p5.api.activityArea.exception.ActivityAreaNotFoundException;
@@ -24,11 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.j1p5.api.global.excpetion.WebErrorCode.*;
-
 @Service
 @RequiredArgsConstructor
 public class ActivityAreaService {
@@ -44,34 +43,46 @@ public class ActivityAreaService {
 
     public PageResult<ActivityAreaFullAddress> getAreas(Point coordinate, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ActivityAreaAddress> activityAreaInfos = activityAreaRepository.getActivityAreas(coordinate, pageRequest);
+        Page<ActivityAreaAddress> activityAreaInfos =
+                activityAreaRepository.getActivityAreas(coordinate, pageRequest);
 
         return convertToAreaName(activityAreaInfos);
     }
 
-    public PageResult<ActivityAreaFullAddress> getAreasWithKeyword(int page, int size, String search) {
+    public PageResult<ActivityAreaFullAddress> getAreasWithKeyword(
+            int page, int size, String search) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ActivityAreaAddress> activityAreaInfos = activityAreaRepository.getActivityAreasWithKeyword(search, pageRequest);
+        Page<ActivityAreaAddress> activityAreaInfos =
+                activityAreaRepository.getActivityAreasWithKeyword(search, pageRequest);
 
         return convertToAreaName(activityAreaInfos);
     }
 
-    private PageResult<ActivityAreaFullAddress> convertToAreaName(Page<ActivityAreaAddress> activityAreaInfos) {
+    private PageResult<ActivityAreaFullAddress> convertToAreaName(
+            Page<ActivityAreaAddress> activityAreaInfos) {
         List<ActivityAreaAddress> activityAreaInfoList = activityAreaInfos.getContent();
         List<ActivityAreaFullAddress> activityAreaFullAddressList = new ArrayList<>();
 
-        activityAreaInfoList.forEach(activityAreaInfo -> {
-            activityAreaFullAddressList.add(ActivityAreaFullAddress.of(activityAreaInfo));
-        });
+        activityAreaInfoList.forEach(
+                activityAreaInfo -> {
+                    activityAreaFullAddressList.add(ActivityAreaFullAddress.of(activityAreaInfo));
+                });
 
-        return new PageResult<>(activityAreaFullAddressList, activityAreaInfos.getTotalPages(), activityAreaInfos.hasNext());
+        return new PageResult<>(
+                activityAreaFullAddressList,
+                activityAreaInfos.getTotalPages(),
+                activityAreaInfos.hasNext());
     }
 
     @Transactional
     public void register(Long userId, Integer emdId) {
-        UserEntity user = userRepository.findById(userId)
+        UserEntity user =
+                userRepository
+                        .findById(userId)
                         .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        EmdArea emdArea = emdAreaRepository.findById(emdId)
+        EmdArea emdArea =
+                emdAreaRepository
+                        .findById(emdId)
                         .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
 
         activityAreaValidation(user);
@@ -89,48 +100,62 @@ public class ActivityAreaService {
 
     @Transactional
     public void delete(Long userId, Integer emdId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        EmdArea emdArea = emdAreaRepository.findById(emdId)
-                .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
+        UserEntity user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        EmdArea emdArea =
+                emdAreaRepository
+                        .findById(emdId)
+                        .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
 
         activityAreaRepository.deleteByUserAndEmdArea(user, emdArea);
     }
 
     @Transactional
     public void update(Long userId, Integer emdId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        UserEntity user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
-        EmdArea emdArea = emdAreaRepository.findById(emdId)
-                .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
+        EmdArea emdArea =
+                emdAreaRepository
+                        .findById(emdId)
+                        .orElseThrow(() -> new EmdAreaNotFoundException(EMD_AREA_NOT_FOUND));
 
-        ActivityArea activityArea = activityAreaRepository.findByUser(user)
-                .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
+        ActivityArea activityArea =
+                activityAreaRepository
+                        .findByUser(user)
+                        .orElseThrow(
+                                () -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
 
         activityArea.updateEmdArea(emdArea);
     }
 
     public ActivityArea getActivityAreaByUser(Long userId) {
-        UserEntity user = userRepository.findById((userId))
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        UserEntity user =
+                userRepository
+                        .findById((userId))
+                        .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
         List<ActivityArea> activityAreas = activityAreaRepository.findAllByUser(user);
         return activityAreas.isEmpty() ? null : activityAreas.get(0);
     }
 
     public SimpleAddress getActivityEmdAreaByUserId(Long userId) {
-        userRepository.findById((userId))
+        userRepository
+                .findById((userId))
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
-        return activityAreaRepository.getActivityEmdAreaByUserId(userId)
+        return activityAreaRepository
+                .getActivityEmdAreaByUserId(userId)
                 .orElseThrow(() -> new ActivityAreaNotFoundException(ACTIVITY_AREA_NOT_FOUND));
     }
 
     @Transactional
     public void withdraw(UserEntity user) {
-        ActivityArea activityArea = activityAreaRepository.findByUser(user)
-                        .orElse(null);
+        ActivityArea activityArea = activityAreaRepository.findByUser(user).orElse(null);
 
         if (activityArea == null) {
             return;

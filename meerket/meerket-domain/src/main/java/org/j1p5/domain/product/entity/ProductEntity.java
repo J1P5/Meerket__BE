@@ -105,8 +105,8 @@ public class ProductEntity extends BaseEntity {
         if (coordinate != null) {
             this.coordinate = coordinate;
         }
-        if(address != null){
-            this.address =address;
+        if (address != null) {
+            this.address = address;
         }
         if (productUpdateInfo.content() != null) {
             this.content = productUpdateInfo.content();
@@ -121,16 +121,16 @@ public class ProductEntity extends BaseEntity {
         this.status = ProductStatus.IN_PROGRESS;
     }
 
-    public void createThumbnail(String thumbnail){
+    public void createThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public void updateIsEarly(){
+    public void updateIsEarly() {
         this.isEarly = true;
     }
 
-    public void updateExpiredTime(){
-//        this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
+    public void updateExpiredTime() {
+        //        this.expiredTime = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
         this.expiredTime = LocalDateTime.now().plus(10, ChronoUnit.SECONDS); // 시연을 위한 20초
     }
 
@@ -138,10 +138,13 @@ public class ProductEntity extends BaseEntity {
         this.winningPrice = winningPrice;
     }
 
-    public void updateHasBuyer(){this.hasBuyer = true;}
+    public void updateHasBuyer() {
+        this.hasBuyer = true;
+    }
 
-    public void updateHasBuyerFalse(){this.hasBuyer = false;}
-
+    public void updateHasBuyerFalse() {
+        this.hasBuyer = false;
+    }
 
     public void updateStatusToComplete() {
         this.status = ProductStatus.COMPLETED;
@@ -150,6 +153,4 @@ public class ProductEntity extends BaseEntity {
     public void withdraw() {
         this.isDeleted = true;
     }
-
-
 }

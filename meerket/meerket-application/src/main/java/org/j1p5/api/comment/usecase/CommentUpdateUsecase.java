@@ -13,6 +13,7 @@ public class CommentUpdateUsecase {
 
     /**
      * 댓글 수정
+     *
      * @author sunghyun
      * @param commentId
      * @param userId
@@ -22,6 +23,5 @@ public class CommentUpdateUsecase {
     public void updateComment(Long commentId, Long userId, CommentUpdateRequestDto request) {
 
         commentService.validateCommentUpdate(commentId, userId, request);
-
     }
 }

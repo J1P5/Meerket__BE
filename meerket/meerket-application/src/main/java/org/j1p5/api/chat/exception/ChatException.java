@@ -8,7 +8,7 @@ public enum ChatException implements BaseErrorCode {
     // 채팅관련 에러
     CHAT_RECEIVER_NOT_FOUND(404, "CHAT_RECEIVER_404", "상대방이 존재하지 않습니다."),
     CHAT_RECEIVER_FIND_ERROR(500, "CHAT_RECEIVER_FIND_500", "상대방을 찾던 중 에러가 발생했습니다."),
-    CHAT_SAVE_ERROR(500,"CHAT_SAVE_500", "채팅 저장에 실패하였습니다."),
+    CHAT_SAVE_ERROR(500, "CHAT_SAVE_500", "채팅 저장에 실패하였습니다."),
     NOT_FOUND_CHATROOM(404, "CHAT_ROOM_404", "채팅방을 찾을 수 없습니다."),
     NOT_MEMBER_OF_CHATROOM(403, "CHAT_ROOM_403", "채팅방에 속하지 않은 유저입니다."),
     INVALID_ROOM_ID(400, "ROOM_ID_400", "roomId 형식이 잘못되었습니다."),
@@ -17,10 +17,6 @@ public enum ChatException implements BaseErrorCode {
     CHATROOM_LIST_ERROR(500, "CHAT_ROOM_500", "채팅방 목록 조회에 실패하였습니다."),
     CHAT_EXIT_ERROR(500, "CHAT_EXIT_500", "채팅방에서 나가는 도중 에러가 발생하였습니다."),
     CHAT_READ_ERROR(500, "CHAT_READ_500", "채팅을 조회하는 도중 에러가 발생하였습니다."),
-
-
-
-
     ;
 
     private final int status;
@@ -32,7 +28,6 @@ public enum ChatException implements BaseErrorCode {
         this.errorCode = errorCode;
         this.message = message;
     }
-
 
     @Override
     public ErrorResponse getErrorResponse() {

@@ -14,5 +14,4 @@ public record ProductUpdateInfo(
         Double latitude,
         Double longtitude,
         String address,
-        String location
-) {}
+        String location) {}

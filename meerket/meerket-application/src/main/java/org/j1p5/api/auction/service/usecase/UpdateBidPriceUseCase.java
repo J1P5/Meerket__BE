@@ -16,8 +16,8 @@ public class UpdateBidPriceUseCase {
     private final FcmService fcmService;
 
     /**
-     * 입찰 수정. 본인 입찰만 수정 가능, 조기마감 여부에 따라 수정 범위 제한
-     * 입찰 수정 알림 전송
+     * 입찰 수정. 본인 입찰만 수정 가능, 조기마감 여부에 따라 수정 범위 제한 입찰 수정 알림 전송
+     *
      * @author yechan
      * @param productId
      * @param userId
@@ -35,9 +35,10 @@ public class UpdateBidPriceUseCase {
         AuctionEntity auctionEntity;
 
         if (earlyClosure) {
-            auctionEntity = auctionService.updateBidPriceForEarlyClosure(auctionId,price);
-        }else{
-            auctionEntity = auctionService.updateBidPriceWithMinimumLimit(auctionId,productId,price);
+            auctionEntity = auctionService.updateBidPriceForEarlyClosure(auctionId, price);
+        } else {
+            auctionEntity =
+                    auctionService.updateBidPriceWithMinimumLimit(auctionId, productId, price);
         }
 
         fcmService.sendSellerBidUpdateMessage(productId);

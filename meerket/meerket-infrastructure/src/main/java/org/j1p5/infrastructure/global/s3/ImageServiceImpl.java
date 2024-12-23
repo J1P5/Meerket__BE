@@ -7,7 +7,6 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
-
 import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.j1p5.domain.product.service.ImageService;
 import org.j1p5.domain.report.ReportImageClient;
 import org.j1p5.domain.user.UserImageClient;

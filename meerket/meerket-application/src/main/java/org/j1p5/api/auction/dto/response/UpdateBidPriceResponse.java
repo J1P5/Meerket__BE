@@ -1,14 +1,10 @@
 package org.j1p5.api.auction.dto.response;
 
+import java.util.Objects;
 import org.j1p5.domain.auction.entity.AuctionEntity;
 
-import java.util.Objects;
-
-public record UpdateBidPriceResponse(
-        Long auctionId,
-        int price
-) {
-    public UpdateBidPriceResponse{
+public record UpdateBidPriceResponse(Long auctionId, int price) {
+    public UpdateBidPriceResponse {
         Objects.requireNonNull(auctionId, "auctionId는 필수입니다.");
     }
 

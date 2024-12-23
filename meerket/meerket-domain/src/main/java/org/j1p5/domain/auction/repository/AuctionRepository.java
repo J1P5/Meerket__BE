@@ -1,17 +1,17 @@
 package org.j1p5.domain.auction.repository;
 
+import java.util.List;
+import java.util.Optional;
 import org.j1p5.domain.auction.entity.AuctionEntity;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
-    @Query("""
+    @Query(
+            """
                 select a
                 from auction a
                 join a.product p
@@ -22,8 +22,8 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
             """)
     List<AuctionEntity> findBiddingAuctionsByUserId(@Param("userId") Long userId);
 
-
-    @Query("""
+    @Query(
+            """
                 select a
                 from auction a
                 join a.product p
@@ -33,42 +33,41 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
             """)
     List<AuctionEntity> findCompletedPurchasesByUserId(@Param("userId") Long userId);
 
-
-    @Query("""
+    @Query(
+            """
                     select case when count(a) > 0 then true else false end
                     from auction a
                     where a.user.id = :userId
                     and a.product.id = :productId
                     and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
-            
+
             """)
-    boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
+    boolean existsByUserIdAndProductId(
+            @Param("userId") Long userId, @Param("productId") Long productId);
 
-
-    @Query("""
+    @Query(
+            """
                     select a
                     from auction a
                     where a.product.id = :productId
                     and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
-                    order by a.price desc , a.updatedAt asc 
+                    order by a.price desc , a.updatedAt asc
                     limit 1
-            """
-    )
+            """)
     Optional<AuctionEntity> findHighestBidder(@Param("productId") Long productId);
 
-
-
-
-    @Query("""
+    @Query(
+            """
                     select a
                     from auction a
                     where a.product.id = :productId
                     and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
-            
+
             """)
     List<AuctionEntity> findAuctionEntitiesByProductId(@Param("productId") Long productId);
 
-    @Query("""
+    @Query(
+            """
     select a
     from auction a
     join a.product p
@@ -77,16 +76,7 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
     and a.status = org.j1p5.domain.auction.entity.AuctionStatus.BIDDING
 """)
     Optional<AuctionEntity> findAuctionByUserIdAndProductId(
-            @Param("productId") Long productId,
-            @Param("userId") Long userId
-    );
+            @Param("productId") Long productId, @Param("userId") Long userId);
 
     List<AuctionEntity> findByUser(UserEntity user);
-
-
 }
-
-
-
-
-

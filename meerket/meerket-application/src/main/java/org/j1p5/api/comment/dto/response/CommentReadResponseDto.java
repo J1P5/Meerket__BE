@@ -1,14 +1,11 @@
 package org.j1p5.api.comment.dto.response;
 
-import org.j1p5.api.comment.dto.CommentMemeberDto;
-import org.j1p5.domain.comment.CommentInfo;
-import org.j1p5.domain.comment.entity.CommentEntity;
-import org.j1p5.domain.comment.entity.CommentStatus;
-import org.j1p5.domain.user.entity.UserEntity;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.j1p5.api.comment.dto.CommentMemeberDto;
+import org.j1p5.domain.comment.CommentInfo;
+import org.j1p5.domain.comment.entity.CommentStatus;
 
 public record CommentReadResponseDto(
         CommentMemeberDto commentMemeberDto,
@@ -16,19 +13,17 @@ public record CommentReadResponseDto(
         String content,
         boolean isWithdrawUser,
         boolean isBlocked,
-        boolean isSeller,//판매자인지
-        boolean isUpdatable,//수정된 글인지
+        boolean isSeller, // 판매자인지
+        boolean isUpdatable, // 수정된 글인지
         LocalDateTime createdAt,
         List<CommentReadResponseDto> replies,
-        CommentStatus status
-) {
-    public static CommentReadResponseDto of(CommentInfo commentInfo){
+        CommentStatus status) {
+    public static CommentReadResponseDto of(CommentInfo commentInfo) {
         return new CommentReadResponseDto(
                 new CommentMemeberDto(
                         commentInfo.userId(),
                         commentInfo.userNickname(),
-                        commentInfo.userProfileImage()
-                ),
+                        commentInfo.userProfileImage()),
                 commentInfo.commentId(),
                 commentInfo.content(),
                 commentInfo.isWithdrawUser(),
@@ -39,7 +34,6 @@ public record CommentReadResponseDto(
                 commentInfo.replies().stream()
                         .map(CommentReadResponseDto::of)
                         .collect(Collectors.toList()),
-                commentInfo.status()
-        );
+                commentInfo.status());
     }
 }

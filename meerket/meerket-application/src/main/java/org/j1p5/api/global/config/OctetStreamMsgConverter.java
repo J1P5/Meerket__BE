@@ -1,12 +1,11 @@
 package org.j1p5.api.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
 
 @Component
 public class OctetStreamMsgConverter extends AbstractJackson2HttpMessageConverter {

@@ -1,9 +1,8 @@
 package org.j1p5.api.product.dto.request;
 
+import java.time.LocalDateTime;
 import org.j1p5.domain.product.dto.ProductUpdateInfo;
 import org.j1p5.domain.product.entity.ProductCategory;
-
-import java.time.LocalDateTime;
 
 public record ProductUpdateRequest(
         String title,
@@ -14,9 +13,7 @@ public record ProductUpdateRequest(
         Double latitude,
         Double longtitude,
         String address,
-        String location
-)
-{
+        String location) {
 
     public static ProductUpdateInfo toInfo(ProductUpdateRequest request) {
         return new ProductUpdateInfo(
@@ -28,7 +25,6 @@ public record ProductUpdateRequest(
                 request.latitude,
                 request.longtitude,
                 request.address,
-                request.location
-        );
+                request.location);
     }
 }

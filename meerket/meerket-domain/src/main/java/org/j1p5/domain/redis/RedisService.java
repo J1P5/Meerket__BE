@@ -24,5 +24,4 @@ public interface RedisService {
      * @param userId
      */
     void removeUserRoomMapping(String userId);
-
 }

@@ -18,7 +18,9 @@ public class AuthManager {
     public SecurityContext setContext(SessionInfo sessionInfo) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                        sessionInfo.pk(), null, AuthorityUtil.convertToAuthorities(sessionInfo.role()));
+                        sessionInfo.pk(),
+                        null,
+                        AuthorityUtil.convertToAuthorities(sessionInfo.role()));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         return SecurityContextHolder.getContext();

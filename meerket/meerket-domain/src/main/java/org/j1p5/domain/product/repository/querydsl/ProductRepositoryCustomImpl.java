@@ -3,10 +3,7 @@ package org.j1p5.domain.product.repository.querydsl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import java.util.List;
-
-import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.product.entity.ProductCategory;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
@@ -27,7 +24,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     private static final int MAX_DISTANCE = 100_000;
 
     @Override
-    public List<ProductEntity> findProductsByCursor(List<Long> blockUserIds, Point coordinate, Long cursor, Integer size) {
+    public List<ProductEntity> findProductsByCursor(
+            List<Long> blockUserIds, Point coordinate, Long cursor, Integer size) {
         // QueryDSL을 사용한 커서 기반 조회
         return queryFactory
                 .selectFrom(qProduct)
@@ -44,7 +42,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     // 마감된 물품만 조회 (임시 시세조회 api)
     @Override
-    public List<ProductEntity> findCompletedProductsByCursor(Point coordinate, Long cursor, Integer size) {
+    public List<ProductEntity> findCompletedProductsByCursor(
+            Point coordinate, Long cursor, Integer size) {
         return queryFactory
                 .selectFrom(qProduct)
                 .where(
@@ -52,50 +51,50 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                         cursorCondition(cursor),
                         isNotDeleted(),
                         isNotWithdrawalUser(),
-                        qProduct.status.eq(ProductStatus.COMPLETED)
-                )
+                        qProduct.status.eq(ProductStatus.COMPLETED))
                 .orderBy(qProduct.id.desc())
                 .limit(size)
                 .fetch();
     }
 
     @Override
-    public List<ProductEntity> findProductByCategory(Point coordinate, String category, Long cursor, Integer size) {
-        return queryFactory.selectFrom(qProduct)
+    public List<ProductEntity> findProductByCategory(
+            Point coordinate, String category, Long cursor, Integer size) {
+        return queryFactory
+                .selectFrom(qProduct)
                 .where(
                         withinDistance(coordinate, MAX_DISTANCE),
                         cursorCondition(cursor),
                         isNotDeleted(),
                         isNotWithdrawalUser(),
-                        findCategory(category)
-                )
+                        findCategory(category))
                 .orderBy(qProduct.id.desc())
                 .limit(size)
                 .fetch();
     }
 
     @Override
-    public List<ProductEntity> findProductByUserId(Long userId, Long cursor, Integer size, ProductStatus status) {
+    public List<ProductEntity> findProductByUserId(
+            Long userId, Long cursor, Integer size, ProductStatus status) {
 
-        return queryFactory.selectFrom(qProduct)
-                .where(qProduct.user.id.eq(userId),
-                        cursorCondition(cursor),
-                        filterByStatus(status)
-                )
+        return queryFactory
+                .selectFrom(qProduct)
+                .where(qProduct.user.id.eq(userId), cursorCondition(cursor), filterByStatus(status))
                 .orderBy(qProduct.id.desc())
                 .limit(size)
                 .fetch();
     }
 
     @Override
-    public List<ProductEntity> findProductByKeyword(Point coordinate, String keyword, Long cursor, Integer size) {
-        return queryFactory.selectFrom(qProduct)
+    public List<ProductEntity> findProductByKeyword(
+            Point coordinate, String keyword, Long cursor, Integer size) {
+        return queryFactory
+                .selectFrom(qProduct)
                 .where(
                         withinDistance(coordinate, MAX_DISTANCE),
                         cursorCondition(cursor),
                         isNotDeleted(),
-                        titleContains(keyword)
-                )
+                        titleContains(keyword))
                 .orderBy(qProduct.id.desc())
                 .limit(size)
                 .fetch();
@@ -105,7 +104,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
      * 특정 좌표와 반경 내의 상품만 조회하는 조건 생성
      *
      * @param coordinate 기준 좌표
-     * @param distance   반경 (단위: 미터)
+     * @param distance 반경 (단위: 미터)
      * @return BooleanExpression (QueryDSL 조건)
      */
     private BooleanExpression withinDistance(Point coordinate, int distance) {
@@ -141,9 +140,11 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     private BooleanExpression filterByStatus(ProductStatus status) {
         if (status == ProductStatus.BIDDING || status == ProductStatus.IN_PROGRESS) {
-            return qProduct.status.eq(ProductStatus.BIDDING)
+            return qProduct.status
+                    .eq(ProductStatus.BIDDING)
                     .or(qProduct.status.eq(ProductStatus.IN_PROGRESS));
-        } else if (status == ProductStatus.COMPLETED) {//WHERE user_id = <userId> AND status = 'COMPLETED'
+        } else if (status
+                == ProductStatus.COMPLETED) { // WHERE user_id = <userId> AND status = 'COMPLETED'
             return qProduct.status.eq(ProductStatus.COMPLETED);
         } else if (status == ProductStatus.DELETED) {
             return qProduct.status.eq(ProductStatus.DELETED);
@@ -151,11 +152,11 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return qProduct.status.ne(ProductStatus.DELETED);
     }
 
-    private BooleanExpression titleContains(String keyword){
-        if(keyword == null || keyword.trim().isEmpty()){
+    private BooleanExpression titleContains(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
             return null;
         }
-        return qProduct.title.like("%" +keyword + "%");
+        return qProduct.title.like("%" + keyword + "%");
     }
 
     private BooleanExpression isNotWithdrawalUser() {

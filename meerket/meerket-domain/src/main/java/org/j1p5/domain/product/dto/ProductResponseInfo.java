@@ -19,7 +19,8 @@ public record ProductResponseInfo(
 
     public static ProductResponseInfo from(ProductEntity product, MyLocationInfo myLocationInfo) {
 
-        ProductResponseInfo productResponseInfos = ProductResponseInfo.builder()
+        ProductResponseInfo productResponseInfos =
+                ProductResponseInfo.builder()
                         .myLocation(myLocationInfo.address()) // 사용자 활동지역
                         .productId(product.getId())
                         .memberId(product.getUser().getId())

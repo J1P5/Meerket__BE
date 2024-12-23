@@ -12,13 +12,14 @@ public class CommentDeleteUsecase {
 
     /**
      * 댓글 삭제
+     *
      * @author sunghyun
      * @param productId
      * @param userId
      * @param commentId
      */
     @Transactional
-    public void removeComment(Long productId, Long userId, Long commentId){
-        commentService.removedComment(productId,userId,commentId);
+    public void removeComment(Long productId, Long userId, Long commentId) {
+        commentService.removedComment(productId, userId, commentId);
     }
 }

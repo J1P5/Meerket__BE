@@ -4,16 +4,4 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateBidPriceRequest(
-
-    @NotNull
-    @Min(1)
-    Long auctionId,
-
-    @NotNull
-    @Min(1)
-    Long productId,
-
-    int price
-
-) {
-}
+        @NotNull @Min(1) Long auctionId, @NotNull @Min(1) Long productId, int price) {}

@@ -1,5 +1,7 @@
 package org.j1p5.domain.chat.repository.custom;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.j1p5.domain.chat.entity.ChatMessageEntity;
@@ -11,20 +13,17 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
-public class ChatMessageCustomRepositoryImpl implements  ChatMessageCustomRepository{
+public class ChatMessageCustomRepositoryImpl implements ChatMessageCustomRepository {
 
     private final MongoTemplate mongoTemplate;
 
     private static final int CHAT_LIST_LIMIT = 100;
 
-
     @Override
-    public List<ChatMessageEntity> getChatMessageEntities(ObjectId roomObjectId, LocalDateTime beforeTime) {
+    public List<ChatMessageEntity> getChatMessageEntities(
+            ObjectId roomObjectId, LocalDateTime beforeTime) {
         try {
             Query query = new Query();
             query.addCriteria(Criteria.where("roomId").is(roomObjectId));
@@ -35,7 +34,8 @@ public class ChatMessageCustomRepositoryImpl implements  ChatMessageCustomReposi
 
             query.with(Sort.by(Sort.Direction.DESC, "createdAt")).limit(CHAT_LIST_LIMIT);
 
-            List<ChatMessageEntity> chatMessageEntities = mongoTemplate.find(query, ChatMessageEntity.class);
+            List<ChatMessageEntity> chatMessageEntities =
+                    mongoTemplate.find(query, ChatMessageEntity.class);
 
             return chatMessageEntities;
         } catch (Exception e) {

@@ -14,6 +14,7 @@ public record UserProfile(String nickname, String imageUrl, String ActivityEmdNa
         if (activityEmdAddress == null) {
             return new UserProfile(userEntity.getNickname(), userEntity.getImageUrl(), null);
         }
-        return new UserProfile(userEntity.getNickname(), userEntity.getImageUrl(), activityEmdAddress.emdName());
+        return new UserProfile(
+                userEntity.getNickname(), userEntity.getImageUrl(), activityEmdAddress.emdName());
     }
 }

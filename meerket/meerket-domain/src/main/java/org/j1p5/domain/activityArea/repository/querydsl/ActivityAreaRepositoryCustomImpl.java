@@ -8,6 +8,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Optional;
 import org.j1p5.domain.activityArea.dto.ActivityAreaAddress;
 import org.j1p5.domain.activityArea.dto.SimpleAddress;
 import org.j1p5.domain.activityArea.entity.QActivityArea;
@@ -19,9 +21,6 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
 
 public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryCustom {
 
@@ -55,15 +54,14 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
             return null;
         }
 
-        StringTemplate fullAddress = Expressions.stringTemplate(
-                "CONCAT({0}, ' ', {1}, ' ', {2})",
-                qSidoArea.sidoName, qSggArea.sggName, qEmdArea.emdName
-        );
+        StringTemplate fullAddress =
+                Expressions.stringTemplate(
+                        "CONCAT({0}, ' ', {1}, ' ', {2})",
+                        qSidoArea.sidoName, qSggArea.sggName, qEmdArea.emdName);
 
-        StringTemplate partialAddress = Expressions.stringTemplate(
-                "CONCAT({0}, ' ', {1})",
-                qSggArea.sggName, qEmdArea.emdName
-        );
+        StringTemplate partialAddress =
+                Expressions.stringTemplate(
+                        "CONCAT({0}, ' ', {1})", qSggArea.sggName, qEmdArea.emdName);
 
         return makeKeywordCondition(fullAddress, partialAddress, keyword);
     }
@@ -75,9 +73,10 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
         return qUserEntity.id.eq(userId);
     }
 
-    private BooleanBuilder makeKeywordCondition(StringTemplate fullAddress, StringTemplate partialAddress, String keyword) {
+    private BooleanBuilder makeKeywordCondition(
+            StringTemplate fullAddress, StringTemplate partialAddress, String keyword) {
         BooleanBuilder builder = new BooleanBuilder();
-        //TODO : like검색 이외 성능 고도화
+        // TODO : like검색 이외 성능 고도화
         builder.or(fullAddress.like("%" + keyword + "%"));
         builder.or(partialAddress.like("%" + keyword + "%"));
         builder.or(qSidoArea.sidoName.like(keyword + "%"));
@@ -89,12 +88,14 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
 
     /**
      * 특정 좌표와 가까운 순서
+     *
      * @param location
      * @return OrderSpecifier
      */
     private OrderSpecifier<?> getOrderSpecifiersByDistance(Point location) {
         String geoFunction = "ST_Distance_Sphere(coordinate, {0})";
-        return new OrderSpecifier<>(Order.ASC, Expressions.numberTemplate(Double.class, geoFunction, location));
+        return new OrderSpecifier<>(
+                Order.ASC, Expressions.numberTemplate(Double.class, geoFunction, location));
     }
 
     @Override
@@ -109,8 +110,10 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
                                         qSggArea.sggName.as("sggName"),
                                         qEmdArea.emdName.as("emdName")))
                         .from(qEmdArea)
-                        .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
-                        .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
+                        .join(qEmdArea.sggArea)
+                        .on(qSggArea.eq(qEmdArea.sggArea))
+                        .join(qSggArea.sidoArea)
+                        .on(qSidoArea.eq(qSggArea.sidoArea))
                         .orderBy(getOrderSpecifiersByDistance(coordinate))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -120,12 +123,15 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
             return new PageImpl<>(areaInfos, pageable, 0);
         }
 
-        Long totalCount = queryFactory
-                .selectDistinct(qEmdArea.count())
-                .from(qEmdArea)
-                .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
-                .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
-                .fetchOne();
+        Long totalCount =
+                queryFactory
+                        .selectDistinct(qEmdArea.count())
+                        .from(qEmdArea)
+                        .join(qEmdArea.sggArea)
+                        .on(qSggArea.eq(qEmdArea.sggArea))
+                        .join(qSggArea.sidoArea)
+                        .on(qSidoArea.eq(qSggArea.sidoArea))
+                        .fetchOne();
 
         if (totalCount == null) {
             totalCount = 0L;
@@ -135,7 +141,8 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
     }
 
     @Override
-    public Page<ActivityAreaAddress> getActivityAreasWithKeyword(String keyword, Pageable pageable) {
+    public Page<ActivityAreaAddress> getActivityAreasWithKeyword(
+            String keyword, Pageable pageable) {
         List<ActivityAreaAddress> areaInfos =
                 queryFactory
                         .selectDistinct(
@@ -146,8 +153,10 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
                                         qSggArea.sggName.as("sggName"),
                                         qEmdArea.emdName.as("emdName")))
                         .from(qEmdArea)
-                        .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
-                        .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
+                        .join(qEmdArea.sggArea)
+                        .on(qSggArea.eq(qEmdArea.sggArea))
+                        .join(qSggArea.sidoArea)
+                        .on(qSidoArea.eq(qSggArea.sidoArea))
                         .where(keywordCondition(keyword))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -157,13 +166,16 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
             return new PageImpl<>(areaInfos, pageable, 0);
         }
 
-        Long totalCount = queryFactory
-                .selectDistinct(qEmdArea.count())
-                .from(qEmdArea)
-                .join(qEmdArea.sggArea).on(qSggArea.eq(qEmdArea.sggArea))
-                .join(qSggArea.sidoArea).on(qSidoArea.eq(qSggArea.sidoArea))
-                .where(keywordCondition(keyword))
-                .fetchOne();
+        Long totalCount =
+                queryFactory
+                        .selectDistinct(qEmdArea.count())
+                        .from(qEmdArea)
+                        .join(qEmdArea.sggArea)
+                        .on(qSggArea.eq(qEmdArea.sggArea))
+                        .join(qSggArea.sidoArea)
+                        .on(qSidoArea.eq(qSggArea.sidoArea))
+                        .where(keywordCondition(keyword))
+                        .fetchOne();
 
         if (totalCount == null) {
             totalCount = 0L;
@@ -175,16 +187,20 @@ public class ActivityAreaRepositoryCustomImpl implements ActivityAreaRepositoryC
     @Override
     public Optional<SimpleAddress> getActivityEmdAreaByUserId(Long userId) {
         Optional<SimpleAddress> areaInfos =
-                Optional.ofNullable(queryFactory.selectDistinct(
-                                Projections.constructor(
-                                        SimpleAddress.class,
-                                        qEmdArea.id.as("emdId"),
-                                        qEmdArea.emdName.as("emdName")))
-                        .from(qActivityArea)
-                        .join(qUserEntity).on(qActivityArea.user.eq(qUserEntity))
-                        .join(qEmdArea).on(qEmdArea.eq(qActivityArea.emdArea))
-                        .where(userIdCondition(userId))
-                        .fetchOne());
+                Optional.ofNullable(
+                        queryFactory
+                                .selectDistinct(
+                                        Projections.constructor(
+                                                SimpleAddress.class,
+                                                qEmdArea.id.as("emdId"),
+                                                qEmdArea.emdName.as("emdName")))
+                                .from(qActivityArea)
+                                .join(qUserEntity)
+                                .on(qActivityArea.user.eq(qUserEntity))
+                                .join(qEmdArea)
+                                .on(qEmdArea.eq(qActivityArea.emdArea))
+                                .where(userIdCondition(userId))
+                                .fetchOne());
 
         return areaInfos;
     }

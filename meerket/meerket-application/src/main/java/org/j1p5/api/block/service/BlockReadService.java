@@ -1,5 +1,6 @@
 package org.j1p5.api.block.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.block.validator.BlockValidator;
 import org.j1p5.common.dto.PageResult;
@@ -12,8 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class BlockReadService {
@@ -24,6 +23,7 @@ public class BlockReadService {
 
     /**
      * 차단 조회
+     *
      * @author icecoff22
      * @param userId
      * @param page
@@ -35,10 +35,14 @@ public class BlockReadService {
 
         UserEntity user = blockValidator.validateUser(userId);
         List<BlockEntity> blockedUsers = blockRepository.findByUser(user);
-        List<Long> blockedUserIds = blockedUsers.stream()
-                .map(b -> b.getBlockedUser().getId()).toList();
+        List<Long> blockedUserIds =
+                blockedUsers.stream().map(b -> b.getBlockedUser().getId()).toList();
 
-        Page<BlockUserInfo> blockUserInfos = userRepository.findBlockUserByIds(blockedUserIds, pageRequest);
-        return PageResult.of(blockUserInfos.getContent(), blockUserInfos.getTotalPages(), blockUserInfos.hasNext());
+        Page<BlockUserInfo> blockUserInfos =
+                userRepository.findBlockUserByIds(blockedUserIds, pageRequest);
+        return PageResult.of(
+                blockUserInfos.getContent(),
+                blockUserInfos.getTotalPages(),
+                blockUserInfos.hasNext());
     }
 }

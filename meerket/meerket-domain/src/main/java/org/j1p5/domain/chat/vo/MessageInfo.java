@@ -1,8 +1,7 @@
 package org.j1p5.domain.chat.vo;
 
-import lombok.Getter;
-
 import java.util.Objects;
+import lombok.Getter;
 
 @Getter
 public class MessageInfo {
@@ -12,7 +11,7 @@ public class MessageInfo {
     private final String content;
     private final String roomId;
 
-    public MessageInfo(Long userId, Long receiverId, String content, String roomId){
+    public MessageInfo(Long userId, Long receiverId, String content, String roomId) {
         this.userId = Objects.requireNonNull(userId, "userId는 필수입니다.");
         this.receiverId = Objects.requireNonNull(receiverId, "receiverId는 필수입니다.");
         this.content = Objects.requireNonNull(content, "content는 필수입니다.");
@@ -24,10 +23,10 @@ public class MessageInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MessageInfo that = (MessageInfo) o;
-        return Objects.equals(userId, that.userId) &&
-                Objects.equals(receiverId, that.receiverId) &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(roomId, that.roomId);
+        return Objects.equals(userId, that.userId)
+                && Objects.equals(receiverId, that.receiverId)
+                && Objects.equals(content, that.content)
+                && Objects.equals(roomId, that.roomId);
     }
 
     @Override
@@ -37,11 +36,17 @@ public class MessageInfo {
 
     @Override
     public String toString() {
-        return "MessageInfo{" +
-                "userId=" + userId +
-                ", receiverId=" + receiverId +
-                ", content='" + content + '\'' +
-                ", roomId='" + roomId + '\'' +
-                '}';
+        return "MessageInfo{"
+                + "userId="
+                + userId
+                + ", receiverId="
+                + receiverId
+                + ", content='"
+                + content
+                + '\''
+                + ", roomId='"
+                + roomId
+                + '\''
+                + '}';
     }
 }

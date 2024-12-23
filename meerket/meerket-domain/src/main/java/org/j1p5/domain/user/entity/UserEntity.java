@@ -45,8 +45,7 @@ public class UserEntity extends BaseEntity {
         this.role = role;
     }
 
-    public static UserEntity create(
-            String SocialId, Provider Provider, Role role) {
+    public static UserEntity create(String SocialId, Provider Provider, Role role) {
         return new UserEntity(SocialId, Provider, role);
     }
 

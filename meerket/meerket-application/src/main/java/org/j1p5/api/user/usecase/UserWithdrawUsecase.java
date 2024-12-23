@@ -1,5 +1,7 @@
 package org.j1p5.api.user.usecase;
 
+import static org.j1p5.api.global.excpetion.WebErrorCode.USER_NOT_FOUND;
+
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.service.ActivityAreaService;
 import org.j1p5.api.areaAuth.service.AreaAuthService;
@@ -13,8 +15,6 @@ import org.j1p5.api.user.service.UserWithdrawService;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import static org.j1p5.api.global.excpetion.WebErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,9 @@ public class UserWithdrawUsecase {
      * @param userId
      */
     public void execute(Long userId) {
-        UserEntity user = userRepository.findById(userId)
+        UserEntity user =
+                userRepository
+                        .findById(userId)
                         .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
         activityAreaService.withdraw(user);

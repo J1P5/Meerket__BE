@@ -18,6 +18,7 @@ public class UserProfileReadUsecase {
 
     /**
      * 유저의 프로필을 조회한다.
+     *
      * @author icecoff22
      * @param userId
      * @return 유저 프로필 정보

@@ -1,6 +1,10 @@
 package org.j1p5.api.auction.service.usecase;
 
+import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
+import static org.j1p5.infrastructure.fcm.exception.FcmException.CANCEL_BID_FCM_SELLER_ERROR;
+
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.api.fcm.FcmService;
@@ -12,11 +16,6 @@ import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
-import static org.j1p5.infrastructure.fcm.exception.FcmException.CANCEL_BID_FCM_SELLER_ERROR;
-
 @Service
 @RequiredArgsConstructor
 public class CancelBidUseCase {
@@ -27,8 +26,8 @@ public class CancelBidUseCase {
     private final ProductRepository productRepository;
 
     /**
-     * 입찰취소. 자신의 입찰만 취소 가능
-     * 입찰 취소 후 상품에 대한 구매자 유무에 따라 상태 업데이트, 알림 발송
+     * 입찰취소. 자신의 입찰만 취소 가능 입찰 취소 후 상품에 대한 구매자 유무에 따라 상태 업데이트, 알림 발송
+     *
      * @author yechan, sunghyun
      * @param userId
      * @param auctionId
@@ -40,11 +39,14 @@ public class CancelBidUseCase {
 
         Long productId = auctionService.cancelBid(auctionId);
 
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
 
-        List<AuctionEntity> remainAuctionEntities = auctionRepository.findAuctionEntitiesByProductId(productId);
-        if(remainAuctionEntities.isEmpty()){
+        List<AuctionEntity> remainAuctionEntities =
+                auctionRepository.findAuctionEntitiesByProductId(productId);
+        if (remainAuctionEntities.isEmpty()) {
             product.updateHasBuyerFalse();
         }
 

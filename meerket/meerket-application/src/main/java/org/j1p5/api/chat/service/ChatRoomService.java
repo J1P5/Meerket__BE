@@ -1,5 +1,7 @@
 package org.j1p5.api.chat.service;
 
+import static org.j1p5.api.chat.exception.ChatException.*;
+import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +17,6 @@ import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import static org.j1p5.api.chat.exception.ChatException.*;
-import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
 
 /**
  * @author yechan
@@ -61,7 +60,6 @@ public class ChatRoomService {
         return new ObjectId(roomId);
     }
 
-
     public CreateChatRoomResponse createChatRoom(AuctionEntity auctionEntity, Long productId) {
 
         ProductEntity productEntity =
@@ -82,7 +80,6 @@ public class ChatRoomService {
 
         return new CreateChatRoomResponse(chatRoomEntity.getId().toString());
     }
-
 
     // 상대방 프로필 확인
     public OtherProfile getOtherProfile(ChatRoomEntity chatRoomEntity, Long userId) {

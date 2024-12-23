@@ -1,7 +1,6 @@
 package org.j1p5.infrastructure.kakao.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 import org.j1p5.domain.auth.dto.OauthProfile;
 
 public class KakaoProfile implements OauthProfile {

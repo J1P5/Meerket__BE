@@ -1,13 +1,12 @@
 package org.j1p5.api.report.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.domain.report.entity.ReportEntity;
 import org.j1p5.domain.report.repository.ReportRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

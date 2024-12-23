@@ -1,5 +1,6 @@
 package org.j1p5.api.block.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.block.validator.BlockValidator;
 import org.j1p5.domain.block.entity.BlockEntity;
@@ -7,8 +8,6 @@ import org.j1p5.domain.block.repository.BlockRepository;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +18,7 @@ public class BlockDeleteService {
 
     /**
      * 차단 해제
+     *
      * @author icecoff22
      * @param userId
      * @param unblockId
@@ -33,6 +33,7 @@ public class BlockDeleteService {
 
     /**
      * 회원 탈퇴 시 차단 테이블 delete 업데이트
+     *
      * @author icecoff22
      * @param user
      */

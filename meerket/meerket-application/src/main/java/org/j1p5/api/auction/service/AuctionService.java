@@ -1,5 +1,6 @@
 package org.j1p5.api.auction.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auction.dto.response.BidHistoryResponse;
 import org.j1p5.api.auction.dto.response.PlaceBidResponse;
@@ -17,8 +18,6 @@ import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class AuctionService {
@@ -35,14 +34,15 @@ public class AuctionService {
         }
     }
 
-
     // 입찰하기
     public PlaceBidResponse placeBid(Long userId, Long productId, int price) {
 
         ProductEntity productEntity = getProductEntity(productId);
 
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
+        UserEntity userEntity =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
 
         if (productEntity.getMinPrice() > price) {
             throw new WebException(AuctionException.AUCTION_MIN_PRICE_ERROR);
@@ -55,14 +55,17 @@ public class AuctionService {
         return PlaceBidResponse.fromEntity(auctionEntity);
     }
 
-
     // 해당 입찰이 실제 해당 유저의 입찰인지 확인
     public void verifyUserBidOwnership(Long userId, Long auctionId) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
+        UserEntity userEntity =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
 
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
+        AuctionEntity auctionEntity =
+                auctionRepository
+                        .findById(auctionId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
 
         if (userEntity.getId() != auctionEntity.getUser().getId()) {
             throw new WebException(AuctionException.BID_USER_NOT_AUTHORIZED);
@@ -71,15 +74,15 @@ public class AuctionService {
 
     // 입찰 취소하기
     public Long cancelBid(Long auctionId) {
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
+        AuctionEntity auctionEntity =
+                auctionRepository
+                        .findById(auctionId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
 
         auctionEntity.updateStatus(AuctionStatus.CANCELLED);
         auctionRepository.save(auctionEntity);
         return auctionEntity.getProduct().getId();
     }
-
-
 
     // 현재 조기마감 상태인지 확인
     public boolean isEarlyClosure(Long productId) {
@@ -88,11 +91,12 @@ public class AuctionService {
         return productEntity.isEarly();
     }
 
-
     // 조기마감 상태일때의 수정
     public AuctionEntity updateBidPriceForEarlyClosure(Long auctionId, int price) {
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
+        AuctionEntity auctionEntity =
+                auctionRepository
+                        .findById(auctionId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
 
         if (auctionEntity.getPrice() >= price) {
             throw new WebException(AuctionException.BID_AMOUNT_TOO_LOW);
@@ -103,7 +107,6 @@ public class AuctionService {
         return auctionEntity;
     }
 
-
     // 조기마감 상태가 아닐때의 수정
     public AuctionEntity updateBidPriceWithMinimumLimit(Long auctionId, Long productId, int price) {
         ProductEntity productEntity = getProductEntity(productId);
@@ -112,14 +115,15 @@ public class AuctionService {
             throw new WebException(AuctionException.AUCTION_MIN_PRICE_ERROR);
         }
 
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
+        AuctionEntity auctionEntity =
+                auctionRepository
+                        .findById(auctionId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
 
         auctionEntity.updatePrice(price);
         auctionRepository.save(auctionEntity);
         return auctionEntity;
     }
-
 
     // 입찰 중인 기록 조회
     public List<AuctionEntity> getBiddingAuctionsByUserId(Long userId) {
@@ -131,31 +135,34 @@ public class AuctionService {
         return auctionRepository.findCompletedPurchasesByUserId(userId);
     }
 
-
     // 입찰 내역 Response 생성
-    public List<BidHistoryResponse> getAuctionHistoryResponses(List<AuctionEntity> auctionEntities) {
+    public List<BidHistoryResponse> getAuctionHistoryResponses(
+            List<AuctionEntity> auctionEntities) {
         return auctionEntities.stream()
-                .map(auctionEntity -> {
-                    ProductEntity productEntity = getProductEntity(auctionEntity.getProduct().getId());
-                    return new BidHistoryResponse(
-                            productEntity.getId(),
-                            auctionEntity.getId(),
-                            productEntity.getTitle(),
-                            productEntity.getThumbnail(),
-                            auctionEntity.getPrice(),
-                            EmdNameReader.getEmdName(auctionEntity.getUser()),
-                            productEntity.getCreatedAt(),
-                            productEntity.getMinPrice(),
-                            productEntity.getExpiredTime()
-                    );
-                })
+                .map(
+                        auctionEntity -> {
+                            ProductEntity productEntity =
+                                    getProductEntity(auctionEntity.getProduct().getId());
+                            return new BidHistoryResponse(
+                                    productEntity.getId(),
+                                    auctionEntity.getId(),
+                                    productEntity.getTitle(),
+                                    productEntity.getThumbnail(),
+                                    auctionEntity.getPrice(),
+                                    EmdNameReader.getEmdName(auctionEntity.getUser()),
+                                    productEntity.getCreatedAt(),
+                                    productEntity.getMinPrice(),
+                                    productEntity.getExpiredTime());
+                        })
                 .toList();
     }
 
     // 최고 입찰자 찾기
     public AuctionEntity findByHighestBidder(Long productId) {
-        AuctionEntity auctionEntity = auctionRepository.findHighestBidder(productId)
-                .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
+        AuctionEntity auctionEntity =
+                auctionRepository
+                        .findHighestBidder(productId)
+                        .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
 
         return auctionEntity;
     }
@@ -167,7 +174,8 @@ public class AuctionService {
     }
 
     private ProductEntity getProductEntity(Long productId) {
-        return productRepository.findById(productId)
+        return productRepository
+                .findById(productId)
                 .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
     }
 
@@ -181,5 +189,4 @@ public class AuctionService {
 
         auctions.forEach(AuctionEntity::withdraw);
     }
-
 }

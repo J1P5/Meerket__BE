@@ -8,8 +8,6 @@ public enum ChatDomainException implements BaseErrorCode {
     CHAT_ROOM_UPDATE_FAIL(500, "CHAT_ROOM_500", "채팅방 업데이트에 실패하였습니다."),
     CHAT_READ_ERROR(500, "CHAT_READ_500", "채팅을 조회하는 도중 에러가 발생하였습니다."),
     CHAT_EXIT_ERROR(500, "CHAT_EXIT_500", "채팅방에서 나가는 도중 에러가 발생하였습니다."),
-
-
     ;
 
     private final int status;
@@ -22,12 +20,8 @@ public enum ChatDomainException implements BaseErrorCode {
         this.message = message;
     }
 
-
-
-
     @Override
     public ErrorResponse getErrorResponse() {
         return ErrorResponse.of(false, status, errorCode, message);
-
     }
 }

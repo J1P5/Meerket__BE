@@ -17,17 +17,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuctionClosingJob implements Job {
 
-    @Autowired
-    private ProductService productService;
+    @Autowired private ProductService productService;
 
-    @Autowired
-    private ChatRoomService chatRoomService;
+    @Autowired private ChatRoomService chatRoomService;
 
-    @Autowired
-    private FcmService fcmService;
+    @Autowired private FcmService fcmService;
 
-    @Autowired
-    private AuctionService auctionService;
+    @Autowired private AuctionService auctionService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -51,10 +47,10 @@ public class AuctionClosingJob implements Job {
         log.info("마감 종료시 일어나는 ClosingJob 종료");
 
         // FCM 알림 전송
-//        fcmService.sendAuctionWonNotification(highestBid.getUserId(), productId);
-//        fcmService.sendAuctionResultToSeller(highestBid.getProduct().getSellerId(), productId, highestBid.getAmount());
-//        fcmService.notifyLosingBidders(productId, highestBid.getUserId());
-
+        //        fcmService.sendAuctionWonNotification(highestBid.getUserId(), productId);
+        //        fcmService.sendAuctionResultToSeller(highestBid.getProduct().getSellerId(),
+        // productId, highestBid.getAmount());
+        //        fcmService.notifyLosingBidders(productId, highestBid.getUserId());
 
     }
 }

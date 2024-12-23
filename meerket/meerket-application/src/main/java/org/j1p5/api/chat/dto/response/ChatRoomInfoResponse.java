@@ -12,10 +12,9 @@ public record ChatRoomInfoResponse(
         int unreadCount,
         String productImage,
         String otherNickname,
-        String otherProfileImage
-) {
+        String otherProfileImage) {
 
-    public ChatRoomInfoResponse{
+    public ChatRoomInfoResponse {
         Objects.requireNonNull(userId, "userId는 필수입니다.");
         Objects.requireNonNull(roomId, "roomId는 필수입니다.");
         Objects.requireNonNull(lastMessage, "lastMessage는 필수입니다.");

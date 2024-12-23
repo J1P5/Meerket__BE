@@ -1,10 +1,9 @@
 package org.j1p5.api.user.usecase;
 
+import java.io.File;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.user.service.UserProfileService;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +13,7 @@ public class UserProfileSettingUsecase {
 
     /**
      * 프로필 수정
+     *
      * @param userId
      * @param nickname
      * @param file

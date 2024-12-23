@@ -16,9 +16,6 @@ public class UserAppender {
 
     public UserEntity append(OauthProfile profile, String provider) {
         return userRepository.save(
-                UserEntity.create(
-                        profile.getId(),
-                        Provider.valueOf(provider),
-                        Role.USER));
+                UserEntity.create(profile.getId(), Provider.valueOf(provider), Role.USER));
     }
 }

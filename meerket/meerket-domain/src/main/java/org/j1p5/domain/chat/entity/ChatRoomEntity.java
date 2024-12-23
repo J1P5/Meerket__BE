@@ -1,5 +1,8 @@
 package org.j1p5.domain.chat.entity;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,17 +10,12 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "chat_rooms")
 public class ChatRoomEntity {
 
-    @Id
-    private ObjectId id;
+    @Id private ObjectId id;
     private Long sellerId;
     private Long buyerId;
     private Long productId;
@@ -31,9 +29,13 @@ public class ChatRoomEntity {
     private Map<Long, Boolean> userStatus;
     private boolean isChatAvailable;
 
-
-    public static ChatRoomEntity create(Long sellerId, Long buyerId, Long productId, String productImage,
-                                        String productTitle, int price) {
+    public static ChatRoomEntity create(
+            Long sellerId,
+            Long buyerId,
+            Long productId,
+            String productImage,
+            String productTitle,
+            int price) {
         Map<Long, Integer> unreadMap = Map.of(sellerId, 0, buyerId, 0);
         Map<Long, Boolean> statusMap = Map.of(sellerId, true, buyerId, true);
 
@@ -53,5 +55,4 @@ public class ChatRoomEntity {
 
         return entity;
     }
-
 }

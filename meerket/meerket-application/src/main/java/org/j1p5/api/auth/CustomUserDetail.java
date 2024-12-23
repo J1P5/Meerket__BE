@@ -1,11 +1,10 @@
 package org.j1p5.api.auth;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class CustomUserDetail implements UserDetails {
     private Long pk;

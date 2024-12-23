@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.dto.ActivityAreaSettingRequest;
-import org.j1p5.api.activityArea.usecase.ActivityAreaSettingUsecase;
 import org.j1p5.api.activityArea.usecase.ActivityAreaReadUsecase;
+import org.j1p5.api.activityArea.usecase.ActivityAreaSettingUsecase;
 import org.j1p5.api.global.annotation.LoginUser;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.common.dto.PageResult;
@@ -28,9 +28,9 @@ public class ActivityAreaController {
             @RequestParam("latitude") Double latitude,
             @RequestParam("longitude") Double longitude,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "size", defaultValue = "10") Integer size
-    ) {
-        return Response.onSuccess(activityAreaReadUsecase.getAreas(longitude, latitude, page, size));
+            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        return Response.onSuccess(
+                activityAreaReadUsecase.getAreas(longitude, latitude, page, size));
     }
 
     @Operation(summary = "키워드 검색", description = "동네 키워드 검색 API")
@@ -38,17 +38,14 @@ public class ActivityAreaController {
     public Response<PageResult<ActivityAreaFullAddress>> getAreasWithKeyword(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
-            @RequestParam(value = "keyword") String keyword
-    ) {
+            @RequestParam(value = "keyword") String keyword) {
         return Response.onSuccess(activityAreaReadUsecase.getAreasWithKeyword(page, size, keyword));
     }
 
     @Operation(summary = "동네 설정 등록", description = "동네 설정 등록 API")
     @PostMapping
     public Response<Void> register(
-            @LoginUser Long userId,
-            @Valid @RequestBody ActivityAreaSettingRequest request
-    ) {
+            @LoginUser Long userId, @Valid @RequestBody ActivityAreaSettingRequest request) {
         activityAreaSettingUsecase.register(userId, request.emdId());
         return Response.onSuccess();
     }
@@ -56,9 +53,7 @@ public class ActivityAreaController {
     @Operation(summary = "설정 동네 삭제", description = "설정한 동네 삭제 API")
     @DeleteMapping
     public Response<Void> delete(
-            @LoginUser Long userId,
-            @Valid @RequestBody ActivityAreaSettingRequest request
-    ) {
+            @LoginUser Long userId, @Valid @RequestBody ActivityAreaSettingRequest request) {
         activityAreaSettingUsecase.delete(userId, request.emdId());
         return Response.onSuccess();
     }
@@ -66,9 +61,7 @@ public class ActivityAreaController {
     @Operation(summary = "설정 동네 수정", description = "설정한 동네 수정 API")
     @PatchMapping
     public Response<Void> update(
-            @LoginUser Long userId,
-            @Valid @RequestBody ActivityAreaSettingRequest request
-    ) {
+            @LoginUser Long userId, @Valid @RequestBody ActivityAreaSettingRequest request) {
         activityAreaSettingUsecase.update(userId, request.emdId());
         return Response.onSuccess();
     }

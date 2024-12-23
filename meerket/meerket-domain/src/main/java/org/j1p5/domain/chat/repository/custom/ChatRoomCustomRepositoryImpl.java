@@ -15,15 +15,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class ChatRoomCustomRepositoryImpl implements  ChatRoomCustomRepository{
+public class ChatRoomCustomRepositoryImpl implements ChatRoomCustomRepository {
 
     private final MongoTemplate mongoTemplate;
-
-
 
     @Override
     public void resetUnreadCount(ObjectId roomObjectId, Long userId) {
@@ -58,7 +55,10 @@ public class ChatRoomCustomRepositoryImpl implements  ChatRoomCustomRepository{
     public void updateChatRoomInfo(UpdateChatRoomCommand command) {
 
         Query query = new Query(Criteria.where("_id").is(command.roomId()));
-        Update update = new Update().set("lastMessage", command.content()).set("lastMessageAt", command.createdAt());
+        Update update =
+                new Update()
+                        .set("lastMessage", command.content())
+                        .set("lastMessageAt", command.createdAt());
 
         if (!command.receiverInChatRoom()) {
             update.inc("unreadCounts." + command.receiverId(), 1);
@@ -71,5 +71,4 @@ public class ChatRoomCustomRepositoryImpl implements  ChatRoomCustomRepository{
             throw new DomainException(ChatDomainException.CHAT_ROOM_UPDATE_FAIL);
         }
     }
-
 }

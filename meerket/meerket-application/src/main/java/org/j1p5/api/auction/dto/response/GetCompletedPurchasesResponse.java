@@ -13,9 +13,8 @@ public record GetCompletedPurchasesResponse(
         String sellerAddress,
         LocalDateTime productCreatedAt,
         int minPrice,
-        LocalDateTime expireTime
-) {
-    public GetCompletedPurchasesResponse{
+        LocalDateTime expireTime) {
+    public GetCompletedPurchasesResponse {
         Objects.requireNonNull(productId, "productId 는 필수입니다.");
         Objects.requireNonNull(auctionId, "auctionId 는 필수입니다.");
         Objects.requireNonNull(productTitle, "productTitle 는 필수입니다.");

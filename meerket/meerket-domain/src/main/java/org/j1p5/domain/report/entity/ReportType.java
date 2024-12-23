@@ -1,10 +1,9 @@
 package org.j1p5.domain.report.entity;
 
-import org.j1p5.domain.auth.exception.InvalidProviderException;
+import static org.j1p5.domain.global.exception.DomainErrorCode.INVALID_REPORT_TYPE;
 
 import java.util.Arrays;
-
-import static org.j1p5.domain.global.exception.DomainErrorCode.INVALID_REPORT_TYPE;
+import org.j1p5.domain.auth.exception.InvalidProviderException;
 
 public enum ReportType {
     USER,

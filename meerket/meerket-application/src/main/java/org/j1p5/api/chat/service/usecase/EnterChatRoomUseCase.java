@@ -1,5 +1,8 @@
 package org.j1p5.api.chat.service.usecase;
 
+import static org.j1p5.api.chat.exception.ChatException.NOT_FOUND_CHATROOM;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.j1p5.api.chat.dto.ChatRoomBasicInfo;
@@ -17,13 +20,8 @@ import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static org.j1p5.api.chat.exception.ChatException.NOT_FOUND_CHATROOM;
-
 /**
- * @author yechan
- * 특정 채팅방에 입장했을때 여러 채팅 정보들 제공
+ * @author yechan 특정 채팅방에 입장했을때 여러 채팅 정보들 제공
  */
 @Service
 @RequiredArgsConstructor
@@ -34,10 +32,9 @@ public class EnterChatRoomUseCase {
     private final ChatRoomRepository chatRoomRepository;
     private final ProductRepository productRepository;
 
-
     /**
-     * 채팅방 입장.
-     * 안읽은 메세지 초기화,
+     * 채팅방 입장. 안읽은 메세지 초기화,
+     *
      * @author yechan
      * @param userId
      * @param roomId
@@ -49,16 +46,17 @@ public class EnterChatRoomUseCase {
 
         chatRoomRepository.resetUnreadCount(roomObjectId, userId);
 
-        List<ChatMessageResponse> chatMessages = chatMessageService.getChatMessages(roomObjectId, null);
+        List<ChatMessageResponse> chatMessages =
+                chatMessageService.getChatMessages(roomObjectId, null);
 
         ChatRoomBasicInfo chatRoomBasicInfo = getChatRoomBasicInfo(roomObjectId, userId);
 
         return new ChatRoomEnterResponse(chatRoomBasicInfo, chatMessages);
     }
 
-
     /**
      * 채팅방 메타 정보 조회
+     *
      * @author yechan
      * @param roomObjectId
      * @param userId
@@ -70,8 +68,10 @@ public class EnterChatRoomUseCase {
                         .findById(roomObjectId)
                         .orElseThrow(() -> new WebException(NOT_FOUND_CHATROOM));
 
-        ProductEntity productEntity = productRepository.findById(chatRoomEntity.getProductId())
-                .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
+        ProductEntity productEntity =
+                productRepository
+                        .findById(chatRoomEntity.getProductId())
+                        .orElseThrow(() -> new WebException(ProductException.PRODUCT_NOT_FOUND));
 
         OtherProfile otherProfile = chatRoomService.getOtherProfile(chatRoomEntity, userId);
         boolean isSeller = chatRoomEntity.getSellerId() == userId;
@@ -89,8 +89,6 @@ public class EnterChatRoomUseCase {
                 chatRoomEntity.isChatAvailable(),
                 EmdNameReader.getEmdName(productEntity.getUser()),
                 productEntity.getCreatedAt(),
-                productEntity.getStatus()
-        );
+                productEntity.getStatus());
     }
-
 }

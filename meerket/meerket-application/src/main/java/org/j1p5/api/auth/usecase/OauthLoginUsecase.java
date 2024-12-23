@@ -22,16 +22,19 @@ public class OauthLoginUsecase {
 
     /**
      * 소셜 로그인
+     *
      * @author icecoff22
      * @param code
      * @param provider
      * @return 유저 정보, 활동 지역
      */
     public UserInfo login(String code, String provider) {
-        OauthProfile profile = oauthSenderService.request(code, provider); //서드 파티에 요청을 보내서 정보를 받아온다.
+        OauthProfile profile =
+                oauthSenderService.request(code, provider); // 서드 파티에 요청을 보내서 정보를 받아온다.
         UserEntity user = oauthService.login(profile, Provider.get(provider)); // 로그인을 시도한다.
 
-        ActivityArea activityArea = activityAreaService.getActivityAreaByUser(user.getId()); // 유저에 해당하는 활동 지역을 조회한다.
+        ActivityArea activityArea =
+                activityAreaService.getActivityAreaByUser(user.getId()); // 유저에 해당하는 활동 지역을 조회한다.
 
         if (activityArea == null) {
             return UserInfo.of(user, null);

@@ -12,8 +12,7 @@ public record BidHistoryResponse(
         String sellerAddress,
         LocalDateTime productCreatedAt,
         int minPrice,
-        LocalDateTime expireTime
-) {
+        LocalDateTime expireTime) {
     public BidHistoryResponse {
         Objects.requireNonNull(productId, "productId 는 필수입니다.");
         Objects.requireNonNull(auctionId, "auctionId 는 필수입니다.");
