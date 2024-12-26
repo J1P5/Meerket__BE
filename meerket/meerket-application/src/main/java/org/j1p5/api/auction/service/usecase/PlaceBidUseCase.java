@@ -1,10 +1,13 @@
 package org.j1p5.api.auction.service.usecase;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.auction.dto.response.PlaceBidResponse;
+import org.j1p5.api.auction.exception.AuctionException;
 import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.api.fcm.FcmService;
+import org.j1p5.api.global.excpetion.WebException;
+import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
@@ -12,6 +15,7 @@ import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.j1p5.api.auction.exception.AuctionException.SELLER_CANNOT_CREATE_BID;
 import static org.j1p5.api.product.exception.ProductException.PRODUCT_NOT_FOUND;
@@ -22,7 +26,7 @@ import static org.j1p5.infrastructure.fcm.exception.FcmException.CREATE_BID_FCM_
 @RequiredArgsConstructor
 public class PlaceBidUseCase {
 
-    private final AuctionService auctionService;
+    private final AuctionRepository auctionRepository;
     private final FcmService fcmService;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -49,10 +53,9 @@ public class PlaceBidUseCase {
             throw new DomainException(SELLER_CANNOT_CREATE_BID);
         }
 
-        auctionService.checkDuplicateBid(userId, productId);
+        checkDuplicateBid(userId, productId);
 
-        PlaceBidResponse placeBidResponse = auctionService.placeBid(userId, productId, price);
-
+        PlaceBidResponse placeBidResponse = placeBid(userId, productId, price);
 
         product.updateHasBuyer();
         //productRepository.save(product);
@@ -62,9 +65,34 @@ public class PlaceBidUseCase {
         } catch (Exception e) {
             throw new InfraException(CREATE_BID_FCM_ERROR);
         }
-
-
         return placeBidResponse;
+    }
+
+
+    private PlaceBidResponse placeBid(Long userId, Long productId, int price) {
+
+        ProductEntity productEntity = productRepository.findById(productId)
+                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
+
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new WebException(AuctionException.BID_USER_NOT_FOUND));
+
+        if (productEntity.getMinPrice() > price) {
+            throw new WebException(AuctionException.AUCTION_MIN_PRICE_ERROR);
+        }
+
+        AuctionEntity auctionEntity = AuctionEntity.create(userEntity, productEntity, price);
+
+        auctionRepository.save(auctionEntity);
+
+        return PlaceBidResponse.fromEntity(auctionEntity);
+    }
+
+    private void checkDuplicateBid(Long userId, Long productId) {
+        boolean exists = auctionRepository.existsByUserIdAndProductId(userId, productId);
+        if (exists) {
+            throw new WebException(AuctionException.DUPLICATE_BID);
+        }
     }
 
 }

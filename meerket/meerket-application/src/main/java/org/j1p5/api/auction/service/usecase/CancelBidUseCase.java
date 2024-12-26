@@ -1,16 +1,19 @@
 package org.j1p5.api.auction.service.usecase;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.j1p5.api.auction.exception.AuctionException;
 import org.j1p5.api.auction.service.AuctionService;
 import org.j1p5.api.fcm.FcmService;
+import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.domain.auction.entity.AuctionEntity;
+import org.j1p5.domain.auction.entity.AuctionStatus;
 import org.j1p5.domain.auction.repository.AuctionRepository;
 import org.j1p5.domain.global.exception.DomainException;
 import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,7 +41,7 @@ public class CancelBidUseCase {
 
         auctionService.verifyUserBidOwnership(userId, auctionId);
 
-        Long productId = auctionService.cancelBid(auctionId);
+        Long productId = cancelBid(auctionId);
 
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
@@ -53,5 +56,15 @@ public class CancelBidUseCase {
         } catch (Exception e) {
             throw new InfraException(CANCEL_BID_FCM_SELLER_ERROR);
         }
+    }
+
+    // 입찰 취소하기
+    private Long cancelBid(Long auctionId) {
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new WebException(AuctionException.BID_NOT_FOUND));
+
+        auctionEntity.updateStatus(AuctionStatus.CANCELLED);
+        auctionRepository.save(auctionEntity);
+        return auctionEntity.getProduct().getId();
     }
 }
