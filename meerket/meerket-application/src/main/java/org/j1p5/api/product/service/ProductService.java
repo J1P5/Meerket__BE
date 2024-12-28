@@ -1,5 +1,13 @@
 package org.j1p5.api.product.service;
 
+import static org.j1p5.api.product.exception.ProductException.*;
+import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
+import static org.j1p5.infrastructure.fcm.exception.FcmException.EARLY_CLOSED_FCM_ERROR;
+
+import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.api.auction.quartz.QuartzService;
@@ -23,22 +31,15 @@ import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.entity.ProductStatus;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.product.service.ImageService;
+import org.j1p5.domain.redis.RedisBidLockService;
+import org.j1p5.domain.redis.RedisIdempotencyService;
+import org.j1p5.domain.redis.RedisProductEditLockService;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.j1p5.infrastructure.global.exception.InfraException;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.j1p5.api.product.exception.ProductException.*;
-import static org.j1p5.domain.global.exception.DomainErrorCode.USER_NOT_FOUND;
-import static org.j1p5.infrastructure.fcm.exception.FcmException.EARLY_CLOSED_FCM_ERROR;
-
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +60,12 @@ public class ProductService {
     private final QuartzService quartzService;
     private final AuctionService auctionService;
     private final BlockRepository blockRepository;
+    private final RedisIdempotencyService redisIdempotencyService;
+    private final RedisBidLockService redisBidLockService;
+    private final RedisProductEditLockService redisProductEditLockService;
 
+    private static final long PRODUCT_UPDATE_TTL = 60;
+    private static final long REQUEST_ID_TTL = 30;
 
     /**
      * 중고물품 등록
@@ -71,7 +77,8 @@ public class ProductService {
      * @author sunghyun0610
      */
     @Transactional
-    public CreateProductResponseDto registerProduct(Long userId, ProductInfo productInfo, List<File> images) {
+    public CreateProductResponseDto registerProduct(
+            Long userId, ProductInfo productInfo, List<File> images) {
         // multipart 자료형은 web에서 처리하고 file만 내려줘라
 
         UserEntity user = userReader.getUser(userId); // user객체 가져오는 실제 구현부는 UserReader임
@@ -94,7 +101,7 @@ public class ProductService {
 
         log.info("상품 등록완료");
 
-        quartzService.scheduleAuctionClosingJob(product);// 스케줄링 잡
+        quartzService.scheduleAuctionClosingJob(product); // 스케줄링 잡
 
         log.info("스케줄링 완료{}", product);
 
@@ -117,25 +124,40 @@ public class ProductService {
         List<ActivityArea> activityAreas = user.getActivityAreas();
         Point coordinate = activityAreaReader.getActivityArea(activityAreas); // 이상 사용자 활동지역 좌표
 
-        List<Long> blockUserIds = blockRepository.findByUser(user)
-                .stream().map(b -> b.getBlockedUser().getId()).toList();
+        List<Long> blockUserIds =
+                blockRepository.findByUser(user).stream()
+                        .map(b -> b.getBlockedUser().getId())
+                        .toList();
 
-        List<ProductEntity> products = productRepository.findProductsByCursor(blockUserIds, coordinate, cursor.cursor(), cursor.size()); // 거리별 + 커서별 productEntity list조회
+        List<ProductEntity> products =
+                productRepository.findProductsByCursor(
+                        blockUserIds,
+                        coordinate,
+                        cursor.cursor(),
+                        cursor.size()); // 거리별 + 커서별 productEntity list조회
 
-        Long nextCursor = products.isEmpty() ? null : products.get(products.size() - 1).getId(); // 조회된 마지막 물품의 id값 저장
+        Long nextCursor =
+                products.isEmpty()
+                        ? null
+                        : products.get(products.size() - 1).getId(); // 조회된 마지막 물품의 id값 저장
 
-        List<ProductResponseInfo> productResponseInfos = products.stream()
-                .map(product -> {
-                    MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(activityAreas.get(0)));
-                    return ProductResponseInfo.from(product, myLocationInfo);
-                })
-                .toList(); // 엔티티 Info Dto로 변환
+        List<ProductResponseInfo> productResponseInfos =
+                products.stream()
+                        .map(
+                                product -> {
+                                    MyLocationInfo myLocationInfo =
+                                            MyLocationInfo.of(
+                                                    userLocationNameReader.getLocationName(
+                                                            activityAreas.get(0)));
+                                    return ProductResponseInfo.from(product, myLocationInfo);
+                                })
+                        .toList(); // 엔티티 Info Dto로 변환
 
         return CursorResult.of(productResponseInfos, nextCursor); // Dto ->CursorResult형으로 변환
     }
 
     // 마감 된 상품만 따로 조회(임시 시세 조회 api)
-    //TODO 추후 리팩토링(위에 getProducts랑 겹치는 부분)
+    // TODO 추후 리팩토링(위에 getProducts랑 겹치는 부분)
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public CursorResult<ProductResponseInfo> getCompletedProducts(Long userId, Cursor cursor) {
 
@@ -144,23 +166,26 @@ public class ProductService {
         List<ActivityArea> activityAreas = user.getActivityAreas();
         Point coordinate = activityAreaReader.getActivityArea(activityAreas);
 
-        List<ProductEntity> products = productRepository
-                .findCompletedProductsByCursor(coordinate, cursor.cursor(), cursor.size());
+        List<ProductEntity> products =
+                productRepository.findCompletedProductsByCursor(
+                        coordinate, cursor.cursor(), cursor.size());
 
         Long nextCursor = products.isEmpty() ? null : products.get(products.size() - 1).getId();
 
-        List<ProductResponseInfo> productResponseInfos = products.stream()
-                .map(product -> {
-                    MyLocationInfo myLocationInfo = MyLocationInfo
-                            .of(userLocationNameReader.getLocationName(activityAreas.get(0)));
-                    return ProductResponseInfo.from(product, myLocationInfo);
-                })
-                .toList();
+        List<ProductResponseInfo> productResponseInfos =
+                products.stream()
+                        .map(
+                                product -> {
+                                    MyLocationInfo myLocationInfo =
+                                            MyLocationInfo.of(
+                                                    userLocationNameReader.getLocationName(
+                                                            activityAreas.get(0)));
+                                    return ProductResponseInfo.from(product, myLocationInfo);
+                                })
+                        .toList();
 
         return CursorResult.of(productResponseInfos, nextCursor);
     }
-
-
 
     /**
      * 특정 중고물품 상세조회. 마감되었다면 최대 입찰가, 입찰 내역이 있다면 입찰 내역까지 return
@@ -172,21 +197,22 @@ public class ProductService {
      */
     @Transactional
     public ProductResponseDetailInfo getProductDetail(Long productId, Long userId) {
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         UserEntity user = userReader.getUser(userId);
         if (product.getStatus().equals(ProductStatus.DELETED) || product.isDeleted()) {
             throw new DomainException(PRODUCT_IS_DELETED);
         }
 
-        AuctionEntity winningAuction = auctionRepository.findHighestBidder(productId)
-                .orElse(null);
+        AuctionEntity winningAuction = auctionRepository.findHighestBidder(productId).orElse(null);
 
-        //userId로 각 구매자에 따른 auctionEntity조회 해야함.
-        AuctionEntity myAuction = auctionRepository.findAuctionByUserIdAndProductId(productId,userId)
-                .orElse(null);
+        // userId로 각 구매자에 따른 auctionEntity조회 해야함.
+        AuctionEntity myAuction =
+                auctionRepository.findAuctionByUserIdAndProductId(productId, userId).orElse(null);
 
-        return ProductResponseDetailInfo.of(product, user, winningAuction,myAuction);
+        return ProductResponseDetailInfo.of(product, user, winningAuction, myAuction);
     }
 
     /**
@@ -195,26 +221,53 @@ public class ProductService {
      * @param userId
      * @param productId
      * @param info
-     *
      * @author sunghyun0610
      */
     @Transactional
     public void updateProduct(Long productId, Long userId, ProductUpdateInfo info) {
-        UserEntity user = userReader.getUser(userId);
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
 
-        if (!(product.getUser().equals(user))) {
-            throw new DomainException(PRODUCT_NOT_AUTHORIZED);
+        // 멱등성 확인
+        String requestId = "updateProduct:" + productId + ":user:" + userId;
+        if (!redisIdempotencyService.saveRequestId(requestId, REQUEST_ID_TTL)) {
+            throw new WebException(DUPLICATED_PRODUCT_UPDATE_REQUEST);
         }
 
-        Point coordinate = PointConverter.createPoint(info.longtitude(), info.latitude());
+        // 입찰 진행 여부 확인
+        String bidLockKey = "product:" + productId + ":lock:bid";
+        if (redisBidLockService.getBidCount(bidLockKey) > 0) {
+            throw new WebException(BID_IN_PROGRESS_PRODUCT_UPDATE_NOT_ALLOWED);
+        }
 
-        if (!product.isHasBuyer()) {
-            product.updateProduct(info, coordinate);
-        } else throw new DomainException(PRODUCT_HAS_BUYER);
+        // 상품 수정 락 설정
+        String editLockKey = "product:" + productId + ":lock:edit";
+        if (!redisProductEditLockService.setEditLock(editLockKey, PRODUCT_UPDATE_TTL)) {
+            throw new WebException(PRODUCT_UPDATE_LOCKED);
+        }
+
+        try {
+            UserEntity user = userReader.getUser(userId);
+            ProductEntity product =
+                    productRepository
+                            .findById(productId)
+                            .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+
+            if (!(product.getUser().equals(user))) {
+                throw new DomainException(PRODUCT_NOT_AUTHORIZED);
+            }
+
+            Point coordinate = PointConverter.createPoint(info.longtitude(), info.latitude());
+
+            if (!product.isHasBuyer()) {
+                product.updateProduct(info, coordinate);
+            } else throw new DomainException(PRODUCT_HAS_BUYER);
+        } finally {
+            try {
+                redisProductEditLockService.releaseEditLock(editLockKey);
+            } catch (Exception e) {
+                log.error("상품 수정 락 해제 에서 에러 발생 check: {}", productId, e);
+            }
+        }
     }
-
 
     /**
      * 중고물품 삭제. 입찰자가 있을 시 패널티 적용, 판매자만 삭제 가능
@@ -227,17 +280,18 @@ public class ProductService {
     public void removeProduct(Long productId, Long userId) {
         UserEntity user = userReader.getUser(userId);
 
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         if (!product.getUser().equals(user)) {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
         }
-        //입찰자가 있을 시 삭제요청하면 패널티 적용해야함
+        // 입찰자가 있을 시 삭제요청하면 패널티 적용해야함
         product.updateStatusToDelete(product);
         quartzService.cancelAuctionJob(productId);
         fcmService.sendBuyerProductDeleted(productId);
     }
-
 
     /**
      * 카테고리별 조회
@@ -245,30 +299,42 @@ public class ProductService {
      * @param userId
      * @param cursor
      * @param category
-     *
      * @return 카테고리별 물품 조회 리스트
      * @author sunghyun0610
      */
     @Transactional
-    public CursorResult<ProductResponseInfo> getProductsByCategory(Long userId, Cursor cursor, String category) {
-        if (category.isEmpty() || category == null) throw new DomainException(INVALID_PRODUCT_CATEGORY);
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
+    public CursorResult<ProductResponseInfo> getProductsByCategory(
+            Long userId, Cursor cursor, String category) {
+        if (category.isEmpty() || category == null)
+            throw new DomainException(INVALID_PRODUCT_CATEGORY);
+        UserEntity user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
         Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
 
-        List<ProductEntity> productEntityList = productRepository.findProductByCategory(userCoordinate, category, cursor.cursor(), cursor.size());
+        List<ProductEntity> productEntityList =
+                productRepository.findProductByCategory(
+                        userCoordinate, category, cursor.cursor(), cursor.size());
 
-        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
+        Long nextCursor =
+                productEntityList.isEmpty()
+                        ? null
+                        : productEntityList.get(productEntityList.size() - 1).getId();
 
-        List<ProductResponseInfo> productResponseInfos = productEntityList.stream()
-                .map(product -> {
-                    MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(user.getActivityAreas().get(0)));
-                    return ProductResponseInfo.from(product, myLocationInfo);
-                })
-                .toList();
+        List<ProductResponseInfo> productResponseInfos =
+                productEntityList.stream()
+                        .map(
+                                product -> {
+                                    MyLocationInfo myLocationInfo =
+                                            MyLocationInfo.of(
+                                                    userLocationNameReader.getLocationName(
+                                                            user.getActivityAreas().get(0)));
+                                    return ProductResponseInfo.from(product, myLocationInfo);
+                                })
+                        .toList();
         return CursorResult.of(productResponseInfos, nextCursor);
     }
-
 
     /**
      * 나의 내역(입찰, 거래중, 거래완료, 삭제) 조회
@@ -276,24 +342,26 @@ public class ProductService {
      * @param userId
      * @param cursor
      * @param status
-     *
      * @return 커서기반 물품 조회 리스트
      * @author sunghyun0610
      */
     @Transactional
-    public CursorResult<MyProductResponseDto> getMyProducts(Long userId, Cursor cursor, ProductStatus status) {
-        List<ProductEntity> productEntityList = productRepository.findProductByUserId(userId, cursor.cursor(), cursor.size(), status);
+    public CursorResult<MyProductResponseDto> getMyProducts(
+            Long userId, Cursor cursor, ProductStatus status) {
+        List<ProductEntity> productEntityList =
+                productRepository.findProductByUserId(
+                        userId, cursor.cursor(), cursor.size(), status);
 
-        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
+        Long nextCursor =
+                productEntityList.isEmpty()
+                        ? null
+                        : productEntityList.get(productEntityList.size() - 1).getId();
 
-        List<MyProductResponseDto> myProductResponseDtos = productEntityList.stream()
-                .map(MyProductResponseDto::from)
-                .toList();
+        List<MyProductResponseDto> myProductResponseDtos =
+                productEntityList.stream().map(MyProductResponseDto::from).toList();
 
         return CursorResult.of(myProductResponseDtos, nextCursor);
-
     }
-
 
     /**
      * 키워드 기반 조회
@@ -301,31 +369,42 @@ public class ProductService {
      * @param userId
      * @param cursor
      * @param keyword
-     *
      * @return 커서기반 물품 조회 리스트
      * @author sunghyun0610
      */
     @Transactional
-    public CursorResult<ProductResponseInfo> getProductByKeyword(String keyword, Long userId, Cursor cursor) {
+    public CursorResult<ProductResponseInfo> getProductByKeyword(
+            String keyword, Long userId, Cursor cursor) {
         if (keyword.isEmpty() || keyword == null) {
             throw new DomainException(INVALID_PRODUCT_KEYWORD);
         }
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
+        UserEntity user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new DomainException(USER_NOT_FOUND));
         Point userCoordinate = activityAreaReader.getActivityArea(user.getActivityAreas());
 
-        List<ProductEntity> productEntityList = productRepository.findProductByKeyword(userCoordinate, keyword, cursor.cursor(), cursor.size());
-        Long nextCursor = productEntityList.isEmpty() ? null : productEntityList.get(productEntityList.size() - 1).getId();
+        List<ProductEntity> productEntityList =
+                productRepository.findProductByKeyword(
+                        userCoordinate, keyword, cursor.cursor(), cursor.size());
+        Long nextCursor =
+                productEntityList.isEmpty()
+                        ? null
+                        : productEntityList.get(productEntityList.size() - 1).getId();
 
-        List<ProductResponseInfo> productResponseInfos = productEntityList.stream()
-                .map(product -> {
-                    MyLocationInfo myLocationInfo = MyLocationInfo.of(userLocationNameReader.getLocationName(user.getActivityAreas().get(0)));
-                    return ProductResponseInfo.from(product, myLocationInfo);
-                })
-                .toList();
+        List<ProductResponseInfo> productResponseInfos =
+                productEntityList.stream()
+                        .map(
+                                product -> {
+                                    MyLocationInfo myLocationInfo =
+                                            MyLocationInfo.of(
+                                                    userLocationNameReader.getLocationName(
+                                                            user.getActivityAreas().get(0)));
+                                    return ProductResponseInfo.from(product, myLocationInfo);
+                                })
+                        .toList();
         return CursorResult.of(productResponseInfos, nextCursor);
     }
-
 
     /**
      * 조기마감 등록. 판매자만 등록 가능. 입찰자가 있어야 등록 가능. 2시간 이내 조기마감 불가
@@ -339,16 +418,18 @@ public class ProductService {
     public CloseEarlyResponseDto closeProductEarly(Long productId, Long userId) {
         UserEntity user = userReader.getUser(userId);
 
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
+        ProductEntity product =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new DomainException(PRODUCT_NOT_FOUND));
         if (!product.getUser().equals(user)) {
             throw new DomainException(PRODUCT_NOT_AUTHORIZED);
-        }//판매자인지 확인
+        } // 판매자인지 확인
         Duration remainingTime = Duration.between(LocalDateTime.now(), product.getExpiredTime());
-        if(remainingTime.toHours()<2){
+        if (remainingTime.toHours() < 2) {
             throw new DomainException(INVALID_PRODUCT_EARLY_CLOSED);
         }
-        if(!product.isHasBuyer()){
+        if (!product.isHasBuyer()) {
             throw new DomainException(PRODUCT_HAS_NO_BUYER);
         }
         product.updateIsEarly();
@@ -360,19 +441,16 @@ public class ProductService {
             log.error("job 만료시간 재설정 에러 발생");
         }
 
-        //조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
-        //fcm을 통한 알림 구현로직 추가 예정
+        // 조기마감후 입찰은 내가 설정한 각겨보다 상향수정만 가능
+        // fcm을 통한 알림 구현로직 추가 예정
         try {
             fcmService.sendBuyerCloseEarlyMessage(productId);
         } catch (Exception e) {
             throw new InfraException(EARLY_CLOSED_FCM_ERROR);
         }
 
-
         return CloseEarlyResponseDto.of(productId);
-
     }
-
 
     /**
      * 최고 입찰가 업데이트
@@ -385,8 +463,10 @@ public class ProductService {
     @Transactional
     public void updateWinningPrice(Long productId, int winningPrice) {
 
-        ProductEntity productEntity = productRepository.findById(productId)
-                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
+        ProductEntity productEntity =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
 
         productEntity.updateWinningPrice(winningPrice);
     }
@@ -400,13 +480,12 @@ public class ProductService {
     @Transactional
     public void updateProductStatusToProgress(Long productId) {
 
-        ProductEntity productEntity = productRepository.findById(productId)
-                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND
-        ));
+        ProductEntity productEntity =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
         productEntity.updateStatusToInProgress();
-
     }
-
 
     /**
      * 거래 완료 시 물품 상태 변경. 판매자만 변경 가능. 입찰자가 있어야 변경가능.
@@ -417,17 +496,19 @@ public class ProductService {
      */
     @org.springframework.transaction.annotation.Transactional
     public void markProductAsCompleted(Long productId, Long userId) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new WebException(USER_NOT_FOUND));
+        UserEntity userEntity =
+                userRepository.findById(userId).orElseThrow(() -> new WebException(USER_NOT_FOUND));
 
-        ProductEntity productEntity = productRepository.findById(productId)
-                .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
+        ProductEntity productEntity =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new WebException(PRODUCT_NOT_FOUND));
 
         if (!productEntity.getUser().getId().equals(userEntity.getId())) {
             throw new WebException(PRODUCT_NOT_AUTHORIZED);
         }
 
-        if(!productEntity.isHasBuyer()){
+        if (!productEntity.isHasBuyer()) {
             throw new WebException(PRODUCT_HAS_NO_BUYER);
         }
 
@@ -449,9 +530,10 @@ public class ProductService {
             return;
         }
 
-        products.forEach(p -> {
-            productImageService.withdraw(p);
-            p.withdraw();
-        });
+        products.forEach(
+                p -> {
+                    productImageService.withdraw(p);
+                    p.withdraw();
+                });
     }
 }

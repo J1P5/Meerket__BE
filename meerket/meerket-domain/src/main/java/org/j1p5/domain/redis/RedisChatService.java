@@ -1,6 +1,6 @@
 package org.j1p5.domain.redis;
 
-public interface RedisService {
+public interface RedisChatService {
 
     /**
      * 특정 사용자와 채팅방을 매핑하여 저장합니다.
@@ -24,5 +24,4 @@ public interface RedisService {
      * @param userId
      */
     void removeUserRoomMapping(String userId);
-
 }

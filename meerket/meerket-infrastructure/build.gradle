@@ -18,6 +18,8 @@ dependencies {
     // redis 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.39.0'
+
 
     // firebase 의존성
     implementation 'com.google.firebase:firebase-admin:9.4.1'
