@@ -2,6 +2,7 @@ package org.j1p5.infrastructure.redis.service;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.redis.RedisIdempotencyService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author yechan
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisIdempotencyServiceImpl implements RedisIdempotencyService {
@@ -30,6 +32,8 @@ public class RedisIdempotencyServiceImpl implements RedisIdempotencyService {
                 redisTemplate
                         .opsForValue()
                         .setIfAbsent(requestId, "PROCESSED", ttl, TimeUnit.SECONDS);
+
+        log.info("멱등성 여부 확인 결과 requestId = {}, 결과 =  {}", requestId, success);
 
         return success != null && success;
     }

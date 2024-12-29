@@ -2,6 +2,7 @@ package org.j1p5.infrastructure.redis.service;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.redis.RedisProductEditLockService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author yechan
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisProductEditLockServiceImpl implements RedisProductEditLockService {
@@ -26,6 +28,7 @@ public class RedisProductEditLockServiceImpl implements RedisProductEditLockServ
      */
     @Override
     public boolean setEditLock(String key, long ttl) {
+        log.info("상품 수정 락 설정");
         return Boolean.TRUE.equals(
                 redisTemplate.opsForValue().setIfAbsent(key, "LOCKED", ttl, TimeUnit.SECONDS));
     }
@@ -38,6 +41,7 @@ public class RedisProductEditLockServiceImpl implements RedisProductEditLockServ
      */
     @Override
     public boolean isEditLocked(String key) {
+        log.info("상품 수정 락 확인");
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
@@ -48,6 +52,7 @@ public class RedisProductEditLockServiceImpl implements RedisProductEditLockServ
      */
     @Override
     public void releaseEditLock(String key) {
+        log.info("상품 수정 락 해제");
         redisTemplate.delete(key);
     }
 }
