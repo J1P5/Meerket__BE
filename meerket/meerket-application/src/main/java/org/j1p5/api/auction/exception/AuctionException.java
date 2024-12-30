@@ -11,18 +11,12 @@ public enum AuctionException implements BaseErrorCode {
     BID_USER_NOT_AUTHORIZED(403, "BID_USER_403", "해당 입찰에 대한 권한이 없습니다."),
     BID_AMOUNT_TOO_LOW(400, "BID_AMOUNT_400", "입찰 금액이 기존 입찰 금액보다 낮습니다."),
     DUPLICATE_BID(400, "DUPLICATE_BID", "이미 입찰한 기록이 있습니다."),
-    SELLER_CANNOT_CREATE_BID(500,"SELLER_BID_500","판매자는 판매글에 입찰을 할 수 없습니다.")
-
+    SELLER_CANNOT_CREATE_BID(500, "SELLER_BID_500", "판매자는 판매글에 입찰을 할 수 없습니다."),
+    DUPLICATE_BID_REQUEST(400, "DUPLICATE_BID_REQUEST", "중복된 입찰 요청입니다."),
+    DUPLICATE_BID_UPDATE_REQUEST(400, "DUPLICATE_BID_UPDATE_REQUEST", "중복된 입찰 수정 요청입니다."),
+    AUCTION_EDIT_IN_PROGRESS(403, "AUCTION_EDIT_IN_PROGRESS", "판매자가 게시글을 수정 중이어서 입찰이 불가능합니다."),
     ;
-
-
-
-
-
-
     ;
-
-
 
     private final int status;
     private final String errorCode;
@@ -33,7 +27,6 @@ public enum AuctionException implements BaseErrorCode {
         this.errorCode = errorCode;
         this.message = message;
     }
-
 
     @Override
     public ErrorResponse getErrorResponse() {
