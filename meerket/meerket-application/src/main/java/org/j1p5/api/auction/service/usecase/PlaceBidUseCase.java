@@ -17,9 +17,9 @@ import org.j1p5.domain.product.entity.ProductEntity;
 import org.j1p5.domain.product.repository.ProductRepository;
 import org.j1p5.domain.redis.RedisBidLockService;
 import org.j1p5.domain.redis.RedisIdempotencyService;
+import org.j1p5.domain.redis.RedisProductEditLockService;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
-import org.j1p5.infrastructure.redis.service.RedisProductEditLockServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class PlaceBidUseCase {
     private final UserRepository userRepository;
     private final RedisBidLockService redisBidLockService;
     private final RedisIdempotencyService redisIdempotencyService;
-    private final RedisProductEditLockServiceImpl redisProductEditLockServiceImpl;
+    private final RedisProductEditLockService redisProductEditLockService;
 
     private static final long REQUEST_ID_TTL = 30;
     private static final long BID_LOCK_TTL = 300;
@@ -60,7 +60,7 @@ public class PlaceBidUseCase {
 
         // 상품 수정중인지 확인
         String editLockKey = "product:" + productId + ":lock:edit";
-        if (redisProductEditLockServiceImpl.isEditLocked(editLockKey)) {
+        if (redisProductEditLockService.isEditLocked(editLockKey)) {
             throw new WebException(AuctionException.AUCTION_EDIT_IN_PROGRESS);
         }
 
