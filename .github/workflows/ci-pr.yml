@@ -46,5 +46,5 @@ jobs:
       
 
     - name: Clean Build with Gradle Wrapper
-      run: ./gradlew clean build --no-daemon --info
+      run: ./meerket/gradlew clean build --no-daemon --info
 
