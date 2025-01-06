@@ -27,6 +27,9 @@ jobs:
 
     - name: List project files
       run: ls -l  # 디렉토리 구조 확인
+      
+    - name: List meerket directory files
+      run: ls -l meerket  # meerket 디렉토리 구조 확인
 
     - name: Ensure Gradlew is Executable
       run: chmod +x ./meerket/gradlew  # gradlew에 실행 권한 부여
@@ -46,5 +49,6 @@ jobs:
       
 
     - name: Clean Build with Gradle Wrapper
+      working-directory: ./meerket
       run: ./meerket/gradlew clean build --no-daemon --info
 
