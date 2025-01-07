@@ -30,13 +30,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      # 2.5) secret설정한 yml 등록
-      - name: Set YML
+          
+      # 2.5) secret설정한 env 등록
+      - name: Create .env file from Secret
         run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.YML }}" | base64 --decode > src/main/resources/application.yml
-          find src
+          echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 --decode > .env
+
       # # 4) gradle 테스트 빌드
       # - name: Build Test with Gradle
       #   run: ./gradlew test -i
@@ -70,37 +69,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 2.5) secret설정한 yml 등록
-      - name: Set PROD_YML
+      # 2.5) secret설정한 env 등록
+      - name: Create .env file from Secret
         run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.YML }}" | base64 --decode > src/main/resources/application.yml
-          find src  
+          echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 --decode > .env
 
-      # 2.5) secret설정한 LOGBACK_SPRING 등록
-      - name: Set PROD_LOGBACK
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.DEV_LOGBACK}}" | base64 --decode > src/main/resources/logback-spring.xml 
-
-      # 2.5) secret설정한 APPSPEC 등록
-      - name: Set APPSPEC
-        run: |
-          echo "${{ secrets.APPSPEC }}" | base64 --decode > ./appspec.yml
-
-      # 2.5) secret설정한 EXECUTE_DEPLOY_SH 등록
-      - name: Set EXECUTE_DEPLOY_SH
-        run: |
-          mkdir scripts
-          echo "${{ secrets.EXECUTE_DEPLOY_SH }}" > scripts/execute-deploy.sh
-          cat scripts/execute-deploy.sh
 
       # 2.5) secret 설정한 firesbase json key 등록
-      - name: Set firebase json key
-        run: |
-          mkdir -p src/main/resources/firebase
-          echo "${{ secrets.FIREBASE_JSON_KEY }}" | base64 --decode > src/main/resources/firebase/nanaland-firebase-key.json
-          find src
+
+      - name: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: "meerket-83e38-firebase-adminsdk-gyt9i-d2df62fdf4.json"
+          json: ${{secrets.FIREBASE_SERVICE_KEY }}
+          dir: './meerket/meerket-application/src/main/resources'
 
       # 3) gradlew 권한 설정
       - name: Grant execute permission for gradlew
