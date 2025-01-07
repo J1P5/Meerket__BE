@@ -110,6 +110,7 @@ jobs:
       # AWS S3에 업로드
       - name: Upload to AWS S3
         run: |
+          cd meerket 
           aws deploy push \
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
             --ignore-hidden-files \
