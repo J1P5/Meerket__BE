@@ -44,12 +44,13 @@ jobs:
 
       # 3) gradlew 권한 설정
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x ./meerket/gradlew  # gradlew에 실행 권한 부여
 
       # 4) gradle 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build -x test -i
-
+        working-directory: ./meerket
+        run: ./gradlew clean build -x test --no-daemon --info
+  
   # 여기서부터 배포 job
   deploy:
     name: deploy
@@ -86,7 +87,7 @@ jobs:
 
       # 3) gradlew 권한 설정
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x ./meerket/gradlew  # gradlew에 실행 권한 부여
 
       # # 4) gradle 테스트 빌드
       # - name: Build Test with Gradle
@@ -96,7 +97,8 @@ jobs:
 
       # 4) gradle 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build -x test -i
+        working-directory: ./meerket
+        run: ./gradlew clean build -x test --no-daemon --info
         # working-directory: ${{ env.working-directory }}
       
       # AWS 인증
