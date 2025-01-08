@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ubuntu/project"
+PROJECT_ROOT="/home/ubuntu/project/meerket-application"
 JAR_FILE="$PROJECT_ROOT/build/libs/org.j1p5-0.0.1.jar"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
