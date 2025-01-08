@@ -1,0 +1,127 @@
+name: CD - Deploy to Production Server
+
+on:
+  push:
+    branches: [ "dev" ]  # main 브랜치 푸시 시 실행
+
+# flow에서 사용할 변수
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: meerket-s3-bucket
+  CODE_DEPLOY_APPLICATION_NAME: Meerket
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Meerket-deployment-group
+
+permissions: write-all
+
+#여기서부터 build job
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      # 1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2) JDK 17 셋팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      # 2.5) secret설정한 env 등록
+      - name: Create .env file from Secret
+        run: |
+          echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 --decode > .env
+
+      # # 4) gradle 테스트 빌드
+      # - name: Build Test with Gradle
+      #   run: ./gradlew test -i
+      #   # run: ./gradlew clean build -i
+      #   # working-directory: ${{ env.working-directory }}
+
+      # 3) gradlew 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 4) gradle 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test -i
+
+  # 여기서부터 배포 job
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [ build ] # test와 build 작업이 성공적으로 완료된 경우에만 실행
+
+    steps:
+      # 1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2) JDK 17 셋팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 2.5) secret설정한 env 등록
+      - name: Create .env file from Secret
+        run: |
+          echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 --decode > .env
+
+
+      # 2.5) secret 설정한 firesbase json key 등록
+
+      - name: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: "meerket-83e38-firebase-adminsdk-gyt9i-d2df62fdf4.json"
+          json: ${{secrets.FIREBASE_SERVICE_KEY }}
+          dir: './meerket/meerket-application/src/main/resources'
+
+      # 3) gradlew 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # # 4) gradle 테스트 빌드
+      # - name: Build Test with Gradle
+      #   run: ./gradlew test -i
+      #   # run: ./gradlew clean build -i
+      #   # working-directory: ${{ env.working-directory }}
+
+      # 4) gradle 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test -i
+        # working-directory: ${{ env.working-directory }}
+      
+      # AWS 인증
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # AWS S3에 업로드
+      - name: Upload to AWS S3
+        run: |
+          cd meerket 
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+            --source .
+
+      # AWS EC2에 Deploy
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
