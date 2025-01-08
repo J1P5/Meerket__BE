@@ -7,9 +7,9 @@ on:
 # flow에서 사용할 변수
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: meerket-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: Meerket
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Meerket-deployment-group
+  S3_BUCKET_NAME: meerket-bucket
+  CODE_DEPLOY_APPLICATION_NAME: meerket-dev
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: meerket-deployment-group
 
 permissions: write-all
 
@@ -105,8 +105,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ${{ env.AWS_REGION }}
 
       # AWS S3에 업로드
