@@ -45,11 +45,16 @@ jobs:
       # 3) gradlew 권한 설정
       - name: Grant execute permission for gradlew
         run: chmod +x ./meerket/gradlew  # gradlew에 실행 권한 부여
+        
 
       # 4) gradle 빌드
       - name: Build with Gradle
         working-directory: ./meerket
         run: ./gradlew clean build -x test --no-daemon --info
+          echo "Build completed. Checking JAR file..."
+          ls -al ./meerket/meerket-application/build/libs
+          jar tf ./meerket/meerket-application/build/libs/*.jar | grep "org/springframework/boot/loader"
+          jar tf ./meerket/meerket-application/build/libs/*.jar | grep "org/j1p5/MeerketApplication.class"
   
   # 여기서부터 배포 job
   deploy:
@@ -95,11 +100,7 @@ jobs:
       #   # run: ./gradlew clean build -i
       #   # working-directory: ${{ env.working-directory }}
 
-      # 4) gradle 빌드
-      - name: Build with Gradle
-        working-directory: ./meerket
-        run: ./gradlew clean build -x test --no-daemon --info
-        # working-directory: ${{ env.working-directory }}
+
       
       # AWS 인증
       - name: Configure AWS credentials
@@ -118,6 +119,8 @@ jobs:
             --ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
+          echo "S3 Upload completed. Verifying contents in S3..."
+          aws s3 ls s3://meerket-bucket/
 
       # AWS EC2에 Deploy
       - name: Deploy to AWS EC2 from S3
