@@ -54,8 +54,10 @@ jobs:
           ./gradlew clean build -x test --no-daemon --info
           echo "Build completed. Checking JAR file..."
           ls -al ./meerket-application/build/libs
-          jar tf ./meerket-application/build/libs/*.jar | grep "org/springframework/boot/loader"
-          jar tf ./meerket-application/build/libs/*.jar | grep "org/j1p5/MeerketApplication.class"
+          echo "Listing Spring Boot Loader classes..."
+          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/springframework/boot/loader"
+          echo "Checking application entry point..."
+          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/j1p5/MeerketApplication.class"
 
   
   # 여기서부터 배포 job
