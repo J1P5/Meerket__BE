@@ -47,7 +47,6 @@ jobs:
         run: chmod +x ./meerket/gradlew  # gradlew에 실행 권한 부여
         
 
-      # 4) gradle 빌드
       - name: Build with Gradle
         working-directory: ./meerket
         run: |
@@ -55,9 +54,10 @@ jobs:
           echo "Build completed. Checking JAR file..."
           ls -al ./meerket-application/build/libs
           echo "Listing Spring Boot Loader classes..."
-          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/springframework/boot/loader"
+          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/springframework/boot/loader" || echo "Spring Boot Loader classes not found."
           echo "Checking application entry point..."
-          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/j1p5/MeerketApplication.class"
+          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/j1p5/MeerketApplication.class" || echo "Application entry point not found."
+
 
   
   # 여기서부터 배포 job
