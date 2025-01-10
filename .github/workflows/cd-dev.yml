@@ -50,11 +50,13 @@ jobs:
       # 4) gradle 빌드
       - name: Build with Gradle
         working-directory: ./meerket
-        run: ./gradlew clean build -x test --no-daemon --info
+        run: |
+          ./gradlew clean build -x test --no-daemon --info
           echo "Build completed. Checking JAR file..."
-          ls -al ./meerket/meerket-application/build/libs
-          jar tf ./meerket/meerket-application/build/libs/*.jar | grep "org/springframework/boot/loader"
-          jar tf ./meerket/meerket-application/build/libs/*.jar | grep "org/j1p5/MeerketApplication.class"
+          ls -al ./meerket-application/build/libs
+          jar tf ./meerket-application/build/libs/*.jar | grep "org/springframework/boot/loader"
+          jar tf ./meerket-application/build/libs/*.jar | grep "org/j1p5/MeerketApplication.class"
+
   
   # 여기서부터 배포 job
   deploy:
