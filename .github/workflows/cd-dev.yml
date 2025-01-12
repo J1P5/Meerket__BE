@@ -86,10 +86,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 2.5) secret설정한 env 등록
-      - name: Create .env file from Secret
+      # 3) .env 파일 다운로드 및 복사
+      - name: Download .env from S3
         run: |
-          echo "${{ secrets.ENV_PROD }}" | base64 --decode > .env
+          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/.env /home/ubuntu/project/.env
+          echo ".env downloaded to /home/ubuntu/project/"
 
 
       # 2.5) secret 설정한 firesbase json key 등록
