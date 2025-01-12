@@ -34,7 +34,7 @@ jobs:
       # 2.5) secret설정한 env 등록
       - name: Create .env file from Secret
         run: |
-          echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 --decode > .env
+          echo "${{ secrets.ENV_PROD}}" | base64 --decode > .env
 
       # # 4) gradle 테스트 빌드
       # - name: Build Test with Gradle
@@ -50,13 +50,20 @@ jobs:
       - name: Build with Gradle
         working-directory: ./meerket
         run: |
+          echo "Setting execute permission for gradlew"
+          chmod +x ./gradlew
+      
+          echo "Cleaning and building the project"
           ./gradlew clean build -x test --no-daemon --info
-          echo "Build completed. Checking JAR file..."
-          ls -al ./meerket-application/build/libs
-          echo "Listing Spring Boot Loader classes..."
-          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/springframework/boot/loader" || echo "Spring Boot Loader classes not found."
-          echo "Checking application entry point..."
-          jar tf ./meerket-application/build/libs/meerket-application-0.0.1.jar | grep "org/j1p5/MeerketApplication.class" || echo "Application entry point not found."
+      
+          echo "Verifying JAR file generation..."
+          if [ -f ./meerket-application/build/libs/meerket-application-0.0.1.jar ]; then
+            echo "JAR file generated successfully!"
+          else
+            echo "JAR file not found! Please check the build configuration."
+            exit 1
+          fi
+
 
 
   
@@ -82,7 +89,7 @@ jobs:
       # 2.5) secret설정한 env 등록
       - name: Create .env file from Secret
         run: |
-          echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 --decode > .env
+          echo "${{ secrets.ENV_PROD }}" | base64 --decode > .env
 
 
       # 2.5) secret 설정한 firesbase json key 등록
