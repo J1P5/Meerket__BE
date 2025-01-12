@@ -36,6 +36,6 @@ bootJar {
     }
 }
 
-jar {
-    enabled = false // 일반 JAR 생성 비활성화
-}
+//jar {
+//    enabled = false // 일반 JAR 생성 비활성화
+//}
