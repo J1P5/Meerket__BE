@@ -26,16 +26,3 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
 }
-
-bootJar {
-    enabled = true // Spring Boot 애플리케이션 실행 가능한 JAR 생성
-    manifest {
-        attributes(
-                'Main-Class': 'org.j1p5.MeerketApplication' // 실제 진입점 경로로 변경
-        )
-    }
-}
-
-//jar {
-//    enabled = false // 일반 JAR 생성 비활성화
-//}
