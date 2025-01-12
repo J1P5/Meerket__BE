@@ -107,7 +107,8 @@ jobs:
 
       # 4) gradle 테스트 빌드
       - name: Build with Gradle
-        run: ./meerket/gradlew clean build -x test -i
+        working-directory: ./meerket
+        run: ./gradlew clean build -x test
         # run: ./gradlew clean build -i
         # working-directory: ${{ env.working-directory }}
 
