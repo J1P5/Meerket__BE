@@ -1,4 +1,4 @@
-ame: CD - Deploy to Production Server
+name: CD - Deploy to Production Server
 
 on:
   push:
