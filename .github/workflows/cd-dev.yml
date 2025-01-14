@@ -1,4 +1,4 @@
-name: CD - Deploy to Production Server
+ame: CD - Deploy to Production Server
 
 on:
   push:
@@ -35,7 +35,6 @@ jobs:
       - name: Create .env file from Secret
         run: |
           echo "${{ secrets.ENV_PROD}}" | base64 --decode > .env
-
       # # 4) gradle 테스트 빌드
       # - name: Build Test with Gradle
       #   run: ./gradlew test -i
@@ -86,13 +85,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3) .env 파일 다운로드 및 복사
-      - name: Download .env from S3
+      # 2.5) secret설정한 env 등록
+      - name: Create .env file from Secret
         run: |
-          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/.env /home/ubuntu/project/.env
-          echo ".env downloaded to /home/ubuntu/project/"
-
-
+          echo "${{ secrets.ENV_PROD }}" | base64 --decode > .env
       # 2.5) secret 설정한 firesbase json key 등록
 
       - name: create-json
@@ -134,7 +130,6 @@ jobs:
             --source .
           echo "S3 Upload completed. Verifying contents in S3..."
           aws s3 ls s3://meerket-bucket/
-
       # AWS EC2에 Deploy
       - name: Deploy to AWS EC2 from S3
         run: |
