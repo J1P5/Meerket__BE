@@ -106,7 +106,6 @@ public class ProductController {
     ) {
 
         CursorResult<ProductResponseInfo> completedProducts = productService.getCompletedProducts(userId, cursor);
-
         return Response.onSuccess(completedProducts);
     }
 
