@@ -9,7 +9,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -48,5 +56,29 @@ public class SecurityConfig {
                                 .maxSessionsPreventsLogin(false));
 
         return http.build();
+    }
+
+    @Bean
+    public SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        List<SessionAuthenticationStrategy> sessionAuthenticationStrategies = List.of(
+                concurrentSessionControlAuthenticationStrategy(),
+                new RegisterSessionAuthenticationStrategy(sessionRegistry())
+        );
+
+        return new CompositeSessionAuthenticationStrategy(sessionAuthenticationStrategies);
+    }
+
+    @Bean
+    public ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlAuthenticationStrategy() {
+        ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlAuthenticationStrategy
+                = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
+        concurrentSessionControlAuthenticationStrategy.setMaximumSessions(1);
+
+        return concurrentSessionControlAuthenticationStrategy;
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 }
