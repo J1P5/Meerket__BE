@@ -39,8 +39,8 @@ public class OauthController {
             HttpServletResponse response) {
         UserInfo user = oauthLoginUsecase.login(loginRequest.code(), loginRequest.provider());
 
-        SecurityContext context = authManager.setContext(SessionInfo.of(user.pk(), user.role()));
-        securityContextRepository.saveContext(context, request, response);
+        authManager.setupAuthenticationContext(SessionInfo.of(user.pk(), user.role()), request, response);
+
 
         return Response.onSuccess(LoginResponse.from(user));
     }
