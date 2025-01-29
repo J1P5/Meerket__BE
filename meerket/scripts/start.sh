@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 
 # .env 파일 로드
-if [ -f /home/ubuntu/project/.env ]; then
-  export $(cat /home/ubuntu/project/.env | xargs)
-else
-  echo ".env file not found. Ensure the file exists in /home/ubuntu/project/"
-  exit 1
-fi
+source /home/ubuntu/project/.env
 
 PROJECT_ROOT="/home/ubuntu/project/meerket-application"
 JAR_FILE="$PROJECT_ROOT/build/libs/meerket-application-0.0.1.jar"
