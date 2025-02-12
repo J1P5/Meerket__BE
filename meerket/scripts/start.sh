@@ -2,7 +2,7 @@
 
 # .env 파일 로드
 # source /home/ubuntu/project/.env
-export $(cat .env | xargs)
+export $(cat /home/ubuntu/project/.env | xargs)
 
 echo "디버깅: .env 파일 로드 후 환경변수 확인"
 echo "HOME_URL: $HOME_URL"
