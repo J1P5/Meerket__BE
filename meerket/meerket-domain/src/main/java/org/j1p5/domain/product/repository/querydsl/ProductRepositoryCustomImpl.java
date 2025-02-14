@@ -37,6 +37,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                         cursorCondition(cursor), // 커서 조건
                         isNotDeleted(),
                         isNotWithdrawalUser())
+                .join(qUserEntity).on(qProduct.user.eq(qUserEntity))
                 .orderBy(qProduct.id.desc()) // 내림차순 정렬
                 .limit(size) // 페이지 크기 제한
                 .fetch();
