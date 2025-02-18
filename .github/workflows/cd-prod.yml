@@ -1,8 +1,8 @@
 name: CD - Deploy to Production Server
-
+# TODO : 임시 main cd/cd 생성, main push에 해당하는 cd/cd 구축 예정
 on:
   push:
-    branches: [ "dev" ]  # main 브랜치 푸시 시 실행
+    branches: [ "main" ]  # main 브랜치 푸시 시 실행
 
 # flow에서 사용할 변수
 env:
@@ -34,7 +34,7 @@ jobs:
       # 2.5) secret설정한 env 등록
       - name: Create .env file from Secret
         run: |
-          echo "${{ secrets.ENV_DEV}}" | base64 --decode > .env
+          echo "${{ secrets.ENV_PROD}}" | base64 --decode > .env
       # # 4) gradle 테스트 빌드
       # - name: Build Test with Gradle
       #   run: ./gradlew test -i
