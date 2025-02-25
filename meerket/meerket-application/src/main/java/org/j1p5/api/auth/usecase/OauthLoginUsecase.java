@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.j1p5.api.activityArea.service.ActivityAreaService;
 import org.j1p5.api.auth.service.OauthSenderService;
 import org.j1p5.api.auth.service.OauthService;
+import org.j1p5.api.fcm.FcmService;
 import org.j1p5.domain.activityArea.dto.SimpleAddress;
 import org.j1p5.domain.activityArea.entity.ActivityArea;
 import org.j1p5.domain.auth.dto.OauthProfile;
@@ -11,6 +12,7 @@ import org.j1p5.domain.user.UserInfo;
 import org.j1p5.domain.user.entity.Provider;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class OauthLoginUsecase {
 
     private final OauthSenderService oauthSenderService;
     private final OauthService oauthService;
+    private final FcmService fcmService;
     private final ActivityAreaService activityAreaService;
 
     /**
@@ -27,16 +30,17 @@ public class OauthLoginUsecase {
      * @param provider
      * @return 유저 정보, 활동 지역
      */
-    public UserInfo login(String code, String provider) {
-        OauthProfile profile = oauthSenderService.request(code, provider); //서드 파티에 요청을 보내서 정보를 받아온다.
-        UserEntity user = oauthService.login(profile, Provider.get(provider)); // 로그인을 시도한다.
+    public UserInfo login(String code, String provider, String fcmToken) {
+        OauthProfile profile = oauthSenderService.request(code, provider);
+        UserEntity user = oauthService.login(profile, Provider.get(provider));
+        fcmService.saveFcmToken(user.getId(), fcmToken);
 
-        ActivityArea activityArea = activityAreaService.getActivityAreaByUser(user.getId()); // 유저에 해당하는 활동 지역을 조회한다.
+        ActivityArea activityArea = activityAreaService.getActivityAreaByUser(user.getId());
 
         if (activityArea == null) {
             return UserInfo.of(user, null);
         }
 
-        return UserInfo.of(user, SimpleAddress.from(activityArea)); // 리턴한다.
+        return UserInfo.of(user, SimpleAddress.from(activityArea));
     }
 }

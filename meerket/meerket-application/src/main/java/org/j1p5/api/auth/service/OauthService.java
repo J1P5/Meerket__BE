@@ -7,6 +7,7 @@ import org.j1p5.domain.user.entity.Role;
 import org.j1p5.domain.user.entity.UserEntity;
 import org.j1p5.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ public class OauthService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public UserEntity login(OauthProfile profile, Provider provider) {
         UserEntity user = userRepository.findBySocialIdAndProvider(profile.getId(), provider)
                         .orElse(null);
