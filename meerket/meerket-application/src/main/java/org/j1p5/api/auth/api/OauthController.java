@@ -13,8 +13,6 @@ import org.j1p5.api.auth.dto.SessionInfo;
 import org.j1p5.api.auth.usecase.OauthLoginUsecase;
 import org.j1p5.api.global.response.Response;
 import org.j1p5.domain.user.UserInfo;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +26,6 @@ public class OauthController {
 
     private final OauthLoginUsecase oauthLoginUsecase;
     private final AuthManager authManager;
-    private final HttpSessionSecurityContextRepository securityContextRepository =
-            new HttpSessionSecurityContextRepository();
 
     @PostMapping
     @Operation(summary = "소셜 로그인 API", description = "소셜 로그인 API. provider는 \"NAVER\", \"KAKAO\" 문자열을 입력해야 한다.")
@@ -37,7 +33,7 @@ public class OauthController {
             @RequestBody @Valid LoginRequest loginRequest,
             HttpServletRequest request,
             HttpServletResponse response) {
-        UserInfo user = oauthLoginUsecase.login(loginRequest.code(), loginRequest.provider());
+        UserInfo user = oauthLoginUsecase.login(loginRequest.code(), loginRequest.provider(), loginRequest.fcmToken());
 
         authManager.setupAuthenticationContext(SessionInfo.of(user.pk(), user.role()), request, response);
 
