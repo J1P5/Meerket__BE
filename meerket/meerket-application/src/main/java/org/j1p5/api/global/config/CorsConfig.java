@@ -20,6 +20,7 @@ public class CorsConfig {
         config.addAllowedOrigin("https://localhost:8080");
         config.addAllowedOrigin("https://tfinder.store");
         config.addAllowedOrigin("https://meerket.vercel.app");
+        config.addAllowedOrigin("https://meerket-develop.vercel.app");
         config.addAllowedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
