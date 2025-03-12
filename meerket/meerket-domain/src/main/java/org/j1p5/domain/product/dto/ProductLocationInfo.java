@@ -4,7 +4,7 @@ import org.locationtech.jts.geom.Point;
 
 public record ProductLocationInfo(
         double longitude,
-        double latitube,
+        double latitude,
         String address, // ~ 동 ~구 까지표기한 주소
         String location // 상세주소
         ) {

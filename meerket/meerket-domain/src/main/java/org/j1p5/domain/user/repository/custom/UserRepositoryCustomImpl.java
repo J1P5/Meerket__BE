@@ -3,12 +3,10 @@ package org.j1p5.domain.user.repository.custom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.j1p5.domain.activityArea.entity.QActivityArea;
-import org.j1p5.domain.block.BlockUserInfo;
+import org.j1p5.domain.block.BlockUserDto;
+import org.j1p5.domain.block.entity.QBlockEntity;
 import org.j1p5.domain.user.entity.QEmdArea;
 import org.j1p5.domain.user.entity.QUserEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,17 +18,19 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
+    QBlockEntity qBlockEntity = QBlockEntity.blockEntity;
     QUserEntity qUserEntity = QUserEntity.userEntity;
     QEmdArea qEmdArea = QEmdArea.emdArea;
     QActivityArea qActivityArea = QActivityArea.activityArea;
 
     @Override
-    public Page<BlockUserInfo> findBlockUserByIds(List<Long> userIds, Pageable pageable) {
-        List<BlockUserInfo> blockUserInfos =
+    public List<BlockUserDto> findBlockUserByIds(List<Long> userIds) {
+        List<BlockUserDto> blockUsers =
                 jpaQueryFactory
                         .selectDistinct(
                                 Projections.constructor(
-                                        BlockUserInfo.class,
+                                        BlockUserDto.class,
+                                        qBlockEntity.id.as("id"),
                                         qUserEntity.id.as("userId"),
                                         qUserEntity.nickname.as("nickname"),
                                         qUserEntity.imageUrl.as("imageUrl"),
@@ -39,29 +39,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                         )
                         .from(qUserEntity)
                         //TODO : 역정규화를 사용한 리팩토링(성능개선) 필요
-                        .join(qActivityArea).on(qActivityArea.user.eq(qUserEntity))
-                        .join(qEmdArea).on(qActivityArea.emdArea.eq(qEmdArea))
+                        .leftJoin(qBlockEntity).on(qBlockEntity.user.eq(qUserEntity))
+                        .leftJoin(qActivityArea).on(qActivityArea.user.eq(qUserEntity))
+                        .leftJoin(qEmdArea).on(qActivityArea.emdArea.eq(qEmdArea))
                         .where(qUserEntity.id.in(userIds))
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
                         .fetch();
 
-        if (blockUserInfos.isEmpty()) {
-            return new PageImpl<>(blockUserInfos, pageable, 0);
-        }
-
-        Long totalCount = jpaQueryFactory
-                .selectDistinct(qUserEntity.count())
-                .from(qUserEntity)
-                .join(qActivityArea).on(qActivityArea.user.eq(qUserEntity))
-                .join(qEmdArea).on(qActivityArea.emdArea.eq(qEmdArea))
-                .where(qUserEntity.id.in(userIds))
-                .fetchOne();
-
-        if (totalCount == null) {
-            totalCount = 0L;
-        }
-
-        return new PageImpl<>(blockUserInfos, pageable, totalCount);
+        return blockUsers;
     }
 }
