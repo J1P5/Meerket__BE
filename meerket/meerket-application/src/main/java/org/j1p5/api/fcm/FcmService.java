@@ -42,7 +42,9 @@ public class FcmService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new InfraException(ChatException.CHAT_RECEIVER_NOT_FOUND));
 
-        fcmSender.sendPushChatMessageNotification(roomId,receiverId, userEntity.getNickname(), content);
+        String uri = FcmRedirectUri.CHATTING.getUri() + roomId + "/" + receiverId.toString();
+
+        fcmSender.sendPushChatMessageNotification(receiverId, userEntity.getNickname(), content, uri);
     }
 
     // 판매자에게 입찰 알림
@@ -50,28 +52,34 @@ public class FcmService {
 
         ProductEntity productEntity = getProductEntity(productId);
 
-        sendPushSellerBidNotification(productEntity, BID_ALERT_MESSAGE);
+        String uri = FcmRedirectUri.PRODUCT_DETAIL.getUri() + productId.toString();
+
+        sendPushSellerBidNotification(productEntity, BID_ALERT_MESSAGE, uri);
     }
 
     // 판매자에게 입찰 수정 알림
     public void sendSellerBidUpdateMessage(Long productId) {
         ProductEntity productEntity = getProductEntity(productId);
 
-        sendPushSellerBidNotification(productEntity, BID_UPDATE_MESSAGE);
+        String uri = FcmRedirectUri.PRODUCT_DETAIL.getUri() + productId.toString();
+
+        sendPushSellerBidNotification(productEntity, BID_UPDATE_MESSAGE, uri);
     }
 
     // 판매자에게 입찰 취소 알림
     public void sendSellerBidCancelMessage(Long productId) {
         ProductEntity productEntity = getProductEntity(productId);
 
-        sendPushSellerBidNotification(productEntity, BID_CANCEL_MESSAGE);
+        String uri = FcmRedirectUri.PRODUCT_DETAIL.getUri() + productId.toString();
+
+        sendPushSellerBidNotification(productEntity, BID_CANCEL_MESSAGE, uri);
     }
 
 
     // 판매자에게 알림 전송 요청
-    private void sendPushSellerBidNotification(ProductEntity productEntity, String content) {
+    private void sendPushSellerBidNotification(ProductEntity productEntity, String content, String uri) {
         fcmSender.sendPushSellerBidNotification(
-                productEntity.getId(), productEntity.getUser().getId(), productEntity.getTitle(), content
+                productEntity.getUser().getId(), productEntity.getTitle(), content, uri
         );
     }
 
@@ -104,25 +112,30 @@ public class FcmService {
     public void sendBuyerCloseEarlyMessage(Long productId) {
         ProductEntity product = this.getProductEntity(productId);
         String content = BID_EARLY_CLOSED_MESSAGE;
-        sendPushBuyerBidNotification(product,content);
+        String uri = FcmRedirectUri.PRODUCT_DETAIL.getUri() + productId.toString();
+
+        sendPushBuyerBidNotification(product,content, uri);
     }
 
     // 상품 삭제되었을 때 구매자에게 알림
     public void sendBuyerProductDeleted(Long productId){
         ProductEntity product = this.getProductEntity(productId);
         String content = BID_DELETED_MESSAGE;
-        sendPushBuyerBidNotification(product,content);
+
+        String uri = FcmRedirectUri.HOME.getUri();
+
+        sendPushBuyerBidNotification(product, content, uri);
     }
 
     // 구매자에게 알림 전송 요청
-    private void sendPushBuyerBidNotification(ProductEntity product, String content){
+    private void sendPushBuyerBidNotification(ProductEntity product, String content, String uri){
         List<AuctionEntity> auctionEntities = auctionRepository.findAuctionEntitiesByProductId(product.getId());
         List<Long> userIds = new ArrayList<>();
         for(AuctionEntity auction : auctionEntities){
             userIds.add(auction.getUser().getId());
         }//경매애 참여한 userId들
 
-        fcmSender.sendPushBuyerBidNotification(product.getId(), userIds,product.getTitle(),content);
+        fcmSender.sendPushBuyerBidNotification(userIds, product.getTitle(), content, uri);
 
     }
 
