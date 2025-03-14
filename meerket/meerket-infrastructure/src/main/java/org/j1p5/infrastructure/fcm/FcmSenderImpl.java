@@ -36,17 +36,15 @@ public class FcmSenderImpl implements FcmSender {
                             .findByUserId(receiverId)
                             .orElseThrow(() -> new InfraException(FcmException.RECEIVER_NOT_FOUND));
 
-            Notification notification =
-                    Notification.builder()
-                            .setTitle(senderNickname + " 님 에게 메시지가 도착했습니다.")
-                            .setBody(content)
-                            .build();
+            Map<String, String> data = new HashMap<>();
+            data.put("title", senderNickname + " 님 에게 메시지가 도착했습니다.");
+            data.put("content", content);
+            data.put("uri", uri);
 
             Message message =
                     Message.builder()
                             .setToken(fcmTokenEntity.getToken())
-                            .setNotification(notification)
-                            .putData("uri", uri)
+                            .putAllData(data)
                             .build();
 
             FirebaseMessaging.getInstance().send(message);
@@ -63,16 +61,14 @@ public class FcmSenderImpl implements FcmSender {
             FcmTokenEntity fcmTokenEntity = fcmTokenRepository.findByUserId(userId)
                     .orElseThrow(() -> new InfraException(FcmException.AUCTION_SELLER_FCM_TOKEN_NOT_FOUND));
 
-            Notification notification =
-                    Notification.builder()
-                            .setTitle(title + " " + content)
-                            .build();
+            Map<String, String> data = new HashMap<>();
+            data.put("title", title + " " + content);
+            data.put("uri", uri);
 
             Message message =
                     Message.builder()
                             .setToken(fcmTokenEntity.getToken())
-                            .setNotification(notification)
-                            .putData("uri", uri)
+                            .putAllData(data)
                             .build();
 
             FirebaseMessaging.getInstance().send(message);
@@ -90,14 +86,14 @@ public class FcmSenderImpl implements FcmSender {
                 log.info("사용자 fcm이 없음");
             }
 
-            Notification notification = Notification.builder()
-                    .setTitle(title + " " + content)
-                    .build();
+            Map<String, String> data = new HashMap<>();
+            data.put("title", title + " " + content);
+            data.put("uri", uri);
+
             for(FcmTokenEntity fcmToken : fcmTokenEntities){
                 Message message = Message.builder()
                         .setToken(fcmToken.getToken())
-                        .setNotification(notification)
-                        .putData("uri", uri)
+                        .putAllData(data)
                         .build();
                 FirebaseMessaging.getInstance().send(message);
             }
