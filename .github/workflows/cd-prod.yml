@@ -7,7 +7,7 @@ on:
 # flow에서 사용할 변수
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: meerket-bucket
+  S3_BUCKET_NAME: meerket-prod-bucket
   CODE_DEPLOY_APPLICATION_NAME: meerket-cd
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: meerket-cd-group
 
@@ -115,7 +115,7 @@ jobs:
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
           echo "S3 Upload completed. Verifying contents in S3..."
-          aws s3 ls s3://meerket-prod-bucket/
+          aws s3 ls s3://$S3_BUCKET_NAME/
       # AWS EC2에 Deploy
       - name: Deploy to AWS EC2 from S3
         run: |
