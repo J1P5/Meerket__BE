@@ -115,7 +115,7 @@ jobs:
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
           echo "S3 Upload completed. Verifying contents in S3..."
-          aws s3 ls s3://meerket-bucket/
+          aws s3 ls s3://meerket-prod-bucket/
       # AWS EC2에 Deploy
       - name: Deploy to AWS EC2 from S3
         run: |
