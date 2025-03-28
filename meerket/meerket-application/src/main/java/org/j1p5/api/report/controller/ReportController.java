@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.block.dto.BlockRegisterRequest;
 import org.j1p5.api.global.annotation.LoginUser;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reports")
+@Tag(name = "reports", description = "신고 관련 API")
 public class ReportController {
 
     private final ReportRegisterService reportRegisterService;

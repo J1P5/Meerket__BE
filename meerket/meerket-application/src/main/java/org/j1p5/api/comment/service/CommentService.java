@@ -3,7 +3,6 @@ package org.j1p5.api.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.comment.dto.request.CommentUpdateRequestDto;
 import org.j1p5.api.global.excpetion.WebException;
-import org.j1p5.domain.block.entity.BlockEntity;
 import org.j1p5.domain.block.repository.BlockRepository;
 import org.j1p5.domain.comment.CommentInfo;
 import org.j1p5.domain.comment.entity.CommentEntity;

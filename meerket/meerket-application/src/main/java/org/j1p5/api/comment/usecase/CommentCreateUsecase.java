@@ -16,6 +16,13 @@ public class CommentCreateUsecase {
     private final CommentService commentService;
 
 
+    /**
+     * 댓글 생성. 대댓글 depth는 1개 까지만
+     * @author sunghyun
+     * @param productId
+     * @param userId
+     * @param request
+     */
     @Transactional
     public void createComment(Long productId, Long userId, CommentCreateRequestDto request) {
 

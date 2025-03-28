@@ -1,11 +1,12 @@
 package org.j1p5.api.global.config;
 
-import java.util.List;
 import org.j1p5.api.global.annotation.LoginUserArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

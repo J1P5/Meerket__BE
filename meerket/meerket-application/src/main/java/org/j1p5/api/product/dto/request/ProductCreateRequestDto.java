@@ -1,10 +1,10 @@
 package org.j1p5.api.product.dto.request;
 
-import java.time.LocalDateTime;
 import lombok.Builder;
 import org.j1p5.domain.product.dto.ProductInfo;
 import org.j1p5.domain.product.entity.ProductCategory;
-import org.j1p5.domain.product.entity.ProductStatus;
+
+import java.time.LocalDateTime;
 
 @Builder
 public record ProductCreateRequestDto(

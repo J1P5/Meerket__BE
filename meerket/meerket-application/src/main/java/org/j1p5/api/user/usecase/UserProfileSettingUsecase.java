@@ -12,6 +12,12 @@ public class UserProfileSettingUsecase {
 
     private final UserProfileService userProfileService;
 
+    /**
+     * 프로필 수정
+     * @param userId
+     * @param nickname
+     * @param file
+     */
     public void execute(Long userId, String nickname, File file) {
         if (file != null) {
             userProfileService.updateProfile(userId, file);

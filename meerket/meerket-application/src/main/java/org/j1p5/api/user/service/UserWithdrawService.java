@@ -12,6 +12,7 @@ public class UserWithdrawService {
 
     private final UserRepository userRepository;
 
+    // 유저 탈퇴 시 유저 도메인 관련 삭제 처리
     @Transactional
     public void withdraw(UserEntity user) {
         user.withdraw();

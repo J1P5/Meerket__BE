@@ -35,6 +35,14 @@ public class EnterChatRoomUseCase {
     private final ProductRepository productRepository;
 
 
+    /**
+     * 채팅방 입장.
+     * 안읽은 메세지 초기화,
+     * @author yechan
+     * @param userId
+     * @param roomId
+     * @return 채팅방 메타 정보 및 최근 채팅 내역
+     */
     public ChatRoomEnterResponse execute(Long userId, String roomId) {
 
         ObjectId roomObjectId = chatRoomService.validateRoomId(roomId);
@@ -49,6 +57,13 @@ public class EnterChatRoomUseCase {
     }
 
 
+    /**
+     * 채팅방 메타 정보 조회
+     * @author yechan
+     * @param roomObjectId
+     * @param userId
+     * @return 채팅방 메타 정보
+     */
     private ChatRoomBasicInfo getChatRoomBasicInfo(ObjectId roomObjectId, Long userId) {
         ChatRoomEntity chatRoomEntity =
                 chatRoomRepository
