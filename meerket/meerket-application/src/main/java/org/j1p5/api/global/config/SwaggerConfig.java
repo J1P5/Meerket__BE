@@ -14,12 +14,14 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        Server server = new Server();
-        server.setUrl("https://tfinder.store");
-
+        Server prodServer = new Server();
+        Server devServer = new Server();
         Server localServer = new Server();
+
+        prodServer.setUrl("https://meerket-prod.store");
+        devServer.setUrl("https://meerket.store");
         localServer.setUrl("http://localhost:8080");
-        return new OpenAPI().components(new Components()).info(apiInfo()).servers(List.of(server, localServer));
+        return new OpenAPI().components(new Components()).info(apiInfo()).servers(List.of(prodServer, devServer, localServer));
     }
 
     private Info apiInfo() {
