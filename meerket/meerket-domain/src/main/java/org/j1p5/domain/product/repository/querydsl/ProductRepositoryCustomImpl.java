@@ -32,7 +32,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return queryFactory
                 .selectFrom(qProduct)
                 .where(
-                        qUserEntity.id.notIn(blockUserIds),
+                        blockNotInCondition(blockUserIds),
                         withinDistance(coordinate, MAX_DISTANCE), // 거리 조건 (100km 이내)
                         cursorCondition(cursor), // 커서 조건
                         isNotDeleted(),
@@ -130,6 +130,14 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return null; // 커서가 없으면 조건 생략
         }
         return qProduct.id.lt(cursor);
+    }
+
+    private BooleanExpression blockNotInCondition(List<Long> blockUserIds) {
+        if (blockUserIds == null || blockUserIds.isEmpty()) {
+            return null;
+        }
+
+        return qProduct.user.id.notIn(blockUserIds);
     }
 
     private BooleanExpression isNotDeleted() {
