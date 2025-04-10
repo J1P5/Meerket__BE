@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("front.server")
 public record FrontServerProperty(
-    String uri
+    String baseUri
 ) {
 }
