@@ -43,4 +43,4 @@ org:
 
 front:
   server:
-    uri: ${FRONT_SERVER_BASE_URI}
+    baseUri: ${FRONT_SERVER_BASE_URI}
