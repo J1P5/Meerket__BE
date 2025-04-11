@@ -3,6 +3,7 @@ package org.j1p5.infrastructure.fcm;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.j1p5.domain.fcm.FcmChatMessage;
 import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.fcm.entity.FcmTokenEntity;
 import org.j1p5.domain.fcm.repository.FcmTokenRepository;
@@ -30,15 +31,15 @@ public class FcmSenderImpl implements FcmSender {
     // 채팅 상대방에게 푸쉬 보내기
     @Override
     public void sendPushChatMessageNotification(
-            Long receiverId, String senderNickname, String content, String uri
+            FcmChatMessage fcmChatMessage, String uri
     ) {
         try {
             FcmTokenEntity fcmTokenEntity =
                     fcmTokenRepository
-                            .findByUserId(receiverId)
+                            .findByUserId(fcmChatMessage.receiverId())
                             .orElseThrow(() -> new InfraException(FcmException.RECEIVER_NOT_FOUND));
 
-            Message message = buildFcmMessage(senderNickname, chatTitlePostFix, fcmTokenEntity.getToken(), uri);
+            Message message = buildFcmMessage(fcmChatMessage.senderNickname(), chatTitlePostFix, fcmTokenEntity.getToken(), uri);
 
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
@@ -50,7 +51,7 @@ public class FcmSenderImpl implements FcmSender {
     // 판매자에게 입찰이 +1이라는 푸쉬알림
     @Override
     public void sendPushSellerBidNotification(
-            Long userId, String title, String content, String uri
+            Long userId, String title, String titleMessage, String uri
     ) {
         try {
             FcmTokenEntity fcmTokenEntity = fcmTokenRepository.findByUserId(userId)
@@ -59,7 +60,7 @@ public class FcmSenderImpl implements FcmSender {
             Map<String, String> data = new HashMap<>();
             data.put("uri", uri);
 
-            Message message = buildFcmMessage(title, content, fcmTokenEntity.getToken(), uri);
+            Message message = buildFcmMessage(title, titleMessage, fcmTokenEntity.getToken(), uri);
 
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
@@ -69,7 +70,7 @@ public class FcmSenderImpl implements FcmSender {
 
     @Override
     public void sendPushBuyerBidNotification(
-            List<Long> userIds, String title, String content, String uri
+            List<Long> userIds, String title, String titleMessage, String uri
     ) {
         try {
             List<FcmTokenEntity> fcmTokenEntities = fcmTokenRepository.findByUserIdIn(userIds);
@@ -79,7 +80,7 @@ public class FcmSenderImpl implements FcmSender {
             }
 
             for(FcmTokenEntity fcmToken : fcmTokenEntities){
-                Message message = buildFcmMessage(title, content, fcmToken.getToken(), uri);
+                Message message = buildFcmMessage(title, titleMessage, fcmToken.getToken(), uri);
                 FirebaseMessaging.getInstance().send(message);
             }
         } catch (Exception e) {
