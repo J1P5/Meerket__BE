@@ -1,15 +1,15 @@
 package org.j1p5.infrastructure.fcm;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.j1p5.domain.fcm.FcmChatMessage;
 import org.j1p5.domain.fcm.FcmSender;
 import org.j1p5.domain.fcm.entity.FcmTokenEntity;
 import org.j1p5.domain.fcm.repository.FcmTokenRepository;
 import org.j1p5.infrastructure.fcm.exception.FcmException;
 import org.j1p5.infrastructure.global.exception.InfraException;
+import org.j1p5.infrastructure.global.property.FrontServerProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -24,28 +24,22 @@ import static org.j1p5.infrastructure.fcm.exception.FcmException.valueOf;
 public class FcmSenderImpl implements FcmSender {
 
     private final FcmTokenRepository fcmTokenRepository;
+    private final FrontServerProperty frontServerProperty;
+    private final static String chatTitlePostFix = "님에게 메시지가 도착했습니다.";
 
 
     // 채팅 상대방에게 푸쉬 보내기
     @Override
     public void sendPushChatMessageNotification(
-            Long receiverId, String senderNickname, String content, String uri) {
+            FcmChatMessage fcmChatMessage, String uri
+    ) {
         try {
             FcmTokenEntity fcmTokenEntity =
                     fcmTokenRepository
-                            .findByUserId(receiverId)
+                            .findByUserId(fcmChatMessage.receiverId())
                             .orElseThrow(() -> new InfraException(FcmException.RECEIVER_NOT_FOUND));
 
-            Map<String, String> data = new HashMap<>();
-            data.put("title", senderNickname + " 님 에게 메시지가 도착했습니다.");
-            data.put("content", content);
-            data.put("uri", uri);
-
-            Message message =
-                    Message.builder()
-                            .setToken(fcmTokenEntity.getToken())
-                            .putAllData(data)
-                            .build();
+            Message message = buildFcmMessage(fcmChatMessage.senderNickname(), chatTitlePostFix, fcmTokenEntity.getToken(), uri);
 
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
@@ -56,49 +50,69 @@ public class FcmSenderImpl implements FcmSender {
 
     // 판매자에게 입찰이 +1이라는 푸쉬알림
     @Override
-    public void sendPushSellerBidNotification(Long userId, String title, String content, String uri) {
+    public void sendPushSellerBidNotification(
+            Long userId, String title, String titleMessage, String uri
+    ) {
         try {
             FcmTokenEntity fcmTokenEntity = fcmTokenRepository.findByUserId(userId)
                     .orElseThrow(() -> new InfraException(FcmException.AUCTION_SELLER_FCM_TOKEN_NOT_FOUND));
 
             Map<String, String> data = new HashMap<>();
-            data.put("title", title + " " + content);
             data.put("uri", uri);
 
-            Message message =
-                    Message.builder()
-                            .setToken(fcmTokenEntity.getToken())
-                            .putAllData(data)
-                            .build();
+            Message message = buildFcmMessage(title, titleMessage, fcmTokenEntity.getToken(), uri);
 
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
             log.error("fcm 판매자에게 메시지 보내기 실패", e);
         }
-
     }
 
     @Override
-    public void sendPushBuyerBidNotification(List<Long> userIds, String title, String content, String uri) {
+    public void sendPushBuyerBidNotification(
+            List<Long> userIds, String title, String titleMessage, String uri
+    ) {
         try {
             List<FcmTokenEntity> fcmTokenEntities = fcmTokenRepository.findByUserIdIn(userIds);
-            if(fcmTokenEntities.isEmpty()){
+
+            if (fcmTokenEntities.isEmpty()) {
                 log.info("사용자 fcm이 없음");
             }
 
-            Map<String, String> data = new HashMap<>();
-            data.put("title", title + " " + content);
-            data.put("uri", uri);
-
             for(FcmTokenEntity fcmToken : fcmTokenEntities){
-                Message message = Message.builder()
-                        .setToken(fcmToken.getToken())
-                        .putAllData(data)
-                        .build();
+                Message message = buildFcmMessage(title, titleMessage, fcmToken.getToken(), uri);
                 FirebaseMessaging.getInstance().send(message);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("fcm 구매자에게 메세지 보내기 실패", e);
         }
+    }
+
+    private Message buildFcmMessage(
+            String titleTarget, String titleMessage, String token, String uri
+    ) {
+        Map<String, String> data = new HashMap<>();
+        data.put("uri", uri);
+
+        return Message.builder()
+                .setNotification(buildNotification(titleTarget, titleMessage))
+                .setToken(token)
+                .setWebpushConfig(webPushConfigWithLink(uri))
+                .putAllData(data)
+                .build();
+    }
+
+    private Notification buildNotification(String target, String titleMessage) {
+        return Notification.builder()
+                .setTitle(target + " " + titleMessage)
+                .build();
+    }
+
+    private WebpushConfig webPushConfigWithLink(String uri) {
+        String link = frontServerProperty.baseUri() + uri;
+
+        return WebpushConfig.builder()
+                .setFcmOptions(WebpushFcmOptions.withLink(link))
+                .build();
     }
 }

@@ -40,3 +40,7 @@ org:
         URL: ${HOME_URL}
         user: ${HOME_USERNAME}
         password: ${HOME_PASSWORD}
+
+front:
+  server:
+    baseUri: ${FRONT_SERVER_BASE_URI}

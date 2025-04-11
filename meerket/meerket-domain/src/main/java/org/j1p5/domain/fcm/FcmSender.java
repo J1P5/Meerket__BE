@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface FcmSender {
 
-    void sendPushChatMessageNotification(Long receiverId, String senderNickname, String content, String uri);
+    void sendPushChatMessageNotification(FcmChatMessage fcmChatMessage, String uri);
 
-    void sendPushSellerBidNotification(Long userId, String title, String content, String uri);
+    void sendPushSellerBidNotification(Long userId, String title, String titleMessage, String uri);
 
-    void sendPushBuyerBidNotification(List<Long> userIds, String title, String content, String uri);
+    void sendPushBuyerBidNotification(List<Long> userIds, String title, String titleMessage, String uri);
 
 
 }
