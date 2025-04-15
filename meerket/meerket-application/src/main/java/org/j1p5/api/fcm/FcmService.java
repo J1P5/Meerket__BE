@@ -2,6 +2,7 @@ package org.j1p5.api.fcm;
 
 import lombok.RequiredArgsConstructor;
 import org.j1p5.api.chat.exception.ChatException;
+import org.j1p5.api.fcm.type.FcmMessageType;
 import org.j1p5.api.fcm.type.FcmRedirectUri;
 import org.j1p5.api.global.excpetion.WebException;
 import org.j1p5.api.product.exception.ProductException;
@@ -39,36 +40,37 @@ public class FcmService {
                 .orElseThrow(() -> new InfraException(ChatException.CHAT_RECEIVER_NOT_FOUND));
 
         sendPushChatNotification(
+                roomId,
                 receiverId,
                 userEntity.getNickname(),
                 content,
-                FcmRedirectUri.CHATTING.buildUri(roomId, receiverId.toString())
+                CHAT_ALERT
         );
     }
 
     // 판매자에게 입찰 알림
     public void sendSellerBidMessage(Long productId) {
-        notifySeller(getProductEntity(productId), BID_ALERT.getMessage(), FcmRedirectUri.PRODUCT_DETAIL);
+        notifySeller(getProductEntity(productId), BID_ALERT);
     }
 
     // 판매자에게 입찰 수정 알림
     public void sendSellerBidUpdateMessage(Long productId) {
-        notifySeller(getProductEntity(productId), BID_UPDATE.getMessage(), FcmRedirectUri.PRODUCT_DETAIL);
+        notifySeller(getProductEntity(productId), BID_UPDATE);
     }
 
     // 판매자에게 입찰 취소 알림
     public void sendSellerBidCancelMessage(Long productId) {
-        notifySeller(getProductEntity(productId), BID_CANCEL.getMessage(), FcmRedirectUri.PRODUCT_DETAIL);
+        notifySeller(getProductEntity(productId), BID_CANCEL);
     }
 
     // 조기마감 시 구매자에게 알림
     public void sendBuyerCloseEarlyMessage(Long productId) {
-        notifyBuyers(getProductEntity(productId), BID_EARLY_CLOSED.getMessage(), FcmRedirectUri.PRODUCT_DETAIL);
+        notifyBuyers(getProductEntity(productId), BID_EARLY_CLOSED);
     }
 
     // 상품 삭제되었을 때 구매자에게 알림
     public void sendBuyerProductDeleted(Long productId){
-        notifyBuyers(getProductEntity(productId), BID_DELETED.getMessage(), FcmRedirectUri.HOME);
+        notifyBuyers(getProductEntity(productId), BID_DELETED);
     }
 
     private ProductEntity getProductEntity(Long productId) {
@@ -90,20 +92,27 @@ public class FcmService {
                 }, () -> fcmTokenRepository.save(FcmTokenEntity.create(userEntity, fcmToken)));
     }
 
-    private void notifySeller(ProductEntity product, String titleMessage, FcmRedirectUri redirectUri) {
-        String uri = redirectUri.buildUri(product.getId().toString());
-        sendPushSellerBidNotification(product, titleMessage, uri);
+    private void notifySeller(ProductEntity product, FcmMessageType fcmType) {
+        sendPushSellerBidNotification(
+                product,
+                fcmType.getMessage(),
+                fcmType.getRedirectUri().buildUri(product.getId().toString())
+        );
     }
 
-    private void notifyBuyers(ProductEntity product, String titleMessage, FcmRedirectUri redirectUri) {
-        String uri = redirectUri.buildUri(product.getId().toString());
-        sendPushBuyerBidNotification(product, titleMessage, uri);
+    private void notifyBuyers(ProductEntity product, FcmMessageType fcmType) {
+        sendPushBuyerBidNotification(
+                product,
+                fcmType.getMessage(),
+                fcmType.getRedirectUri().buildUri(product.getId().toString())
+        );
     }
 
     // 채팅 알림 전송 요청
-    private void sendPushChatNotification(Long receiverId, String userNickname, String content, String uri) {
+    private void sendPushChatNotification(String roomId, Long receiverId, String userNickname, String content, FcmMessageType fcmType) {
         fcmSender.sendPushChatMessageNotification(
-                new FcmChatMessage(receiverId, userNickname, CHAT_ALERT.getMessage(), content), uri
+                new FcmChatMessage(receiverId, userNickname, fcmType.getMessage(), content),
+                        fcmType.getRedirectUri().buildUri(roomId, receiverId.toString())
         );
     }
 
