@@ -25,8 +25,6 @@ public class FcmSenderImpl implements FcmSender {
 
     private final FcmTokenRepository fcmTokenRepository;
     private final FrontServerProperty frontServerProperty;
-    private final static String chatTitlePostFix = "님에게 메시지가 도착했습니다.";
-
 
     // 채팅 상대방에게 푸쉬 보내기
     @Override
@@ -39,7 +37,11 @@ public class FcmSenderImpl implements FcmSender {
                             .findByUserId(fcmChatMessage.receiverId())
                             .orElseThrow(() -> new InfraException(FcmException.RECEIVER_NOT_FOUND));
 
-            Message message = buildFcmMessage(fcmChatMessage.senderNickname(), chatTitlePostFix, fcmTokenEntity.getToken(), uri);
+            Message message = buildFcmMessage(
+                    fcmChatMessage.senderNickname(),
+                    fcmChatMessage.titleMessage(),
+                    fcmChatMessage.content(),
+                    fcmTokenEntity.getToken(), uri);
 
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
@@ -89,6 +91,20 @@ public class FcmSenderImpl implements FcmSender {
     }
 
     private Message buildFcmMessage(
+            String titleTarget, String titleMessage, String content, String token, String uri
+    ) {
+        Map<String, String> data = new HashMap<>();
+        data.put("uri", uri);
+
+        return Message.builder()
+                .setNotification(buildNotification(titleTarget, titleMessage, content))
+                .setToken(token)
+                .setWebpushConfig(webPushConfigWithLink(uri))
+                .putAllData(data)
+                .build();
+    }
+
+    private Message buildFcmMessage(
             String titleTarget, String titleMessage, String token, String uri
     ) {
         Map<String, String> data = new HashMap<>();
@@ -99,6 +115,13 @@ public class FcmSenderImpl implements FcmSender {
                 .setToken(token)
                 .setWebpushConfig(webPushConfigWithLink(uri))
                 .putAllData(data)
+                .build();
+    }
+
+    private Notification buildNotification(String target, String titleMessage, String content) {
+        return Notification.builder()
+                .setTitle(target + " " + titleMessage)
+                .setBody(content)
                 .build();
     }
 

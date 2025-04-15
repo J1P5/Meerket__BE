@@ -11,9 +11,11 @@ public enum FcmMessageType {
     BID_DELETED("판매자가 게시물을 삭제하였습니다. 해당 입찰은 유효하지 않습니다.", FcmRedirectUri.HOME),
     CHAT_ALERT("님에게 메시지가 도착했습니다.", FcmRedirectUri.CHATTING);
 
-    private String message;
-    private FcmRedirectUri redirectUri;
+    private final String message;
+    private final FcmRedirectUri redirectUri;
 
     FcmMessageType(String message, FcmRedirectUri redirectUri) {
+        this.message = message;
+        this.redirectUri = redirectUri;
     }
 }
