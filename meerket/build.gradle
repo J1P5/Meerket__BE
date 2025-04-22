@@ -48,6 +48,9 @@ subprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+        implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.4'
+        runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
         // mongodb
         implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     }
