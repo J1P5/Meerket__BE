@@ -22,3 +22,9 @@ server:
       cookie:
         same-site: "NONE"
         secure: true
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
