@@ -59,9 +59,6 @@ public class FcmSenderImpl implements FcmSender {
             FcmTokenEntity fcmTokenEntity = fcmTokenRepository.findByUserId(userId)
                     .orElseThrow(() -> new InfraException(FcmException.AUCTION_SELLER_FCM_TOKEN_NOT_FOUND));
 
-            Map<String, String> data = new HashMap<>();
-            data.put("uri", uri);
-
             Message message = buildFcmMessage(title, titleMessage, fcmTokenEntity.getToken(), uri);
 
             FirebaseMessaging.getInstance().send(message);
@@ -93,49 +90,37 @@ public class FcmSenderImpl implements FcmSender {
     private Message buildFcmMessage(
             String titleTarget, String titleMessage, String content, String token, String uri
     ) {
-        Map<String, String> data = new HashMap<>();
-        data.put("uri", uri);
-
         return Message.builder()
-                .setNotification(buildNotification(titleTarget, titleMessage, content))
                 .setToken(token)
-                .setWebpushConfig(webPushConfigWithLink(uri))
-                .putAllData(data)
+                .putAllData(buildFcmData(titleTarget, titleMessage, content, uri))
                 .build();
     }
 
     private Message buildFcmMessage(
             String titleTarget, String titleMessage, String token, String uri
     ) {
+        return Message.builder()
+                .setToken(token)
+                .putAllData(buildFcmData(titleTarget, titleMessage, uri))
+                .build();
+    }
+
+    private Map<String, String> buildFcmData(String target, String titleMessage, String content, String uri) {
         Map<String, String> data = new HashMap<>();
+
+        data.put("title", target + " " + titleMessage);
+        data.put("body", content);
         data.put("uri", uri);
 
-        return Message.builder()
-                .setNotification(buildNotification(titleTarget, titleMessage))
-                .setToken(token)
-                .setWebpushConfig(webPushConfigWithLink(uri))
-                .putAllData(data)
-                .build();
+        return data;
     }
 
-    private Notification buildNotification(String target, String titleMessage, String content) {
-        return Notification.builder()
-                .setTitle(target + " " + titleMessage)
-                .setBody(content)
-                .build();
-    }
+    private Map<String, String> buildFcmData(String target, String titleMessage, String uri) {
+        Map<String, String> data = new HashMap<>();
 
-    private Notification buildNotification(String target, String titleMessage) {
-        return Notification.builder()
-                .setTitle(target + " " + titleMessage)
-                .build();
-    }
+        data.put("title", target + " " + titleMessage);
+        data.put("uri", uri);
 
-    private WebpushConfig webPushConfigWithLink(String uri) {
-        String link = frontServerProperty.baseUri() + uri;
-
-        return WebpushConfig.builder()
-                .setFcmOptions(WebpushFcmOptions.withLink(link))
-                .build();
+        return data;
     }
 }
