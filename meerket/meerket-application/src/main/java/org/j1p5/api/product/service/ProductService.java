@@ -226,25 +226,22 @@ public class ProductService {
     @Transactional
     public void updateProduct(Long productId, Long userId, ProductUpdateInfo info) {
 
-        // 멱등성 확인
+        // 따닥 방지
         String requestId = "updateProduct:" + productId + ":user:" + userId;
         if (!redisIdempotencyService.saveRequestId(requestId, REQUEST_ID_TTL)) {
             throw new WebException(DUPLICATED_PRODUCT_UPDATE_REQUEST);
         }
 
-        // 입찰 진행 여부 확인
-        String bidLockKey = "product:" + productId + ":lock:bid";
-        if (redisBidLockService.getBidCount(bidLockKey) > 0) {
-            throw new WebException(BID_IN_PROGRESS_PRODUCT_UPDATE_NOT_ALLOWED);
-        }
+        String productLockKey = "product:" + productId + ":lock";
 
-        // 상품 수정 락 설정
-        String editLockKey = "product:" + productId + ":lock:edit";
-        if (!redisProductEditLockService.setEditLock(editLockKey, PRODUCT_UPDATE_TTL)) {
-            throw new WebException(PRODUCT_UPDATE_LOCKED);
-        }
-
+        boolean locked = false;
         try {
+            locked = redisBidLockService.tryLock(productLockKey, 0, PRODUCT_UPDATE_TTL);
+
+            if (!locked) {
+                throw new WebException(PRODUCT_UPDATE_LOCKED);
+            }
+
             UserEntity user = userReader.getUser(userId);
             ProductEntity product =
                     productRepository
@@ -259,12 +256,17 @@ public class ProductService {
 
             if (!product.isHasBuyer()) {
                 product.updateProduct(info, coordinate);
-            } else throw new DomainException(PRODUCT_HAS_BUYER);
+            } else {
+                throw new DomainException(PRODUCT_HAS_BUYER);
+            }
+
         } finally {
-            try {
-                redisProductEditLockService.releaseEditLock(editLockKey);
-            } catch (Exception e) {
-                log.error("상품 수정 락 해제 에서 에러 발생 check: {}", productId, e);
+            if (locked) {
+                try {
+                    redisBidLockService.unlock(productLockKey);
+                } catch (Exception e) {
+                    log.error("상품 수정 락 해제에서 에러 발생 check: {}", productId, e);
+                }
             }
         }
     }

@@ -4,55 +4,47 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.redis.RedisProductEditLockService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
-/**
- * @author yechan
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisProductEditLockServiceImpl implements RedisProductEditLockService {
 
-    @Qualifier("redisTemplate")
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedissonClient redissonClient;
 
-    /**
-     * 상품 수정할때의 Lock
-     *
-     * @param key
-     * @param ttl
-     * @return true: lock 성공, false: 이미 lock 되어있음
-     */
     @Override
     public boolean setEditLock(String key, long ttl) {
-        log.info("상품 수정 락 설정");
-        return Boolean.TRUE.equals(
-                redisTemplate.opsForValue().setIfAbsent(key, "LOCKED", ttl, TimeUnit.SECONDS));
+        RLock lock = redissonClient.getLock(key);
+        try {
+            boolean locked = lock.tryLock(0, ttl, TimeUnit.SECONDS);
+            log.info("상품 수정 락 설정 key={}, locked={}, lease={}s", key, locked, ttl);
+            return locked;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("상품 수정 락 설정 interrupted key={}", key, e);
+            return false;
+        }
     }
 
-    /**
-     * 상품이 수정중인지 확인
-     *
-     * @param key
-     * @return true: 상품이 수정중인 상태, false: 상품이 수정중 아닌상태
-     */
     @Override
     public boolean isEditLocked(String key) {
-        log.info("상품 수정 락 확인");
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+        RLock lock = redissonClient.getLock(key);
+        boolean locked = lock.isLocked();
+        log.info("상품 수정 락 확인 key={}, locked={}", key, locked);
+        return locked;
     }
 
-    /**
-     * 상품의 수정이 완료되고 나서 Lock 해제
-     *
-     * @param key
-     */
     @Override
     public void releaseEditLock(String key) {
-        log.info("상품 수정 락 해제");
-        redisTemplate.delete(key);
+        RLock lock = redissonClient.getLock(key);
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+            log.info("상품 수정 락 해제 key={}", key);
+        } else {
+            log.warn("상품 수정 락 해제 스킵(현재 스레드 미보유) key={}", key);
+        }
     }
 }

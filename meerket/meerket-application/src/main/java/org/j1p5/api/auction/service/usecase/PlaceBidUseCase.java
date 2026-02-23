@@ -50,45 +50,42 @@ public class PlaceBidUseCase {
      */
     @Transactional
     public PlaceBidResponse execute(Long userId, Long productId, int price) {
-        // TODO 사용자의 거리를 기반하여 물건의 위치와 얼마나 떨어져있는지 확인해야 함.
 
-        // 멱등성 확인
+        // 따닥 방지(중복 제출 방지)
         String requestId = "product:" + productId + ":user:" + userId;
         if (!redisIdempotencyService.saveRequestId(requestId, REQUEST_ID_TTL)) {
             throw new WebException(AuctionException.DUPLICATE_BID_REQUEST);
         }
 
-        // 상품 수정중인지 확인
-        String editLockKey = "product:" + productId + ":lock:edit";
-        if (redisProductEditLockService.isEditLocked(editLockKey)) {
-            throw new WebException(AuctionException.AUCTION_EDIT_IN_PROGRESS);
-        }
+        String productLockKey = "product:" + productId + ":lock";
 
-        // 입찰 중 락 설정
-        String bidLockKey = "product:" + productId + ":lock:bid";
-
+        boolean locked = false;
         try {
-            redisBidLockService.incrementBid(bidLockKey, BID_LOCK_TTL);
+            locked = redisBidLockService.tryLock(productLockKey, 0, BID_LOCK_TTL);
+            if (!locked) {
+                throw new WebException(AuctionException.BID_IN_PROGRESS);
+            }
 
             ProductEntity product = getProductEntity(productId);
             UserEntity user = getUserEntity(userId);
 
             verifySeller(product, user);
-
             checkDuplicateBid(userId, productId);
 
             PlaceBidResponse placeBidResponse = placeBid(userId, productId, price);
 
             product.updateHasBuyer();
-
             sendSellerBidNotification(productId);
 
             return placeBidResponse;
+
         } finally {
-            try {
-                redisBidLockService.decrementBid(bidLockKey);
-            } catch (Exception e) {
-                log.error("입찰 락을 해제하는데 실패했습니다.", e);
+            if (locked) {
+                try {
+                    redisBidLockService.unlock(productLockKey);
+                } catch (Exception e) {
+                    log.error("입찰 락을 해제하는데 실패했습니다.", e);
+                }
             }
         }
     }

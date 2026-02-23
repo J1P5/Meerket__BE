@@ -1,16 +1,13 @@
 package org.j1p5.infrastructure.redis.service;
 
-import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.j1p5.domain.redis.RedisBidLockService;
-import org.redisson.api.RAtomicLong;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
-/**
- * @author yechan
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -18,61 +15,36 @@ public class RedisBidLockServiceImpl implements RedisBidLockService {
 
     private final RedissonClient redissonClient;
 
-    /**
-     * 입찰 시작: 키 증가 또는 생성
-     *
-     * @param key Redis 키
-     * @param ttl 키 만료 시간(초)
-     * @return 현재 키의 값
-     */
     @Override
-    public long incrementBid(String key, long ttl) {
-        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
-        long currentValue = atomicLong.incrementAndGet();
-
-        log.info("현재 입찰 락 증가  key = {}", key);
-        log.info("현재 입찰 락 증가  count = {}", currentValue);
-
-        if (currentValue == 1) {
-            atomicLong.expire(Duration.ofSeconds(ttl));
+    public boolean tryLock(String key, long waitTimeSec, long leaseTimeSec) {
+        RLock lock = redissonClient.getLock(key);
+        try {
+            boolean locked = lock.tryLock(waitTimeSec, leaseTimeSec, TimeUnit.SECONDS);
+            log.info("RLock tryLock key={}, locked={}, wait={}s, lease={}s", key, locked, waitTimeSec, leaseTimeSec);
+            return locked;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("RLock tryLock interrupted key={}", key, e);
+            return false;
         }
-
-        return currentValue;
     }
 
-    /**
-     * 입찰 종료: 키 감소 또는 삭제
-     *
-     * @param key Redis 키
-     * @return 현재 키의 값
-     */
     @Override
-    public long decrementBid(String key) {
-        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
-        long currentValue = atomicLong.decrementAndGet();
-
-        log.info("현재 입찰 락 감소  key = {}", key);
-        log.info("현재 입찰 락 감소  count = {}", currentValue);
-
-        if (currentValue <= 0) {
-            atomicLong.delete();
+    public void unlock(String key) {
+        RLock lock = redissonClient.getLock(key);
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+            log.info("RLock unlock key={}", key);
+        } else {
+            log.warn("RLock unlock skipped (not held by current thread) key={}", key);
         }
-
-        return currentValue;
     }
 
-    /**
-     * 현재 입찰이 진행되고 있는지를 확인
-     *
-     * @param key Redis 키
-     * @return 현재 키의 값 (없으면 0 반환)
-     */
     @Override
-    public long getBidCount(String key) {
-        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
-
-        log.info("현재 입찰 중 개수 = {}", atomicLong);
-
-        return atomicLong.get();
+    public boolean isLocked(String key) {
+        RLock lock = redissonClient.getLock(key);
+        boolean locked = lock.isLocked();
+        log.info("RLock isLocked key={}, locked={}", key, locked);
+        return locked;
     }
 }

@@ -26,6 +26,7 @@ public class UpdateBidPriceUseCase {
     private final FcmService fcmService;
     private final ProductRepository productRepository;
     private final RedisIdempotencyService redisIdempotencyService;
+    private final RedisBidLockService redisBidLockService;
 
     private static final long REQUEST_ID_TTL = 30;
 
@@ -42,7 +43,7 @@ public class UpdateBidPriceUseCase {
     @Transactional
     public UpdateBidPriceResponse execute(Long productId, Long userId, Long auctionId, int price) {
 
-        // 멱등성 확인
+        // 중복 방지
         String requestId = "updateBid:" + auctionId + ":user:" + userId;
         try {
             if (!redisIdempotencyService.saveRequestId(requestId, REQUEST_ID_TTL)) {
@@ -54,21 +55,38 @@ public class UpdateBidPriceUseCase {
             log.error("입찰 수정 멱등성 검사에서 에러발생 check 요청: {}", requestId, e);
         }
 
-        auctionService.verifyUserBidOwnership(userId, auctionId);
+        String productLockKey = "product:" + productId + ":lock";
+        boolean locked = false;
 
-        boolean earlyClosure = auctionService.isEarlyClosure(productId);
+        try {
+            locked = redisBidLockService.tryLock(productLockKey, 0, 300);
+            if (!locked) {
+                throw new WebException(AuctionException.BID_IN_PROGRESS);
+            }
 
-        AuctionEntity auctionEntity;
+            auctionService.verifyUserBidOwnership(userId, auctionId);
 
-        if (earlyClosure) {
-            auctionEntity = updateBidPriceForEarlyClosure(auctionId, price);
-        } else {
-            auctionEntity = updateBidPriceWithMinimumLimit(auctionId, productId, price);
+            boolean earlyClosure = auctionService.isEarlyClosure(productId);
+
+            AuctionEntity auctionEntity;
+            if (earlyClosure) {
+                auctionEntity = updateBidPriceForEarlyClosure(auctionId, price);
+            } else {
+                auctionEntity = updateBidPriceWithMinimumLimit(auctionId, productId, price);
+            }
+
+            fcmService.sendSellerBidUpdateMessage(productId);
+            return UpdateBidPriceResponse.fromEntity(auctionEntity);
+
+        } finally {
+            if (locked) {
+                try {
+                    redisBidLockService.unlock(productLockKey);
+                } catch (Exception e) {
+                    log.error("입찰 수정 락 해제 실패", e);
+                }
+            }
         }
-
-        fcmService.sendSellerBidUpdateMessage(productId);
-
-        return UpdateBidPriceResponse.fromEntity(auctionEntity);
     }
 
     // 조기마감 상태일때의 수정
