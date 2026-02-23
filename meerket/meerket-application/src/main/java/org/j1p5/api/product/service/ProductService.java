@@ -79,15 +79,12 @@ public class ProductService {
     @Transactional
     public CreateProductResponseDto registerProduct(
             Long userId, ProductInfo productInfo, List<File> images) {
-        // multipart 자료형은 web에서 처리하고 file만 내려줘라
 
         UserEntity user = userReader.getUser(userId); // user객체 가져오는 실제 구현부는 UserReader임
 
-        //        userRegionauth.checkAuth(user.getId());// 동네 인증된 사용자 체크
 
         ProductEntity product = ProductInfo.toEntity(productInfo, user);
 
-        // 이미지 처리를 위한 로직 -> 그 후 image테이블에 저장
 
         List<String> imageUrls = imageService.upload(images);
         for (String url : imageUrls) {
@@ -118,7 +115,6 @@ public class ProductService {
      */
     @Transactional
     public CursorResult<ProductResponseInfo> getProducts(Long userId, Cursor cursor) {
-        // 사용자 활동지역 반경 100km까지 조회
         UserEntity user = userReader.getUser(userId);
 
         List<ActivityArea> activityAreas = user.getActivityAreas();
